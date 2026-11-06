@@ -1,0 +1,130 @@
+:root {
+  color-scheme: light dark;
+  --bg: #fbfaf7;
+  --fg: #1d1f1e;
+  --muted: #6b7470;
+  --line: #e6e3dc;
+  --card: #ffffff;
+  --accent: #2f6f5e;
+  --accent-soft: #e4f0ec;
+  --accent-fg: #ffffff;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161a19;
+    --fg: #ecebe6;
+    --muted: #96a09b;
+    --line: #2a302e;
+    --card: #1e2422;
+    --accent: #5fb49c;
+    --accent-soft: #223730;
+    --accent-fg: #0f1513;
+  }
+}
+* { box-sizing: border-box; }
+html, body {
+  /* Explicit: Chrome's UA stylesheet shrinks extension pages to 75 %. */
+  font-size: 14px;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select {
+  font: inherit;
+  color: inherit;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.muted { color: var(--muted); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* ---------- popup ---------- */
+.popup { width: 300px; padding: 14px 16px 12px; }
+.popup header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.popup header h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: 0.01em; }
+.popup header .date { font-size: 12px; color: var(--muted); text-align: right; }
+.next {
+  background: var(--accent-soft);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.next .label { font-size: 12px; color: var(--muted); }
+.next .name { font-size: 22px; font-weight: 600; margin: 2px 0 0; }
+.next .in { font-size: 13px; color: var(--muted); }
+.next .in b { color: var(--fg); font-weight: 600; }
+ul.times { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+ul.times li {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 6px; border-bottom: 1px solid var(--line);
+}
+ul.times li.current { background: var(--card); border-radius: 8px; border-color: transparent; font-weight: 600; }
+ul.times li.current .time::before { content: "●"; color: var(--accent); font-size: 9px; margin-right: 8px; vertical-align: 1px; }
+ul.times li.passed { color: var(--muted); }
+ul.times li.sunrise { color: var(--muted); font-size: 13px; }
+ul.times .time { font-variant-numeric: tabular-nums; }
+.popup footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 10px; font-size: 12px; }
+.popup footer .muted { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.popup .notice {
+  margin-top: 8px; font-size: 12px; padding: 8px 10px; border-radius: 8px;
+  background: var(--card); border: 1px solid var(--line);
+}
+
+/* ---------- options ---------- */
+.options { max-width: 560px; margin: 0 auto; padding: 32px 20px 60px; }
+.options h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; }
+.options .lead { color: var(--muted); margin: 0 0 24px; }
+.options section {
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 20px; margin-bottom: 16px;
+}
+.options h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 12px; font-weight: 600; }
+.field { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); }
+.field:first-of-type { border-top: 0; }
+.field label { display: block; }
+.field .hint { font-size: 12px; color: var(--muted); }
+.field input[type="number"], .field input[type="text"], .field select {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; min-width: 120px;
+}
+.field input[type="number"] { width: 90px; min-width: 0; text-align: right; }
+.toggle { position: relative; width: 40px; height: 24px; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle span {
+  position: absolute; inset: 0; background: var(--line); border-radius: 12px; transition: background .15s;
+}
+.toggle span::after {
+  content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
+  background: #fff; border-radius: 50%; transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+.toggle input:checked + span { background: var(--accent); }
+.toggle input:checked + span::after { transform: translateX(16px); }
+.adjust { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px; }
+.adjust label { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.adjust input { width: 70px; text-align: right; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
+.city { position: relative; }
+.city input { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.city ul {
+  position: absolute; z-index: 2; left: 0; right: 0; top: 100%; margin: 4px 0 0; padding: 4px; list-style: none;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  max-height: 220px; overflow: auto;
+}
+.city ul:empty { display: none; }
+.city li { padding: 7px 10px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; }
+.city li:hover, .city li[aria-selected="true"] { background: var(--accent-soft); }
+.city li .tz { color: var(--muted); font-size: 12px; }
+.coords { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 10px; margin-top: 10px; }
+.coords label { font-size: 12px; color: var(--muted); display: block; }
+.coords input { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; margin-top: 2px; }
+.btn {
+  background: var(--accent); color: var(--accent-fg); border: 0; border-radius: 8px; padding: 8px 14px; cursor: pointer; font-weight: 600;
+}
+.btn.secondary { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+.status { font-size: 12px; color: var(--muted); min-height: 1.4em; margin-top: 6px; }
+.preview { font-variant-numeric: tabular-nums; display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; text-align: center; font-size: 12px; }
+.preview b { display: block; font-size: 14px; }

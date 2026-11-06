@@ -1,1 +1,16 @@
-{"name":"salat-chrome","private":true,"version":"0.1.0"}
+{
+  "name": "salat-chrome",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Salat – Prayer Times (Chrome extension, Manifest V3)",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "zip": "node build.mjs && cd dist && zip -qr ../salat-chrome-$npm_package_version.zip . && cd .. && echo built salat-chrome-$npm_package_version.zip"
+  },
+  "dependencies": {
+    "@salat/core": "*"
+  }
+}

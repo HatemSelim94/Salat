@@ -5,7 +5,7 @@ Lightweight, offline, non-annoying prayer-time reminders — for your desktop, y
 | Target | Folder | Stack | Status |
 |---|---|---|---|
 | Shared engine | [`core/`](core) | TypeScript, [adhan-js](https://github.com/batoulapps/adhan-js) | ✅ tests passing |
-| Chrome extension | [`chrome/`](chrome) | Manifest V3, vanilla TS | 🚧 |
+| Chrome extension | [`chrome/`](chrome) | Manifest V3, vanilla TS | ✅ working, unpublished |
 | VS Code extension | [`vscode/`](vscode) | VS Code API | 🚧 |
 | Desktop app | [`desktop/`](desktop) | C++17, Qt 6 / QML | 🚧 |
 | Android app | [`android/`](android) | Kotlin, Jetpack Compose | 🚧 |

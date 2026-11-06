@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Salat</title>
+  <link rel="stylesheet" href="salat.css">
+</head>
+<body class="popup">
+  <header>
+    <h1 id="location">Salat</h1>
+    <div class="date"><div id="hijri"></div><div id="gregorian"></div></div>
+  </header>
+  <div class="next">
+    <div class="label">Next prayer</div>
+    <div class="name" id="next-name">—</div>
+    <div class="in" id="next-in"></div>
+  </div>
+  <ul class="times" id="times"></ul>
+  <div class="notice" id="notice" hidden></div>
+  <footer>
+    <span class="muted" id="method"></span>
+    <a href="#" id="open-options">Settings</a>
+  </footer>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
