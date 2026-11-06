@@ -18,7 +18,7 @@
     <string name="home_remindersOff" translatable="true">Erinnerungen sind ausgeschaltet.</string>
     <string name="home_battery" translatable="true">Damit Erinnerungen pünktlich kommen, erlaube Salat, ohne Akku-Einschränkungen zu laufen.</string>
     <string name="home_exactAlarm" translatable="true">Android braucht die Berechtigung für exakte Alarme, damit Erinnerungen minutengenau sind. Tippen zum Erlauben.</string>
-    <string name="home_allow" translatable="true">Erlauben</string>
+    <string name="home_allow" translatable="true">Beheben</string>
     <string name="home_setCityShort" translatable="true">Stadt wählen</string>
     <string name="home_batteryShort" translatable="true">Erinnerungen können sich verspäten, solange der Akkusparmodus für Salat aktiv ist.</string>
     <string name="home_exactAlarmShort" translatable="true">Für minutengenaue Erinnerungen wird die Berechtigung für exakte Alarme benötigt.</string>
@@ -94,8 +94,8 @@
     <string name="vscode_current" translatable="true">aktuell</string>
     <string name="vscode_next" translatable="true">Nächste</string>
     <string name="vscode_guessed" translatable="true">Standort aus der Zeitzone geschätzt – „Salat: Stadt festlegen“ ausführen</string>
-    <string name="home_batterySteps" translatable="true">Im Android-Dialog auf „Zulassen“ tippen. Öffnet sich stattdessen eine Liste: „Alle Apps“ wählen, Salat suchen und „Nicht optimieren“ auswählen.</string>
+    <string name="home_batterySteps" translatable="true">Es öffnet sich eine App-Liste. Oben den Filter von „Nicht optimiert“ auf „Alle“ stellen, Salat suchen und die Optimierung AUSschalten. Danach hierher zurückkehren – dieser Hinweis verschwindet, sobald es erledigt ist.</string>
     <string name="home_whyBattery" translatable="true">Warum? Samsung- und andere Telefone legen Apps schlafen, um Akku zu sparen – und eine schlafende App kann zum Fajr nicht klingeln. Salat braucht fast keinen Akku: es wacht einmal pro Gebet auf.</string>
     <string name="home_notNow" translatable="true">Später</string>
-    <string name="home_continue" translatable="true">Weiter</string>
+    <string name="home_continue" translatable="true">Liste öffnen</string>
 </resources>

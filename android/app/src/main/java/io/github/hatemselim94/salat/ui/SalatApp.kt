@@ -2,7 +2,6 @@ package io.github.hatemselim94.salat.ui
 
 import android.content.Intent
 import android.os.Build
-import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings as AndroidSettings
 import androidx.compose.foundation.background
@@ -162,19 +161,9 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
     }
 }
 
-/**
- * Prefer the direct yes/no system dialog; fall back to the battery-optimisation list
- * (where the user has to find Salat themselves) if the dialog intent is unavailable.
- */
+/** Opens Android's battery-optimisation list (no special permission needed); the dialog before it explains what to pick. */
 private fun requestBatteryExemption(context: android.content.Context) {
-    val direct = Intent(AndroidSettings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-        .setData(Uri.parse("package:" + context.packageName))
-        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    try {
-        context.startActivity(direct)
-    } catch (e: Exception) {
-        context.startActivity(Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-    }
+    context.startActivity(Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 }
 
 /** A message the user must act on, with an explicit button so it does not read as plain text. */

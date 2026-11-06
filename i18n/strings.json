@@ -86,9 +86,9 @@
     "de": "Android braucht die Berechtigung für exakte Alarme, damit Erinnerungen minutengenau sind. Tippen zum Erlauben."
   },
   "home.allow": {
-    "en": "Allow",
-    "ar": "السماح",
-    "de": "Erlauben"
+    "en": "Fix",
+    "ar": "إصلاح",
+    "de": "Beheben"
   },
   "home.setCityShort": {
     "en": "Set city",
@@ -466,9 +466,9 @@
     "de": "Standort aus der Zeitzone geschätzt – „Salat: Stadt festlegen“ ausführen"
   },
   "home.batterySteps": {
-    "en": "In the Android dialog that opens, tap Allow. If a list opens instead: choose “All apps”, find Salat and select “Don’t optimise”.",
-    "ar": "في نافذة أندرويد التي ستظهر اضغط «السماح». إذا ظهرت قائمة بدلًا من ذلك: اختر «كل التطبيقات»، ابحث عن صلاة واختر «عدم التحسين».",
-    "de": "Im Android-Dialog auf „Zulassen“ tippen. Öffnet sich stattdessen eine Liste: „Alle Apps“ wählen, Salat suchen und „Nicht optimieren“ auswählen."
+    "en": "A list of apps will open. Change the filter at the top from “Not optimised” to “All”, find Salat and switch optimisation OFF. Then come back here — this notice disappears once it is done.",
+    "ar": "ستُفتح قائمة بالتطبيقات. غيّر الفلتر في الأعلى من «غير محسّنة» إلى «الكل»، ابحث عن صلاة وأوقف التحسين. ثم عد إلى هنا — يختفي هذا التنبيه عند الانتهاء.",
+    "de": "Es öffnet sich eine App-Liste. Oben den Filter von „Nicht optimiert“ auf „Alle“ stellen, Salat suchen und die Optimierung AUSschalten. Danach hierher zurückkehren – dieser Hinweis verschwindet, sobald es erledigt ist."
   },
   "home.whyBattery": {
     "en": "Why? Samsung and other phones put apps to sleep to save battery, and a sleeping app cannot ring at Fajr. Salat uses almost no battery: it wakes once per prayer.",
@@ -481,8 +481,8 @@
     "de": "Später"
   },
   "home.continue": {
-    "en": "Continue",
-    "ar": "متابعة",
-    "de": "Weiter"
+    "en": "Open the list",
+    "ar": "فتح القائمة",
+    "de": "Liste öffnen"
   }
 }
