@@ -2,6 +2,7 @@ package io.github.hatemselim94.salat.ui
 
 import android.content.Intent
 import android.os.Build
+import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings as AndroidSettings
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -131,10 +133,20 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
             ActionCard(stringResource(R.string.home_locationGuessed), stringResource(R.string.home_setCityShort), onClick = onOpenSettings)
         }
         val pm = context.getSystemService(PowerManager::class.java)
+        var explainBattery by remember { mutableStateOf(false) }
         if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {
-            ActionCard(stringResource(R.string.home_batteryShort), stringResource(R.string.home_allow)) {
-                context.startActivity(Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            }
+            ActionCard(stringResource(R.string.home_batteryShort), stringResource(R.string.home_allow)) { explainBattery = true }
+        }
+        if (explainBattery) {
+            AlertDialog(
+                onDismissRequest = { explainBattery = false },
+                title = { Text(stringResource(R.string.home_allow)) },
+                text = { Text(stringResource(R.string.home_whyBattery) + "\n\n" + stringResource(R.string.home_batterySteps)) },
+                confirmButton = {
+                    TextButton(onClick = { explainBattery = false; requestBatteryExemption(context) }) { Text(stringResource(R.string.home_continue)) }
+                },
+                dismissButton = { TextButton(onClick = { explainBattery = false }) { Text(stringResource(R.string.home_notNow)) } },
+            )
         }
         if (Build.VERSION.SDK_INT in 31..32 && !Scheduler.canScheduleExact(context)) {
             ActionCard(stringResource(R.string.home_exactAlarmShort), stringResource(R.string.home_allow)) {
@@ -147,6 +159,21 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
             Text(settings.method.label, fontSize = 12.sp, color = muted, modifier = Modifier.weight(1f))
             TextButton(onClick = onOpenSettings, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.home_settings)) }
         }
+    }
+}
+
+/**
+ * Prefer the direct yes/no system dialog; fall back to the battery-optimisation list
+ * (where the user has to find Salat themselves) if the dialog intent is unavailable.
+ */
+private fun requestBatteryExemption(context: android.content.Context) {
+    val direct = Intent(AndroidSettings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        .setData(Uri.parse("package:" + context.packageName))
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    try {
+        context.startActivity(direct)
+    } catch (e: Exception) {
+        context.startActivity(Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 }
 

@@ -95,9 +95,9 @@
     "de": "Stadt wählen"
   },
   "home.batteryShort": {
-    "en": "Reminders may be late: battery optimisation is on for Salat.",
-    "ar": "قد تتأخر التذكيرات: تحسين البطارية مفعّل لتطبيق صلاة.",
-    "de": "Erinnerungen können sich verspäten: Akku-Optimierung ist für Salat aktiv."
+    "en": "Reminders may come late while battery saving is on for Salat.",
+    "ar": "قد تتأخر التذكيرات ما دام توفير البطارية مفعّلًا لتطبيق صلاة.",
+    "de": "Erinnerungen können sich verspäten, solange der Akkusparmodus für Salat aktiv ist."
   },
   "home.exactAlarmShort": {
     "en": "Exact-alarm permission is needed for on-the-minute reminders.",
@@ -463,5 +463,25 @@
     "en": "Location guessed from time zone — run Salat: Set City",
     "ar": "تم تخمين الموقع من المنطقة الزمنية — شغّل «صلاة: تحديد المدينة»",
     "de": "Standort aus der Zeitzone geschätzt – „Salat: Stadt festlegen“ ausführen"
+  },
+  "home.batterySteps": {
+    "en": "In the Android dialog that opens, tap Allow. If a list opens instead: choose “All apps”, find Salat and select “Don’t optimise”.",
+    "ar": "في نافذة أندرويد التي ستظهر اضغط «السماح». إذا ظهرت قائمة بدلًا من ذلك: اختر «كل التطبيقات»، ابحث عن صلاة واختر «عدم التحسين».",
+    "de": "Im Android-Dialog auf „Zulassen“ tippen. Öffnet sich stattdessen eine Liste: „Alle Apps“ wählen, Salat suchen und „Nicht optimieren“ auswählen."
+  },
+  "home.whyBattery": {
+    "en": "Why? Samsung and other phones put apps to sleep to save battery, and a sleeping app cannot ring at Fajr. Salat uses almost no battery: it wakes once per prayer.",
+    "ar": "لماذا؟ هواتف سامسونج وغيرها تُنيم التطبيقات لتوفير البطارية، والتطبيق النائم لا يستطيع التنبيه عند الفجر. صلاة لا يستهلك البطارية تقريبًا: يستيقظ مرة واحدة لكل صلاة.",
+    "de": "Warum? Samsung- und andere Telefone legen Apps schlafen, um Akku zu sparen – und eine schlafende App kann zum Fajr nicht klingeln. Salat braucht fast keinen Akku: es wacht einmal pro Gebet auf."
+  },
+  "home.notNow": {
+    "en": "Not now",
+    "ar": "ليس الآن",
+    "de": "Später"
+  },
+  "home.continue": {
+    "en": "Continue",
+    "ar": "متابعة",
+    "de": "Weiter"
   }
 }

@@ -20,7 +20,7 @@
     <string name="home_exactAlarm" translatable="true">Android needs permission for exact alarms so reminders are on the minute. Tap to allow.</string>
     <string name="home_allow" translatable="true">Allow</string>
     <string name="home_setCityShort" translatable="true">Set city</string>
-    <string name="home_batteryShort" translatable="true">Reminders may be late: battery optimisation is on for Salat.</string>
+    <string name="home_batteryShort" translatable="true">Reminders may come late while battery saving is on for Salat.</string>
     <string name="home_exactAlarmShort" translatable="true">Exact-alarm permission is needed for on-the-minute reminders.</string>
     <string name="settings_title" translatable="true">Settings</string>
     <string name="settings_back" translatable="true">Back</string>
@@ -94,4 +94,8 @@
     <string name="vscode_current" translatable="true">current</string>
     <string name="vscode_next" translatable="true">Next</string>
     <string name="vscode_guessed" translatable="true">Location guessed from time zone — run Salat: Set City</string>
+    <string name="home_batterySteps" translatable="true">In the Android dialog that opens, tap Allow. If a list opens instead: choose “All apps”, find Salat and select “Don’t optimise”.</string>
+    <string name="home_whyBattery" translatable="true">Why? Samsung and other phones put apps to sleep to save battery, and a sleeping app cannot ring at Fajr. Salat uses almost no battery: it wakes once per prayer.</string>
+    <string name="home_notNow" translatable="true">Not now</string>
+    <string name="home_continue" translatable="true">Continue</string>
 </resources>
