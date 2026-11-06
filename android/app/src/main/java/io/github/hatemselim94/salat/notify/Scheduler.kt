@@ -63,8 +63,7 @@ object Scheduler {
 
     private fun setExact(am: AlarmManager, atMillis: Long, pi: PendingIntent) {
         try {
-            if (Build.VERSION.SDK_INT >= 23) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, atMillis, pi)
-            else am.setExact(AlarmManager.RTC_WAKEUP, atMillis, pi)
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, atMillis, pi)
         } catch (e: SecurityException) {
             // Exact alarm permission revoked (Android 12/13 without USE_EXACT_ALARM): degrade to inexact.
             am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, atMillis, pi)

@@ -14,8 +14,8 @@ class Settings(context: Context) {
         if (!prefs.contains(KEY_LAT)) {
             val d = Cities.load(appContext).firstOrNull { it.tz == TimeZone.getDefault().id }
             prefs.edit()
-                .putFloat(KEY_LAT, (d?.lat ?: 21.39).toFloat())
-                .putFloat(KEY_LNG, (d?.lng ?: 39.86).toFloat())
+                .putLong(KEY_LAT, (d?.lat ?: 21.39).toRawBits())
+                .putLong(KEY_LNG, (d?.lng ?: 39.86).toRawBits())
                 .putString(KEY_TZ, d?.tz ?: "Asia/Riyadh")
                 .putString(KEY_LABEL, d?.let { "${it.name}, ${it.country}" } ?: "Makkah, SA")
                 .putBoolean(KEY_CONFIGURED, false)
@@ -24,14 +24,17 @@ class Settings(context: Context) {
     }
 
     var latitude: Double
-        get() = prefs.getFloat(KEY_LAT, 21.39f).toDouble()
-        set(v) = prefs.edit().putFloat(KEY_LAT, v.toFloat()).apply()
+        get() = getDouble(KEY_LAT, 21.39)
+        set(v) = prefs.edit().putLong(KEY_LAT, v.toRawBits()).apply()
     var longitude: Double
-        get() = prefs.getFloat(KEY_LNG, 39.86f).toDouble()
-        set(v) = prefs.edit().putFloat(KEY_LNG, v.toFloat()).apply()
+        get() = getDouble(KEY_LNG, 39.86)
+        set(v) = prefs.edit().putLong(KEY_LNG, v.toRawBits()).apply()
+
+    private fun getDouble(key: String, default: Double): Double =
+        if (prefs.contains(key)) Double.fromBits(prefs.getLong(key, 0L)) else default
     var timezone: String
         get() = prefs.getString(KEY_TZ, "Asia/Riyadh")!!
-        set(v) { if (TimeZone.getAvailableIDs().contains(v)) prefs.edit().putString(KEY_TZ, v).apply() }
+        set(v) { if (runCatching { java.time.ZoneId.of(v) }.isSuccess) prefs.edit().putString(KEY_TZ, v).apply() }
     var label: String
         get() = prefs.getString(KEY_LABEL, "")!!
         set(v) = prefs.edit().putString(KEY_LABEL, v).apply()
@@ -69,7 +72,7 @@ class Settings(context: Context) {
 
     fun setLocation(lat: Double, lng: Double, tz: String, label: String) {
         prefs.edit()
-            .putFloat(KEY_LAT, lat.toFloat()).putFloat(KEY_LNG, lng.toFloat())
+            .putLong(KEY_LAT, lat.toRawBits()).putLong(KEY_LNG, lng.toRawBits())
             .putString(KEY_TZ, tz).putString(KEY_LABEL, label)
             .putBoolean(KEY_CONFIGURED, true)
             .apply()

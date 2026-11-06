@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -16,7 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -101,8 +100,8 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    NumberField("Latitude", settings.latitude.toString(), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -90.0..90.0) settings.latitude = it } }
-                    NumberField("Longitude", settings.longitude.toString(), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -180.0..180.0) settings.longitude = it } }
+                    NumberField("Latitude", "%.4f".format(java.util.Locale.ROOT, settings.latitude), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -90.0..90.0) settings.latitude = it } }
+                    NumberField("Longitude", "%.4f".format(java.util.Locale.ROOT, settings.longitude), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -180.0..180.0) settings.longitude = it } }
                 }
                 var tz by remember { mutableStateOf(settings.timezone) }
                 OutlinedTextField(value = tz, onValueChange = { tz = it; settings.timezone = it }, label = { Text("Time zone") }, singleLine = true, modifier = Modifier.fillMaxWidth())
@@ -189,15 +188,16 @@ private fun <T> Picker(label: String, options: List<Pair<T, String>>, selected: 
     }
 }
 
+/** Edits locally and commits when focus leaves, so typing "48." is not reset mid-way by a recomposition. */
 @Composable
 private fun NumberField(label: String, initial: String, modifier: Modifier = Modifier, onCommit: (String) -> Unit) {
-    var text by remember(initial) { mutableStateOf(initial) }
+    var text by remember { mutableStateOf(initial) }
     OutlinedTextField(
         value = text,
-        onValueChange = { text = it; onCommit(it) },
+        onValueChange = { text = it },
         label = { Text(label) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        modifier = modifier,
+        modifier = modifier.onFocusChanged { if (!it.isFocused && text != initial) onCommit(text) },
     )
 }

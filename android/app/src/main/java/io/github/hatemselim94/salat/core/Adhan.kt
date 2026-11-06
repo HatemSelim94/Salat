@@ -11,7 +11,6 @@ import kotlin.math.atan2
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.floor
-import kotlin.math.round
 import kotlin.math.sin
 import kotlin.math.tan
 import kotlin.math.truncate
@@ -143,7 +142,7 @@ object Adhan {
     private fun rad2deg(r: Double) = r * 180.0 / Math.PI
     private fun normalizeToScale(num: Double, max: Double) = num - max * floor(num / max)
     private fun unwindAngle(a: Double) = normalizeToScale(a, 360.0)
-    private fun quadrantShiftAngle(a: Double) = if (a >= -180 && a <= 180) a else a - 360 * round(a / 360)
+    private fun quadrantShiftAngle(a: Double) = if (a >= -180 && a <= 180) a else a - 360 * floor(a / 360 + 0.5)
 
     // ---- astronomical (Meeus) ---------------------------------------------
 
@@ -253,7 +252,7 @@ object Adhan {
     private fun seasonAdjustedMorningTwilight(lat: Double, doy: Int, year: Int, sunrise: Long): Long {
         val al = abs(lat)
         val adj = seasonAdjustment(75 + 28.65 / 55.0 * al, 75 + 19.44 / 55.0 * al, 75 + 32.74 / 55.0 * al, 75 + 48.1 / 55.0 * al, daysSinceSolstice(doy, year, lat))
-        return sunrise + round(adj * -60.0).toLong()
+        return sunrise + Math.round(adj * -60.0)
     }
 
     private fun seasonAdjustedEveningTwilight(lat: Double, doy: Int, year: Int, sunset: Long, shafaq: Shafaq): Long {
@@ -264,7 +263,7 @@ object Adhan {
             Shafaq.GENERAL -> listOf(75 + 25.6 / 55.0 * al, 75 + 2.05 / 55.0 * al, 75 - 9.21 / 55.0 * al, 75 + 6.14 / 55.0 * al)
         }
         val adj = seasonAdjustment(a, b, c, d, daysSinceSolstice(doy, year, lat))
-        return sunset + round(adj * 60.0).toLong()
+        return sunset + Math.round(adj * 60.0)
     }
 
     // ---- solar coordinates / solar time -----------------------------------

@@ -1,6 +1,6 @@
 # Salat – Android app (Kotlin / Jetpack Compose)
 
-> **Status: written, not yet compiled.** The environment this was authored in could not reach Google's Maven repository, so the project has never been built. Expect a handful of compile errors or deprecated-API warnings on first open in Android Studio; the structure and logic are complete. Run the unit test first — it proves the prayer-time algorithm.
+> **Status: partially verified.** The environment this was authored in could not reach Google's Maven repository, so the Android/Compose parts have never been built. What *has* been compiled and run: `core/Adhan.kt` + `AdhanTest` (all 43,200 reference times match), and `core/Engine.kt` / `core/Settings.kt` type-check against stubs. The Compose UI, receivers and manifest were reviewed by hand only — expect a few nits on first open in Android Studio.
 
 ## What it does
 

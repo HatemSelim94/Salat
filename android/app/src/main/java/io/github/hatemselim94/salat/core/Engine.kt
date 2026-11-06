@@ -30,7 +30,7 @@ data class ScheduledEvent(val pre: Boolean, val prayer: Prayer, val epoch: Long)
 
 /** Pure computation on top of [Adhan]; no Android dependencies beyond java.time. */
 class Engine(private val settings: Settings) {
-    private val zone: ZoneId get() = ZoneId.of(settings.timezone)
+    private val zone: ZoneId get() = runCatching { ZoneId.of(settings.timezone) }.getOrElse { ZoneId.systemDefault() }
 
     fun computeDay(instant: Long, dayOffset: Int = 0): DayTimes {
         val local = Instant.ofEpochSecond(instant).atZone(zone).toLocalDate().plusDays(dayOffset.toLong())
