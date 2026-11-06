@@ -51,14 +51,7 @@ object Scheduler {
             .setAction(ACTION_SNOOZE)
             .putExtra(EXTRA_PRAYER, prayer.key)
         val at = System.currentTimeMillis() + settings.snoozeMinutes * 60_000L
-        // setAlarmClock is never deferred by Doze (unlike setExactAndAllowWhileIdle), which matters for
-        // a short snooze on phones that sleep aggressively. The status-bar alarm icon is the trade-off.
-        val fire = pendingIntent(context, REQUEST_SNOOZE, intent)
-        val show = PendingIntent.getActivity(
-            context, 0, Intent(context, io.github.hatemselim94.salat.MainActivity::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-        am.setAlarmClock(AlarmManager.AlarmClockInfo(at, show), fire)
+        setExact(am, at, pendingIntent(context, REQUEST_SNOOZE, intent))
     }
 
     /** True when the OS will let us schedule exact alarms (always true on 33+ with USE_EXACT_ALARM). */
