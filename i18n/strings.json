@@ -326,9 +326,9 @@
     "de": "Gespeichert"
   },
   "settings.foss": {
-    "en": "free and open source (MIT)",
-    "ar": "مجاني ومفتوح المصدر (MIT)",
-    "de": "kostenlos und quelloffen (MIT)"
+    "en": "free to use · © Hatem Selim",
+    "ar": "مجاني للاستخدام · © حاتم سليم",
+    "de": "kostenlos nutzbar · © Hatem Selim"
   },
   "rule.recommended": {
     "en": "Automatic (recommended for latitude)",

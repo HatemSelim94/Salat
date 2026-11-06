@@ -35,7 +35,7 @@ The desktop builds are **not code-signed** (signing costs ~€100/year per platf
 - **macOS:** the first launch is blocked; open *System Settings → Privacy & Security* and click **Open Anyway** next to Salat, then launch again.
 - **Linux:** none.
 
-All code is open source under the [MIT license](LICENSE); read it or build it yourself if you prefer.
+The source is published for transparency — read it to confirm nothing leaves your device — but it is not open source: see [LICENSE](LICENSE) (all rights reserved) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Downloads
 

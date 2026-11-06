@@ -1,4 +1,4 @@
-// C++17 port of the adhan-js prayer-time algorithm (batoulapps/adhan-js, MIT).
+// C++17 port of the adhan-js prayer-time algorithm (batoulapps/adhan-js, MIT — see THIRD_PARTY_NOTICES.md).
 // Dependency-free: dates are civil (year/month/day) in, UTC epoch seconds out.
 // Verified against @salat/core's output in tests/adhan_test.cpp.
 #pragma once

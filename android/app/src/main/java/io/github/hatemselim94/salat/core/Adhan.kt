@@ -1,4 +1,4 @@
-// Kotlin port of the adhan-js prayer-time algorithm (batoulapps/adhan-js, MIT).
+// Kotlin port of the adhan-js prayer-time algorithm (batoulapps/adhan-js, MIT — see THIRD_PARTY_NOTICES.md).
 // Line-by-line translation of desktop/src/adhan/adhan.cpp, which is verified
 // against @salat/core. AdhanTest checks this file against the same vectors.
 package io.github.hatemselim94.salat.core

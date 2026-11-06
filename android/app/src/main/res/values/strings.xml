@@ -66,7 +66,7 @@
     <string name="settings_autostartHint" translatable="true">Runs quietly in the tray at login.</string>
     <string name="settings_startHidden" translatable="true">Start hidden in the tray</string>
     <string name="settings_saved" translatable="true">Saved</string>
-    <string name="settings_foss" translatable="true">free and open source (MIT)</string>
+    <string name="settings_foss" translatable="true">free to use · © Hatem Selim</string>
     <string name="rule_recommended" translatable="true">Automatic (recommended for latitude)</string>
     <string name="rule_middleOfTheNight" translatable="true">Middle of the night</string>
     <string name="rule_seventhOfTheNight" translatable="true">One-seventh of the night</string>

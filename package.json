@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "description": "Salat – lightweight, offline, non-annoying prayer-time reminders for desktop, Chrome, VS Code and Android",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "workspaces": [
     "core",
     "chrome",

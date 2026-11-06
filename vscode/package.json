@@ -4,7 +4,7 @@
   "description": "Quiet prayer-time countdown in the status bar with a reminder at each prayer. Offline, no tracking.",
   "version": "0.1.0",
   "publisher": "HatemSelim94",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "private": true,
   "icon": "icon.png",
   "repository": { "type": "git", "url": "https://github.com/HatemSelim94/salat" },

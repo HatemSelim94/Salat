@@ -35,4 +35,4 @@ Hover the item for today's full timetable; click it for a quick pick. Notificati
 - The status bar refreshes once a minute, on the minute. One `setTimeout` is armed for the next prayer; a once-a-minute check catches timer drift after sleep. Events missed by more than 15 minutes (laptop lid closed) are skipped rather than fired late.
 - Works only while a VS Code window is open. For reminders regardless of what is running, use the Salat desktop app.
 
-Part of [Salat](https://github.com/HatemSelim94/salat) — MIT.
+Part of [Salat](https://github.com/HatemSelim94/salat). © Hatem Selim, all rights reserved; third-party notices in the repository.

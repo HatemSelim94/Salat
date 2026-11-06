@@ -66,7 +66,7 @@
     <string name="settings_autostartHint" translatable="true">يعمل بهدوء في شريط النظام عند تسجيل الدخول.</string>
     <string name="settings_startHidden" translatable="true">البدء مخفيًا في شريط النظام</string>
     <string name="settings_saved" translatable="true">تم الحفظ</string>
-    <string name="settings_foss" translatable="true">مجاني ومفتوح المصدر (MIT)</string>
+    <string name="settings_foss" translatable="true">مجاني للاستخدام · © حاتم سليم</string>
     <string name="rule_recommended" translatable="true">تلقائي (موصى به حسب خط العرض)</string>
     <string name="rule_middleOfTheNight" translatable="true">منتصف الليل</string>
     <string name="rule_seventhOfTheNight" translatable="true">سُبع الليل</string>

@@ -2,7 +2,7 @@
   "name": "@salat/core",
   "version": "0.1.0",
   "description": "Shared prayer-time engine for Salat (wraps adhan-js)",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
