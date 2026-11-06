@@ -22,18 +22,22 @@ object Notifications {
     // Channel sound cannot be changed after creation, so the sound setting picks between two channels.
     // v2: the chime channel now stores a name-based resource URI (numeric ids change between builds,
     // and a dangling URI silently falls back to the system tone). Old channels are deleted below.
-    private const val CHANNEL_PRAYER_SILENT = "prayer_silent_v2"
-    private const val CHANNEL_PRAYER_DEFAULT = "prayer_default_v2"
-    private const val CHANNEL_PRAYER_CHIME = "prayer_chime_v2"
-    private const val CHANNEL_PRE = "pre_reminder_v2"
-    private val LEGACY_CHANNELS = listOf("prayer_silent", "prayer_default", "prayer_chime", "pre_reminder")
+    private const val CHANNEL_PRAYER_SILENT = "prayer_silent_v3"
+    private const val CHANNEL_PRAYER_DEFAULT = "prayer_default_v3"
+    private const val CHANNEL_PRAYER_CHIME = "prayer_chime_v3"
+    private const val CHANNEL_PRE = "pre_reminder_v3"
+    private val LEGACY_CHANNELS = listOf(
+        "prayer_silent", "prayer_default", "prayer_chime", "pre_reminder",
+        "prayer_silent_v2", "prayer_default_v2", "prayer_chime_v2", "pre_reminder_v2",
+    )
     private const val NOTIFICATION_ID = 100
     const val ACTION_SNOOZE_CLICKED = "io.github.hatemselim94.salat.SNOOZE_CLICKED"
 
     fun ensureChannels(context: Context) {
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         for (id in LEGACY_CHANNELS) nm.deleteNotificationChannel(id)
-        val chime = Uri.parse("android.resource://${context.packageName}/raw/chime")
+        // Name-based URI (stable across builds) built from the real resource so the shrinker keeps it; OGG, as Android's own tones are.
+        val chime = Uri.parse("android.resource://${context.packageName}/raw/${context.resources.getResourceEntryName(R.raw.chime)}")
         val audio = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
