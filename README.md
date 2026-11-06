@@ -7,12 +7,12 @@ Lightweight, offline, non-annoying prayer-time reminders — for your desktop, y
 | Shared engine | [`core/`](core) | TypeScript, [adhan-js](https://github.com/batoulapps/adhan-js) | ✅ tests passing |
 | Chrome extension | [`chrome/`](chrome) | Manifest V3, vanilla TS | ✅ working, unpublished |
 | VS Code extension | [`vscode/`](vscode) | VS Code API | ✅ packaged, unpublished |
-| Desktop app | [`desktop/`](desktop) | C++17, Qt 6 / QML | 🚧 |
+| Desktop app | [`desktop/`](desktop) | C++17, Qt 6 / QML | ✅ builds on Linux; Windows/macOS untested |
 | Android app | [`android/`](android) | Kotlin, Jetpack Compose | 🚧 |
 
 ## Principles
 
-- **Light.** No Electron, no frameworks where a few hundred lines will do. Idle CPU is zero; memory is measured in single-digit megabytes.
+- **Light.** No Electron, no frameworks where a few hundred lines will do. Idle CPU is zero; the desktop app idles at 0 % CPU.
 - **Offline and private.** Prayer times are calculated on your device from coordinates. No network requests, no accounts, no telemetry, no ads.
 - **Not annoying.** One notification per prayer, auto-dismissing. Pre-prayer warnings and sound are off until you turn them on. One-time location setup, then nothing is asked again. No new-tab hijacking, no badge animations, no "rate us".
 - **Works in the background.** Tray icon / service worker / status bar / exact alarms — whatever each platform offers, used the way it was designed, with correct behaviour across sleep, wake and time-zone changes.

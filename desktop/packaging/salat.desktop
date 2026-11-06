@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Salat
+GenericName=Prayer Times
+Comment=Quiet, offline prayer-time reminders
+Exec=salat
+Icon=salat
+Terminal=false
+Categories=Utility;
+Keywords=prayer;salah;salat;adhan;athan;muslim;islam;
+StartupNotify=false
