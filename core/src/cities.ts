@@ -78,6 +78,7 @@ export const CITIES: readonly City[] = [
   { name: 'Beirut', country: 'LB', lat: 33.89, lng: 35.5, tz: 'Asia/Beirut' },
   { name: 'Damascus', country: 'SY', lat: 33.51, lng: 36.29, tz: 'Asia/Damascus' },
   { name: 'Baghdad', country: 'IQ', lat: 33.31, lng: 44.37, tz: 'Asia/Baghdad' },
+  { name: 'Erbil', country: 'IQ', lat: 36.19, lng: 44.01, tz: 'Asia/Baghdad' },
   { name: 'Tehran', country: 'IR', lat: 35.69, lng: 51.39, tz: 'Asia/Tehran' },
   { name: 'Sanaa', country: 'YE', lat: 15.37, lng: 44.19, tz: 'Asia/Aden' },
   { name: 'Tripoli', country: 'LY', lat: 32.9, lng: 13.18, tz: 'Africa/Tripoli' },
