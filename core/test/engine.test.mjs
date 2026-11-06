@@ -140,3 +140,16 @@ test('i18n: resolve, translate, placeholders, fallback', async () => {
   assert.equal(t('de', 'does.not.exist'), 'does.not.exist');
   assert.ok(isRtl('ar') && !isRtl('de'));
 });
+
+test('DST transition days and a leap day compute cleanly', () => {
+  const s = defaultSettings(STUTTGART);
+  for (const iso of ['2026-03-29', '2026-10-25', '2028-02-29', '2026-12-31', '2027-01-01']) {
+    const day = computeDay(s, new Date(`${iso}T12:00:00Z`));
+    assert.equal(day.date, iso);
+    const seq = [day.fajr, day.sunrise, day.dhuhr, day.asr, day.maghrib, day.isha];
+    for (let i = 1; i < seq.length; i++) assert.ok(seq[i] > seq[i - 1], `${iso}: order broken at ${i}`);
+    // Dhuhr stays near local noon on both sides of a DST switch (12:0x–12:3x CET/CEST).
+    const dh = Number(formatTime(day.dhuhr, STUTTGART.timezone, false).slice(0, 2));
+    assert.ok(dh === 12 || dh === 13, `${iso}: dhuhr hour ${dh}`);
+  }
+});

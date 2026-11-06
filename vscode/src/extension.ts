@@ -34,6 +34,7 @@ let settings: Settings;
 let queue: ScheduledEvent[] = [];
 let locationGuessed = false;
 let lang: Language = 'en';
+let lastSystemTz = systemTimezone();
 const t = (key: string, params?: Record<string, string | number>) => tr(lang, key, params);
 const label = (p: PrayerName) => prayerLabel(lang, p);
 
@@ -137,6 +138,13 @@ function drainDue(nowMs: number): void {
 function tick(): void {
   // Catches timer drift after sleep/wake and keeps the countdown honest.
   drainDue(Date.now());
+  // A system time-zone change (travel) only matters when the location zone follows the system.
+  const tz = systemTimezone();
+  if (tz !== lastSystemTz) {
+    lastSystemTz = tz;
+    settings = readSettings();
+    rebuildQueue();
+  }
   if (!queue.length) rebuildQueue();
   else armNextEvent();
   updateStatus();

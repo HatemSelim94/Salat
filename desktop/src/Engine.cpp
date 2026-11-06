@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 
 #include "Platform.h"
 #include "Settings.h"
@@ -163,7 +164,8 @@ void Engine::onEventTimer() {
 
 void Engine::onTick() {
     const qint64 now = nowEpoch();
-    const bool slept = now - m_lastTick > 150;  // tick is 60 s; a bigger gap means suspend/resume or clock change
+    // The tick is 60 s. A gap far from that in either direction means suspend/resume or a clock change.
+    const bool slept = std::llabs((now - m_lastTick) - 60) > 90;
     m_lastTick = now;
     const QByteArray tz = QTimeZone::systemTimeZoneId();
     if (slept || tz != m_lastSystemTz) {
