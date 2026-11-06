@@ -1,1 +1,132 @@
-{"name":"salat-vscode","private":true,"version":"0.1.0"}
+{
+  "name": "salat",
+  "displayName": "Salat – Prayer Times",
+  "description": "Quiet prayer-time countdown in the status bar with a reminder at each prayer. Offline, no tracking.",
+  "version": "0.1.0",
+  "publisher": "HatemSelim94",
+  "license": "MIT",
+  "private": true,
+  "icon": "icon.png",
+  "repository": { "type": "git", "url": "https://github.com/HatemSelim94/salat" },
+  "homepage": "https://github.com/HatemSelim94/salat/tree/main/vscode",
+  "bugs": { "url": "https://github.com/HatemSelim94/salat/issues" },
+  "engines": { "vscode": "^1.90.0" },
+  "categories": ["Other"],
+  "keywords": ["prayer", "salah", "salat", "adhan", "athan", "muslim", "islam"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "extensionKind": ["ui", "workspace"],
+  "capabilities": { "untrustedWorkspaces": { "supported": true }, "virtualWorkspaces": true },
+  "contributes": {
+    "commands": [
+      { "command": "salat.showTimes", "title": "Salat: Show Today's Prayer Times" },
+      { "command": "salat.setCity", "title": "Salat: Set City" },
+      { "command": "salat.openSettings", "title": "Salat: Open Settings" }
+    ],
+    "configuration": {
+      "title": "Salat",
+      "properties": {
+        "salat.location.label": {
+          "type": "string",
+          "default": "",
+          "description": "Name shown for your location. Use the 'Salat: Set City' command to fill location fields from the bundled city list."
+        },
+        "salat.location.latitude": {
+          "type": ["number", "null"],
+          "default": null,
+          "minimum": -90,
+          "maximum": 90,
+          "description": "Latitude in decimal degrees. Leave empty to guess from your system time zone."
+        },
+        "salat.location.longitude": {
+          "type": ["number", "null"],
+          "default": null,
+          "minimum": -180,
+          "maximum": 180,
+          "description": "Longitude in decimal degrees."
+        },
+        "salat.location.timezone": {
+          "type": "string",
+          "default": "",
+          "description": "IANA time zone, e.g. Europe/Berlin. Leave empty to use the system time zone."
+        },
+        "salat.method": {
+          "type": "string",
+          "default": "MuslimWorldLeague",
+          "enum": ["MuslimWorldLeague", "Egyptian", "Karachi", "UmmAlQura", "Dubai", "MoonsightingCommittee", "NorthAmerica", "Kuwait", "Qatar", "Singapore", "Tehran", "Turkey"],
+          "enumDescriptions": ["Muslim World League", "Egyptian General Authority of Survey", "University of Islamic Sciences, Karachi", "Umm al-Qura University, Makkah", "Dubai", "Moonsighting Committee Worldwide", "ISNA (North America)", "Kuwait", "Qatar", "Singapore", "Institute of Geophysics, Tehran", "Diyanet (Turkey)"],
+          "description": "Calculation method. Use what your local mosque or country authority uses."
+        },
+        "salat.madhab": {
+          "type": "string",
+          "default": "shafi",
+          "enum": ["shafi", "hanafi"],
+          "enumDescriptions": ["Standard Asr (Shafi, Maliki, Hanbali)", "Later Asr (Hanafi)"],
+          "description": "Asr calculation."
+        },
+        "salat.highLatitudeRule": {
+          "type": "string",
+          "default": "recommended",
+          "enum": ["recommended", "middleOfTheNight", "seventhOfTheNight", "twilightAngle"],
+          "description": "Fajr/Isha rule for high latitudes in summer. 'recommended' picks automatically from your latitude."
+        },
+        "salat.adjustments": {
+          "type": "object",
+          "default": {},
+          "properties": {
+            "fajr": { "type": "number" }, "sunrise": { "type": "number" }, "dhuhr": { "type": "number" },
+            "asr": { "type": "number" }, "maghrib": { "type": "number" }, "isha": { "type": "number" }
+          },
+          "additionalProperties": false,
+          "description": "Per-prayer offsets in minutes to match a local timetable, e.g. { \"fajr\": 3, \"isha\": -2 }."
+        },
+        "salat.notifications.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a notification at each prayer time. Respects VS Code's Do Not Disturb mode."
+        },
+        "salat.notifications.preReminderMinutes": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 60,
+          "description": "Minutes before each prayer for a heads-up notification. 0 turns it off."
+        },
+        "salat.notifications.snoozeMinutes": {
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 60,
+          "description": "Snooze length offered on the notification."
+        },
+        "salat.hour12": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use a 12-hour clock."
+        },
+        "salat.statusBar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the next prayer and countdown in the status bar."
+        },
+        "salat.statusBar.compact": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show only the prayer name and countdown, without the clock time."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "package": "node build.mjs && vsce package --no-dependencies -o salat-vscode-$npm_package_version.vsix",
+    "test": "node build.mjs && node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@salat/core": "*"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.0.0"
+  }
+}
