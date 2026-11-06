@@ -3,6 +3,7 @@ package io.github.hatemselim94.salat.notify
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import io.github.hatemselim94.salat.R
 import io.github.hatemselim94.salat.core.Engine
 import io.github.hatemselim94.salat.core.Prayer
 import io.github.hatemselim94.salat.core.Settings
@@ -28,6 +29,8 @@ class AlarmReceiver : BroadcastReceiver() {
             Notifications.ACTION_SNOOZE_CLICKED -> {
                 Notifications.cancel(context)
                 Scheduler.scheduleSnooze(context, prayer)
+                val minutes = Settings(context).snoozeMinutes.toString()
+                android.widget.Toast.makeText(context, context.getString(R.string.notif_snoozedToast, minutes), android.widget.Toast.LENGTH_SHORT).show()
             }
         }
     }

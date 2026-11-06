@@ -78,6 +78,7 @@
     <string name="notif_snoozedTitle">%1$s — تذكير مؤجل</string>
     <string name="notif_snoozedBody" translatable="true">طلبت تذكيرك مرة أخرى.</string>
     <string name="notif_snooze">غفوة %1$s د</string>
+    <string name="notif_snoozedToast">تم التأجيل — مرة أخرى بعد %1$s د</string>
     <string name="notif_dismiss" translatable="true">تجاهل</string>
     <string name="notif_channelPrayer" translatable="true">أوقات الصلاة</string>
     <string name="notif_channelPrayerChime" translatable="true">أوقات الصلاة (مع نغمة)</string>

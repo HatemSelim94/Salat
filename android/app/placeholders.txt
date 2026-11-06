@@ -6,4 +6,5 @@ notif_preTitle: prayer, n
 notif_preBody: prayer, time
 notif_snoozedTitle: prayer
 notif_snooze: n
+notif_snoozedToast: n
 vscode_locationSet: label

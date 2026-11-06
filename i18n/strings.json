@@ -385,6 +385,11 @@
     "ar": "غفوة {n} د",
     "de": "{n} Min. später"
   },
+  "notif.snoozedToast": {
+    "en": "Snoozed — again in {n} min",
+    "ar": "تم التأجيل — مرة أخرى بعد {n} د",
+    "de": "Verschoben – erneut in {n} Min."
+  },
   "notif.dismiss": {
     "en": "Dismiss",
     "ar": "تجاهل",

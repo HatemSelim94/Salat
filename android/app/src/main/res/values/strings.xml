@@ -78,6 +78,7 @@
     <string name="notif_snoozedTitle">%1$s — snoozed reminder</string>
     <string name="notif_snoozedBody" translatable="true">You asked to be reminded again.</string>
     <string name="notif_snooze">Snooze %1$s min</string>
+    <string name="notif_snoozedToast">Snoozed — again in %1$s min</string>
     <string name="notif_dismiss" translatable="true">Dismiss</string>
     <string name="notif_channelPrayer" translatable="true">Prayer times</string>
     <string name="notif_channelPrayerChime" translatable="true">Prayer times (with chime)</string>

@@ -78,6 +78,7 @@
     <string name="notif_snoozedTitle">%1$s – erneute Erinnerung</string>
     <string name="notif_snoozedBody" translatable="true">Du wolltest noch einmal erinnert werden.</string>
     <string name="notif_snooze">%1$s Min. später</string>
+    <string name="notif_snoozedToast">Verschoben – erneut in %1$s Min.</string>
     <string name="notif_dismiss" translatable="true">Schließen</string>
     <string name="notif_channelPrayer" translatable="true">Gebetszeiten</string>
     <string name="notif_channelPrayerChime" translatable="true">Gebetszeiten (mit Ton)</string>
