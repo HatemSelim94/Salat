@@ -95,11 +95,11 @@
     <string name="vscode_current" translatable="true">current</string>
     <string name="vscode_next" translatable="true">Next</string>
     <string name="vscode_guessed" translatable="true">Location guessed from time zone — run Salat: Set City</string>
-    <string name="home_batterySteps" translatable="true">1. Tap “Open the list” below.
-2. At the top, change the filter from “Not optimised” to “All”.
-3. Find Salat and switch it OFF (= not optimised).
+    <string name="home_batterySteps" translatable="true">1. Tap “Open app info” below.
+2. Tap “Battery”.
+3. Choose “Unrestricted”.
 4. Come back here; this card disappears when it is done.</string>
     <string name="home_whyBattery" translatable="true">Samsung and other phones put apps to sleep to save battery, and a sleeping app cannot ring at Fajr. Salat uses almost no battery: it wakes once per prayer for a second.</string>
     <string name="home_notNow" translatable="true">Not now</string>
-    <string name="home_continue" translatable="true">Open the list</string>
+    <string name="home_continue" translatable="true">Open app info</string>
 </resources>

@@ -2,6 +2,7 @@ package io.github.hatemselim94.salat.ui
 
 import android.content.Intent
 import android.os.Build
+import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings as AndroidSettings
 import androidx.compose.foundation.background
@@ -161,9 +162,19 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
     }
 }
 
-/** Opens Android's battery-optimisation list (no special permission needed); the dialog before it explains what to pick. */
+/**
+ * Opens Salat's own App-info page (no special permission needed). From there: Battery → Unrestricted.
+ * This avoids the system-wide optimisation list, where the app is hidden behind a filter.
+ */
 private fun requestBatteryExemption(context: android.content.Context) {
-    context.startActivity(Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    val appInfo = Intent(AndroidSettings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        .setData(Uri.parse("package:" + context.packageName))
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    try {
+        context.startActivity(appInfo)
+    } catch (e: Exception) {
+        context.startActivity(Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
 }
 
 /** A message the user must act on, with an explicit button so it does not read as plain text. */

@@ -95,11 +95,11 @@
     <string name="vscode_current" translatable="true">الحالية</string>
     <string name="vscode_next" translatable="true">القادمة</string>
     <string name="vscode_guessed" translatable="true">تم تخمين الموقع من المنطقة الزمنية — شغّل «صلاة: تحديد المدينة»</string>
-    <string name="home_batterySteps" translatable="true">١. اضغط «فتح القائمة» بالأسفل.
-٢. في الأعلى غيّر الفلتر من «غير محسّنة» إلى «الكل».
-٣. ابحث عن صلاة وأوقفه (= غير محسّن).
+    <string name="home_batterySteps" translatable="true">١. اضغط «فتح معلومات التطبيق» بالأسفل.
+٢. اضغط «البطارية».
+٣. اختر «غير مقيّد».
 ٤. عد إلى هنا؛ تختفي هذه البطاقة عند الانتهاء.</string>
     <string name="home_whyBattery" translatable="true">هواتف سامسونج وغيرها تُنيم التطبيقات لتوفير البطارية، والتطبيق النائم لا يستطيع التنبيه عند الفجر. صلاة لا يستهلك البطارية تقريبًا: يستيقظ لثانية واحدة لكل صلاة.</string>
     <string name="home_notNow" translatable="true">ليس الآن</string>
-    <string name="home_continue" translatable="true">فتح القائمة</string>
+    <string name="home_continue" translatable="true">فتح معلومات التطبيق</string>
 </resources>

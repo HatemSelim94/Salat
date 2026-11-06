@@ -44,16 +44,23 @@ def icon(size: int) -> Image.Image:
 
 
 def chime(path: Path, rate: int = 22050) -> None:
-    dur = 1.2
+    """Rising three-note bell (C5 E5 G5), ~1.6 s. Deliberately unlike stock notification tones."""
+    notes = [(523.25, 0.0), (659.25, 0.22), (783.99, 0.44)]
+    dur = 1.6
     n = int(rate * dur)
     frames = bytearray()
     for i in range(n):
         t = i / rate
-        env = math.exp(-3.2 * t)
-        # A soft fifth: 660 Hz and 990 Hz, second tone slightly delayed.
-        a = math.sin(2 * math.pi * 660 * t)
-        b = math.sin(2 * math.pi * 990 * max(0.0, t - 0.12)) if t > 0.12 else 0.0
-        v = 0.55 * env * (0.6 * a + 0.4 * b)
+        v = 0.0
+        for f, start in notes:
+            if t < start:
+                continue
+            tt = t - start
+            env = math.exp(-2.6 * tt)
+            v += env * (0.6 * math.sin(2 * math.pi * f * tt)
+                        + 0.25 * math.sin(2 * math.pi * 2 * f * tt) * math.exp(-5 * tt)
+                        + 0.1 * math.sin(2 * math.pi * 3 * f * tt) * math.exp(-8 * tt))
+        v *= 0.5
         frames += struct.pack("<h", int(max(-1, min(1, v)) * 32767))
     with wave.open(str(path), "wb") as w:
         w.setnchannels(1)

@@ -471,9 +471,9 @@
     "de": "Standort aus der Zeitzone geschätzt – „Salat: Stadt festlegen“ ausführen"
   },
   "home.batterySteps": {
-    "en": "1. Tap “Open the list” below.\n2. At the top, change the filter from “Not optimised” to “All”.\n3. Find Salat and switch it OFF (= not optimised).\n4. Come back here; this card disappears when it is done.",
-    "ar": "١. اضغط «فتح القائمة» بالأسفل.\n٢. في الأعلى غيّر الفلتر من «غير محسّنة» إلى «الكل».\n٣. ابحث عن صلاة وأوقفه (= غير محسّن).\n٤. عد إلى هنا؛ تختفي هذه البطاقة عند الانتهاء.",
-    "de": "1. Unten auf „Liste öffnen“ tippen.\n2. Oben den Filter von „Nicht optimiert“ auf „Alle“ stellen.\n3. Salat suchen und AUSschalten (= nicht optimiert).\n4. Hierher zurückkehren; die Karte verschwindet, sobald es erledigt ist."
+    "en": "1. Tap “Open app info” below.\n2. Tap “Battery”.\n3. Choose “Unrestricted”.\n4. Come back here; this card disappears when it is done.",
+    "ar": "١. اضغط «فتح معلومات التطبيق» بالأسفل.\n٢. اضغط «البطارية».\n٣. اختر «غير مقيّد».\n٤. عد إلى هنا؛ تختفي هذه البطاقة عند الانتهاء.",
+    "de": "1. Unten auf „App-Info öffnen“ tippen.\n2. Auf „Akku“ tippen.\n3. „Uneingeschränkt“ wählen.\n4. Hierher zurückkehren; die Karte verschwindet, sobald es erledigt ist."
   },
   "home.whyBattery": {
     "en": "Samsung and other phones put apps to sleep to save battery, and a sleeping app cannot ring at Fajr. Salat uses almost no battery: it wakes once per prayer for a second.",
@@ -486,8 +486,8 @@
     "de": "Später"
   },
   "home.continue": {
-    "en": "Open the list",
-    "ar": "فتح القائمة",
-    "de": "Liste öffnen"
+    "en": "Open app info",
+    "ar": "فتح معلومات التطبيق",
+    "de": "App-Info öffnen"
   }
 }
