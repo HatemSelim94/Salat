@@ -22,11 +22,26 @@ android {
         resourceConfigurations += listOf("en", "ar", "de")
     }
 
+    // Release signing from environment variables (CI secrets, or your own shell). Without them the
+    // release APK is built unsigned, which Android refuses to install.
+    val ksPath = System.getenv("SALAT_KEYSTORE")
+    if (ksPath != null) {
+        signingConfigs {
+            create("release") {
+                storeFile = file(ksPath)
+                storePassword = System.getenv("SALAT_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("SALAT_KEY_ALIAS")
+                keyPassword = System.getenv("SALAT_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (ksPath != null) signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

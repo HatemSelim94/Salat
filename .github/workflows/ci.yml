@@ -147,6 +147,39 @@ jobs:
         run: gradle -p android :app:testDebugUnitTest --no-daemon
       - name: Build debug APK
         run: gradle -p android :app:assembleDebug --no-daemon
+
+      # Release: signed with the real key when the ANDROID_KEYSTORE_B64 secret exists,
+      # otherwise with a throwaway key generated here (fine for testing, never for publishing).
+      - name: Prepare release signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "SALAT_KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "SALAT_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+            echo "SALAT_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
+            echo "RELEASE_LABEL=release" >> "$GITHUB_ENV"
+          else
+            keytool -genkeypair -v -keystore "$RUNNER_TEMP/release.jks" -alias salat -keyalg RSA -keysize 2048 -validity 30 \
+              -storepass testsigning -keypass testsigning -dname "CN=Salat test signing" >/dev/null 2>&1
+            echo "SALAT_KEYSTORE_PASSWORD=testsigning" >> "$GITHUB_ENV"
+            echo "SALAT_KEY_ALIAS=salat" >> "$GITHUB_ENV"
+            echo "SALAT_KEY_PASSWORD=testsigning" >> "$GITHUB_ENV"
+            echo "RELEASE_LABEL=release-TESTSIGNED" >> "$GITHUB_ENV"
+          fi
+          echo "SALAT_KEYSTORE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+      - name: Build release APK
+        run: gradle -p android :app:assembleRelease --no-daemon
+      - name: Rename release APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk "salat-android-${RELEASE_LABEL}.apk" && ls -la salat-android-*.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: salat-android-release
+          path: salat-android-release*.apk
       - name: Lint
         run: gradle -p android :app:lintDebug --no-daemon
         continue-on-error: true
