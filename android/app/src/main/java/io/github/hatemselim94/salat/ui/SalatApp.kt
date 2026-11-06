@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -72,7 +74,8 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val fg = MaterialTheme.colorScheme.onBackground
 
-    Column(modifier = Modifier.fillMaxSize().statusBarsPadding().padding(horizontal = 20.dp, vertical = 16.dp)) {
+    // Edge-to-edge window: keep content clear of both the status bar and the navigation/gesture bar.
+    Column(modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 20.dp, vertical = 16.dp)) {
         Row(verticalAlignment = Alignment.Top) {
             Text(settings.label, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = fg, modifier = Modifier.weight(1f))
             Column(horizontalAlignment = Alignment.End) {
@@ -146,7 +149,7 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
         Spacer(Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(settings.method.label, fontSize = 12.sp, color = muted, modifier = Modifier.weight(1f))
-            TextButton(onClick = onOpenSettings) { Text(stringResource(R.string.home_settings)) }
+            TextButton(onClick = onOpenSettings, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.home_settings)) }
         }
     }
 }

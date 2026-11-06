@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -72,7 +74,7 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
     val minutes: (Int) -> String = { n -> if (n == 0) context.getString(R.string.settings_off) else context.getString(R.string.settings_minutes, n.toString()) }
     val rules = RULES.map { (id, res) -> id to stringResource(res).substringBefore(" (") }
 
-    Column(Modifier.fillMaxSize().statusBarsPadding()) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
         TopAppBar(
             title = { Text(stringResource(R.string.settings_title), fontWeight = FontWeight.SemiBold) },
             navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.settings_back)) } },
