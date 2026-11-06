@@ -1,5 +1,7 @@
 # Salat
 
+[![CI](https://github.com/HatemSelim94/salat/actions/workflows/ci.yml/badge.svg)](https://github.com/HatemSelim94/salat/actions/workflows/ci.yml)
+
 Lightweight, offline, non-annoying prayer-time reminders — for your desktop, your browser, your editor and your phone.
 
 | Target | Folder | Stack | Status |
@@ -30,6 +32,10 @@ The desktop builds are **not code-signed** (signing costs ~€100/year per platf
 - **Linux:** none.
 
 All code is open source under the [MIT license](LICENSE); read it or build it yourself if you prefer.
+
+## Downloads
+
+Every push builds everything on GitHub Actions (free for public repos): the Chrome zip, the `.vsix`, the Qt app for Windows (zip with Qt runtime), macOS (dmg) and Linux (bare binary), and the Android debug APK. Grab them from the latest run under *Actions → CI → Artifacts*. Pushing a tag like `v0.1.0` publishes the same files as a GitHub Release.
 
 ## Development
 
