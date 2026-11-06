@@ -1,8 +1,12 @@
 import {
   HIGH_LATITUDE_RULES,
+  LANGUAGES,
   METHODS,
-  PRAYER_LABELS,
   cityToLocation,
+  prayerLabel,
+  t,
+  type Language,
+  type LanguagePref,
   computeDay,
   formatTime,
   searchCities,
@@ -12,12 +16,14 @@ import {
   type PrayerName,
 } from '@salat/core';
 import { load, save, type Stored } from './storage.js';
+import { localiseDocument, pageLanguage } from './ui-i18n.js';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const input = (id: string) => $<HTMLInputElement>(id);
 const select = (id: string) => $<HTMLSelectElement>(id);
 
 let stored: Stored;
+let lang: Language = 'en';
 let saveTimer: number | undefined;
 
 function fillSelect(el: HTMLSelectElement, items: readonly { id: string; label: string }[]): void {
@@ -39,6 +45,7 @@ function renderForm(): void {
   select('method').value = s.method;
   select('madhab').value = s.madhab;
   select('hlr').value = s.highLatitudeRule;
+  select('language').value = s.language;
   for (const p of ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as PrayerName[]) {
     input(`adj-${p}`).value = String(s.adjustments[p] ?? 0);
   }
@@ -57,7 +64,7 @@ function renderPreview(): void {
   try {
     const day = computeDay(s, new Date());
     el.innerHTML = (['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as PrayerName[])
-      .map((p) => `<div><span class="muted">${PRAYER_LABELS[p]}</span><b>${formatTime(day[p], s.location.timezone, s.hour12)}</b></div>`)
+      .map((p) => `<div><span class="muted">${prayerLabel(lang, p)}</span><b>${formatTime(day[p], s.location.timezone, s.hour12)}</b></div>`)
       .join('');
     $('location-status').textContent = '';
   } catch (e) {
@@ -90,6 +97,11 @@ function readForm(): void {
   s.notifications.sound = input('sound').checked;
   s.notifications.snoozeMinutes = clamp(Number(input('snooze').value) || 10, 1, 60);
   s.hour12 = input('hour12').checked;
+  const newLang = select('language').value as LanguagePref;
+  if (newLang !== s.language) {
+    s.language = newLang;
+    applyLanguage();
+  }
   stored.extras.badge = input('badge').checked;
   stored.extras.configured = true;
 }
@@ -107,6 +119,20 @@ function isValidTimezone(tz: string): boolean {
   }
 }
 
+function applyLanguage(): void {
+  lang = pageLanguage(stored.settings);
+  localiseDocument(lang);
+  fillSelect(select('method'), METHODS);
+  fillSelect(select('hlr'), HIGH_LATITUDE_RULES.map((r) => ({ id: r.id, label: t(lang, `rule.${r.id}`) })));
+  fillSelect(select('language'), LANGUAGES);
+  document.querySelectorAll<HTMLLabelElement>('#adjust label span').forEach((el) => {
+    el.textContent = prayerLabel(lang, el.dataset.prayer as PrayerName);
+  });
+  select('method').value = stored.settings.method;
+  select('hlr').value = stored.settings.highLatitudeRule;
+  select('language').value = stored.settings.language;
+}
+
 function scheduleSave(): void {
   readForm();
   renderPreview();
@@ -114,7 +140,7 @@ function scheduleSave(): void {
   saveTimer = window.setTimeout(async () => {
     await save(stored);
     const st = $('save-status');
-    st.textContent = 'Saved';
+    st.textContent = t(lang, 'settings.saved');
     setTimeout(() => (st.textContent = ''), 1500);
   }, 300);
 }
@@ -168,14 +194,13 @@ function setupCitySearch(): void {
 
 async function init(): Promise<void> {
   stored = await load();
-  fillSelect(select('method'), METHODS);
-  fillSelect(select('hlr'), HIGH_LATITUDE_RULES);
   const adj = $('adjust');
   for (const p of ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as PrayerName[]) {
     const label = document.createElement('label');
-    label.innerHTML = `<span>${PRAYER_LABELS[p]}</span><input id="adj-${p}" type="number" min="-60" max="60" step="1">`;
+    label.innerHTML = `<span data-prayer="${p}"></span><input id="adj-${p}" type="number" min="-60" max="60" step="1">`;
     adj.appendChild(label);
   }
+  applyLanguage();
   renderForm();
   setupCitySearch();
 

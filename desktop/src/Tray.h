@@ -28,4 +28,6 @@ private:
     QMenu m_menu;
     QAction* m_nextAction = nullptr;
     QAction* m_snoozeAction = nullptr;
+    QAction* m_openAction = nullptr;
+    QAction* m_quitAction = nullptr;
 };

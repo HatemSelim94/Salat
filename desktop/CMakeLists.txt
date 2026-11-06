@@ -22,6 +22,7 @@ qt_add_executable(salat
     src/Cities.cpp src/Cities.h
     src/Tray.cpp src/Tray.h
     src/Platform.cpp src/Platform.h
+    src/Tr.cpp src/Tr.h
 )
 
 # Theme.qml is a singleton (must be declared before qt_add_qml_module).
@@ -42,6 +43,7 @@ qt_add_qml_module(salat
         src/Cities.h src/Cities.cpp
     RESOURCES
         resources/cities.json
+        resources/translations.json
         resources/chime.wav
         resources/icons/icon16.png
         resources/icons/icon32.png

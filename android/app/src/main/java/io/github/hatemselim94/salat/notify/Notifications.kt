@@ -33,18 +33,15 @@ object Notifications {
             .setUsage(AudioAttributes.USAGE_NOTIFICATION)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .build()
-        nm.createNotificationChannel(NotificationChannel(CHANNEL_PRAYER_SILENT, "Prayer times", NotificationManager.IMPORTANCE_HIGH).apply {
-            description = "One notification at each prayer time"
+        nm.createNotificationChannel(NotificationChannel(CHANNEL_PRAYER_SILENT, context.getString(R.string.notif_channelPrayer), NotificationManager.IMPORTANCE_HIGH).apply {
             setSound(null, null)
             enableVibration(true)
         })
-        nm.createNotificationChannel(NotificationChannel(CHANNEL_PRAYER_CHIME, "Prayer times (with chime)", NotificationManager.IMPORTANCE_HIGH).apply {
-            description = "One notification at each prayer time, with a short chime"
+        nm.createNotificationChannel(NotificationChannel(CHANNEL_PRAYER_CHIME, context.getString(R.string.notif_channelPrayerChime), NotificationManager.IMPORTANCE_HIGH).apply {
             setSound(chime, audio)
             enableVibration(true)
         })
-        nm.createNotificationChannel(NotificationChannel(CHANNEL_PRE, "Heads-up before prayer", NotificationManager.IMPORTANCE_DEFAULT).apply {
-            description = "Optional reminder a few minutes before each prayer"
+        nm.createNotificationChannel(NotificationChannel(CHANNEL_PRE, context.getString(R.string.notif_channelPre), NotificationManager.IMPORTANCE_DEFAULT).apply {
             setSound(null, null)
         })
     }
@@ -54,11 +51,13 @@ object Notifications {
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         ensureChannels(context)
 
-        val label = prayer.label
+        val label = prayer.label(context)
+        val pre_n = settings.preReminderMinutes.toString()
         val (title, text) = when {
-            pre -> "$label in ${settings.preReminderMinutes} min" to "$label prayer is at ${engine.formatTime(epoch + settings.preReminderMinutes * 60)}."
-            snoozed -> "$label — snoozed reminder" to "You asked to be reminded again."
-            else -> "$label time" to "It is time for $label prayer (${engine.formatTime(epoch)})."
+            pre -> context.getString(R.string.notif_preTitle, label, pre_n) to
+                context.getString(R.string.notif_preBody, label, engine.formatTime(epoch + settings.preReminderMinutes * 60))
+            snoozed -> context.getString(R.string.notif_snoozedTitle, label) to context.getString(R.string.notif_snoozedBody)
+            else -> context.getString(R.string.notif_prayerTitle, label) to context.getString(R.string.notif_prayerBody, label, engine.formatTime(epoch))
         }
         val channel = when {
             pre -> CHANNEL_PRE
@@ -85,7 +84,7 @@ object Notifications {
                 Intent(context, AlarmReceiver::class.java).setAction(ACTION_SNOOZE_CLICKED).putExtra(Scheduler.EXTRA_PRAYER, prayer.key),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
-            builder.addAction(0, "Snooze ${settings.snoozeMinutes} min", snooze)
+            builder.addAction(0, context.getString(R.string.notif_snooze, settings.snoozeMinutes.toString()), snooze)
         }
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         nm.notify(NOTIFICATION_ID, builder.build())

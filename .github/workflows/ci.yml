@@ -49,7 +49,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # ubuntu-22.04 for the AppImage: an AppImage runs on any distro with a glibc at least as new as the build host's.
+        os: [ubuntu-22.04, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -97,12 +98,27 @@ jobs:
           macdeployqt desktop/build/salat.app -qmldir=desktop/qml -dmg
           mv desktop/build/salat.dmg salat-macos.dmg
 
-      - name: Package (Linux)
+      - name: Package (Linux AppImage)
         if: runner.os == 'Linux'
+        env:
+          QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake
+          QML_SOURCES_PATHS: ${{ github.workspace }}/desktop/qml
+          EXTRA_PLATFORM_PLUGINS: libqwayland-generic.so;libqwayland-egl.so
+          LINUXDEPLOY_OUTPUT_VERSION: ${{ github.ref_name }}
+          NO_STRIP: "1"
         run: |
-          # Plain binary; needs the distro's Qt 6 runtime (apt install qt6-declarative qml6-module-qtquick-controls …).
-          cp desktop/build/salat salat-linux-x64
-          strip salat-linux-x64
+          curl -fsSL -o linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          curl -fsSL -o linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy linuxdeploy-plugin-qt
+          cmake --install desktop/build --prefix AppDir/usr
+          ./linuxdeploy --appdir AppDir --plugin qt --output appimage \
+            --desktop-file AppDir/usr/share/applications/salat.desktop \
+            --icon-file desktop/resources/icons/icon256.png --icon-filename salat
+          mv Salat*.AppImage salat-linux-x86_64.AppImage 2>/dev/null || mv salat*.AppImage salat-linux-x86_64.AppImage
+          chmod +x salat-linux-x86_64.AppImage
+          # Smoke-run the AppImage itself (extracted; FUSE is not needed that way).
+          ./salat-linux-x86_64.AppImage --appimage-extract >/dev/null
+          QT_QPA_PLATFORM=offscreen ./squashfs-root/AppRun --light --screenshot screenshot-appimage.png && test -s screenshot-appimage.png
 
       - uses: actions/upload-artifact@v4
         with:
@@ -110,7 +126,7 @@ jobs:
           path: |
             salat-windows-x64.zip
             salat-macos.dmg
-            salat-linux-x64
+            salat-linux-x86_64.AppImage
             screenshot-linux.png
           if-no-files-found: error
 
@@ -160,7 +176,7 @@ jobs:
       - name: Collect
         run: |
           mkdir -p out
-          find artifacts -type f \( -name '*.zip' -o -name '*.vsix' -o -name '*.dmg' -o -name '*.apk' -o -name 'salat-linux-x64' \) -exec cp {} out/ \;
+          find artifacts -type f \( -name '*.zip' -o -name '*.vsix' -o -name '*.dmg' -o -name '*.apk' -o -name '*.AppImage' \) -exec cp {} out/ \;
           ls -la out
       - uses: softprops/action-gh-release@v2
         with:

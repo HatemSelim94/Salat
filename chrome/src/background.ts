@@ -4,13 +4,18 @@
  * Everything it needs is recomputed from storage on each wake.
  */
 import {
-  PRAYER_LABELS,
   formatTime,
   nextPrayer,
+  prayerLabel,
+  resolveLanguage,
+  t,
   upcomingEvents,
+  type Language,
   type PrayerName,
   type Settings,
 } from '@salat/core';
+
+const langOf = (s: Settings): Language => resolveLanguage(s.language, chrome.i18n?.getUILanguage?.());
 import { load, onChange, type Stored } from './storage.js';
 
 const PREFIX = 'salat:';
@@ -46,23 +51,32 @@ async function updateBadge(stored: Stored): Promise<void> {
     return;
   }
   const next = nextPrayer(stored.settings, new Date());
+  const lang = langOf(stored.settings);
+  const label = prayerLabel(lang, next.name);
   await chrome.action.setBadgeBackgroundColor({ color: '#2f6f5e' });
   await chrome.action.setBadgeTextColor?.({ color: '#ffffff' });
-  await chrome.action.setBadgeText({ text: PRAYER_LABELS[next.name].slice(0, 4) });
+  // Badge fits ~4 glyphs: for Arabic drop the definite article (الفجر → فجر).
+  await chrome.action.setBadgeText({ text: (lang === 'ar' ? label.replace(/^ال/, '') : label).slice(0, 4) });
   await chrome.action.setTitle({
-    title: `Salat – ${PRAYER_LABELS[next.name]} at ${formatTime(next.time, stored.settings.location.timezone, stored.settings.hour12)}`,
+    title: `${t(lang, 'app.name')} – ${label} ${formatTime(next.time, stored.settings.location.timezone, stored.settings.hour12)}`,
   });
 }
 
 // ---- notifications --------------------------------------------------------
 
 async function notify(kind: 'prayer' | 'pre' | 'snooze', name: PrayerName, settings: Settings): Promise<void> {
-  const label = PRAYER_LABELS[name];
-  const title = kind === 'pre' ? `${label} in ${settings.notifications.preReminderMinutes} min` : `${label} time`;
+  const lang = langOf(settings);
+  const label = prayerLabel(lang, name);
+  const tz = settings.location.timezone;
+  const n = settings.notifications.preReminderMinutes;
+  const title =
+    kind === 'pre' ? t(lang, 'notif.preTitle', { prayer: label, n })
+    : kind === 'snooze' ? t(lang, 'notif.snoozedTitle', { prayer: label })
+    : t(lang, 'notif.prayerTitle', { prayer: label });
   const message =
-    kind === 'pre'
-      ? `${label} prayer is at ${formatTime(nextPrayerTime(settings, name), settings.location.timezone, settings.hour12)}.`
-      : `It is time for ${label} prayer.`;
+    kind === 'pre' ? t(lang, 'notif.preBody', { prayer: label, time: formatTime(nextPrayerTime(settings, name), tz, settings.hour12) })
+    : kind === 'snooze' ? t(lang, 'notif.snoozedBody')
+    : t(lang, 'notif.prayerBody', { prayer: label, time: formatTime(new Date(), tz, settings.hour12) });
 
   const id = `${PREFIX}notif:${name}:${Date.now()}`;
   await chrome.notifications.create(id, {
@@ -72,7 +86,7 @@ async function notify(kind: 'prayer' | 'pre' | 'snooze', name: PrayerName, setti
     message,
     priority: 1,
     silent: true, // we handle sound ourselves (or not at all)
-    buttons: kind === 'prayer' ? [{ title: `Snooze ${settings.notifications.snoozeMinutes} min` }] : [],
+    buttons: kind === 'prayer' ? [{ title: t(lang, 'notif.snooze', { n: settings.notifications.snoozeMinutes }) }] : [],
   });
 
   if (kind === 'prayer' && settings.notifications.sound) await playChime();

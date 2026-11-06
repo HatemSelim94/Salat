@@ -19,6 +19,10 @@ Lightweight, offline, non-annoying prayer-time reminders — for your desktop, y
 - **Not annoying.** One notification per prayer, auto-dismissing. Pre-prayer warnings and sound are off until you turn them on. One-time location setup, then nothing is asked again. No new-tab hijacking, no badge animations, no "rate us".
 - **Works in the background.** Tray icon / service worker / status bar / exact alarms — whatever each platform offers, used the way it was designed, with correct behaviour across sleep, wake and time-zone changes.
 
+## Languages
+
+English, Arabic (right-to-left) and German, from one string table in [`i18n/strings.json`](i18n/strings.json) that `tools/export_i18n.mjs` fans out to all four apps. The language follows the system (or the editor, in VS Code) and can be overridden in each app's settings; on Android 13+ use the per-app language setting. To add a language, add a column there and run the script.
+
 ## Calculation
 
 Times come from the astronomical algorithm implemented by the [adhan](https://github.com/batoulapps/adhan) family of libraries: 12 calculation methods (MWL, Egyptian, Umm al-Qura, Diyanet, ISNA, Karachi, …), Shafi/Hanafi Asr, high-latitude rules (automatic by default — relevant for northern Europe in summer), and per-prayer minute offsets so you can match your local mosque.
@@ -35,7 +39,7 @@ All code is open source under the [MIT license](LICENSE); read it or build it yo
 
 ## Downloads
 
-Every push builds everything on GitHub Actions (free for public repos): the Chrome zip, the `.vsix`, the Qt app for Windows (zip with Qt runtime), macOS (dmg) and Linux (bare binary), and the Android debug APK. Grab them from the latest run under *Actions → CI → Artifacts*. Pushing a tag like `v0.1.0` publishes the same files as a GitHub Release.
+Every push builds everything on GitHub Actions (free for public repos): the Chrome zip, the `.vsix`, the Qt app for Windows (zip with Qt runtime), macOS (dmg) and Linux (AppImage), and the Android debug APK. Grab them from the latest run under *Actions → CI → Artifacts*. Pushing a tag like `v0.1.0` publishes the same files as a GitHub Release.
 
 ## Development
 

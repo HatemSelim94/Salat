@@ -1,8 +1,11 @@
 import * as vscode from 'vscode';
 import {
   METHODS,
-  PRAYER_LABELS,
   cityToLocation,
+  prayerLabel,
+  resolveLanguage,
+  t as tr,
+  type Language,
   civilDate,
   computeDay,
   currentPrayer,
@@ -30,6 +33,9 @@ let eventTimer: NodeJS.Timeout | undefined;
 let settings: Settings;
 let queue: ScheduledEvent[] = [];
 let locationGuessed = false;
+let lang: Language = 'en';
+const t = (key: string, params?: Record<string, string | number>) => tr(lang, key, params);
+const label = (p: PrayerName) => prayerLabel(lang, p);
 
 // ---- settings ---------------------------------------------------------------
 
@@ -52,6 +58,8 @@ function readSettings(): Settings {
   }
 
   const s = defaultSettings(location);
+  s.language = cfg.get('language', 'auto');
+  lang = resolveLanguage(s.language, vscode.env.language);
   s.method = cfg.get('method', s.method);
   s.madhab = cfg.get('madhab', s.madhab);
   s.highLatitudeRule = cfg.get('highLatitudeRule', s.highLatitudeRule);
@@ -78,19 +86,19 @@ function updateStatus(): void {
   const compact = cfg.get('statusBar.compact', false);
   const clock = formatTime(next.time, tz, settings.hour12);
   statusItem.text = compact
-    ? `$(bell) ${PRAYER_LABELS[next.name]} ${formatCountdown(now, next.time)}`
-    : `$(bell) ${PRAYER_LABELS[next.name]} ${clock} · ${formatCountdown(now, next.time)}`;
+    ? `$(bell) ${label(next.name)} ${formatCountdown(now, next.time)}`
+    : `$(bell) ${label(next.name)} ${clock} · ${formatCountdown(now, next.time)}`;
 
   const day = computeDay(settings, now);
   const current = currentPrayer(settings, now);
   const md = new vscode.MarkdownString();
-  md.appendMarkdown(`**Salat** — ${settings.location.label}  \n`);
+  md.appendMarkdown(`**${t('app.name')}** — ${settings.location.label}  \n`);
   for (const p of ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as PrayerName[]) {
     const mark = p === current.name ? '●' : '○';
-    md.appendMarkdown(`${mark} ${PRAYER_LABELS[p].padEnd(8)} ${formatTime(day[p], tz, settings.hour12)}  \n`);
+    md.appendMarkdown(`${mark} ${label(p)} — ${formatTime(day[p], tz, settings.hour12)}  \n`);
   }
   md.appendMarkdown(`\n_${METHODS.find((m) => m.id === settings.method)?.label ?? settings.method}_`);
-  if (locationGuessed) md.appendMarkdown(`  \n_Location guessed from time zone — run **Salat: Set City**_`);
+  if (locationGuessed) md.appendMarkdown(`  \n_${t('vscode.guessed')}_`);
   statusItem.tooltip = md;
   statusItem.show();
 }
@@ -137,21 +145,22 @@ function tick(): void {
 // ---- notifications ----------------------------------------------------------
 
 async function notify(ev: ScheduledEvent, snoozed = false): Promise<void> {
-  const label = PRAYER_LABELS[ev.name];
+  const name = label(ev.name);
   const tz = settings.location.timezone;
   const pre = settings.notifications.preReminderMinutes;
   const prayerAt = new Date(ev.at.getTime() + (ev.kind === 'pre' ? pre * 60_000 : 0));
   const message =
     ev.kind === 'pre'
-      ? `${label} in ${pre} min (${formatTime(prayerAt, tz, settings.hour12)}).`
+      ? `${t('notif.preTitle', { prayer: name, n: pre })} (${formatTime(prayerAt, tz, settings.hour12)})`
       : snoozed
-        ? `${label} — snoozed reminder`
-        : `It is time for ${label} prayer (${formatTime(ev.at, tz, settings.hour12)}).`;
-  const snooze = `Snooze ${settings.notifications.snoozeMinutes} min`;
+        ? t('notif.snoozedTitle', { prayer: name })
+        : t('notif.prayerBody', { prayer: name, time: formatTime(ev.at, tz, settings.hour12) });
+  const snooze = t('notif.snooze', { n: settings.notifications.snoozeMinutes });
+  const dismiss = t('notif.dismiss');
   const choice =
     ev.kind === 'prayer'
-      ? await vscode.window.showInformationMessage(message, snooze, 'Dismiss')
-      : await vscode.window.showInformationMessage(message, 'Dismiss');
+      ? await vscode.window.showInformationMessage(message, snooze, dismiss)
+      : await vscode.window.showInformationMessage(message, dismiss);
   if (choice === snooze) {
     setTimeout(() => void notify({ ...ev, at: new Date() }, true), settings.notifications.snoozeMinutes * 60_000);
   }
@@ -165,22 +174,22 @@ async function showTimes(): Promise<void> {
   const current = currentPrayer(settings, now);
   const tz = settings.location.timezone;
   const items: vscode.QuickPickItem[] = (['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as PrayerName[]).map((p) => ({
-    label: `${p === current.name ? '$(circle-filled)' : '$(circle-outline)'} ${PRAYER_LABELS[p]}`,
+    label: `${p === current.name ? '$(circle-filled)' : '$(circle-outline)'} ${label(p)}`,
     description: formatTime(day[p], tz, settings.hour12),
-    detail: p === current.name ? 'current' : undefined,
+    detail: p === current.name ? t('vscode.current') : undefined,
   }));
   const next = nextPrayer(settings, now);
-  const tomorrow = civilDate(next.time, tz).day !== civilDate(now, tz).day ? ' (tomorrow)' : '';
+  const tomorrow = civilDate(next.time, tz).day !== civilDate(now, tz).day ? ` (${t('home.tomorrow')})` : '';
   await vscode.window.showQuickPick(items, {
-    title: `Salat — ${settings.location.label} · ${day.date}`,
-    placeHolder: `Next: ${PRAYER_LABELS[next.name]} ${formatTime(next.time, tz, settings.hour12)}${tomorrow}, in ${formatCountdown(now, next.time)}`,
+    title: `${t('app.name')} — ${settings.location.label} · ${day.date}`,
+    placeHolder: `${t('vscode.next')}: ${label(next.name)} ${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t('home.in')} ${formatCountdown(now, next.time)}`,
   });
 }
 
 async function setCity(): Promise<void> {
   const qp = vscode.window.createQuickPick<vscode.QuickPickItem & { idx: number }>();
-  qp.title = 'Salat: Set City';
-  qp.placeholder = 'Type a city name…';
+  qp.title = t('vscode.setCity');
+  qp.placeholder = t('vscode.typeCity');
   qp.matchOnDescription = true;
   let results = searchCities('', 0);
   qp.onDidChangeValue((v) => {
@@ -198,7 +207,7 @@ async function setCity(): Promise<void> {
     await cfg.update('location.latitude', loc.latitude, target);
     await cfg.update('location.longitude', loc.longitude, target);
     await cfg.update('location.timezone', loc.timezone, target);
-    vscode.window.setStatusBarMessage(`Salat: location set to ${loc.label}`, 3000);
+    vscode.window.setStatusBarMessage(t('vscode.locationSet', { label: loc.label }), 3000);
   });
   qp.onDidHide(() => qp.dispose());
   qp.show();
@@ -210,7 +219,7 @@ export function activate(context: vscode.ExtensionContext): void {
   settings = readSettings();
 
   statusItem = vscode.window.createStatusBarItem('salat.next', vscode.StatusBarAlignment.Right, 100);
-  statusItem.name = 'Salat: next prayer';
+  statusItem.name = `${t('app.name')}: ${t('home.nextPrayer')}`;
   statusItem.command = 'salat.showTimes';
   context.subscriptions.push(statusItem);
 

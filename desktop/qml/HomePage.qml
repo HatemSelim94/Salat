@@ -41,11 +41,11 @@ Page {
                 id: nextCol
                 anchors { left: parent.left; right: parent.right; top: parent.top; margins: 14 }
                 spacing: 2
-                Label { text: "Next prayer"; color: Theme.muted; font.pixelSize: 12 }
+                Label { text: Tr.t("home.nextPrayer", Tr.rev); color: Theme.muted; font.pixelSize: 12 }
                 Label { text: engine.nextLabel; color: Theme.fg; font.pixelSize: 26; font.weight: Font.DemiBold }
                 RowLayout {
                     spacing: 6
-                    Label { text: engine.nextTime + (engine.nextIsTomorrow ? " tomorrow" : "") + " · in"; color: Theme.muted; font.pixelSize: 13 }
+                    Label { text: engine.nextTime + (engine.nextIsTomorrow ? " " + Tr.t("home.tomorrow", Tr.rev) : "") + " · " + Tr.t("home.in", Tr.rev); color: Theme.muted; font.pixelSize: 13 }
                     Label { text: engine.countdown; color: Theme.fg; font.pixelSize: 13; font.weight: Font.DemiBold }
                 }
             }
@@ -105,7 +105,7 @@ Page {
                 wrapMode: Text.WordWrap
                 font.pixelSize: 12
                 color: Theme.fg
-                text: "Location guessed from your time zone. <a href='settings'>Set your city</a> for exact times."
+                text: Tr.t("home.locationGuessed", Tr.rev) + " <a href='settings'>" + Tr.t("home.setCity", Tr.rev) + "</a> " + Tr.t("home.forExactTimes", Tr.rev)
                 linkColor: Theme.accent
                 onLinkActivated: page.openSettings()
             }
@@ -117,7 +117,7 @@ Page {
             Layout.fillWidth: true
             Label { text: engine.methodLabel; color: Theme.muted; font.pixelSize: 12; elide: Text.ElideRight; Layout.fillWidth: true }
             Label {
-                text: "<a href='settings'>Settings</a>"
+                text: "<a href='settings'>" + Tr.t("home.settings", Tr.rev) + "</a>"
                 font.pixelSize: 12
                 linkColor: Theme.accent
                 onLinkActivated: page.openSettings()

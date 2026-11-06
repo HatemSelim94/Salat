@@ -1,5 +1,6 @@
 package io.github.hatemselim94.salat.core
 
+import io.github.hatemselim94.salat.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -8,13 +9,15 @@ import java.time.chrono.HijrahChronology
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-enum class Prayer(val key: String, val label: String, val obligatory: Boolean) {
-    FAJR("fajr", "Fajr", true),
-    SUNRISE("sunrise", "Sunrise", false),
-    DHUHR("dhuhr", "Dhuhr", true),
-    ASR("asr", "Asr", true),
-    MAGHRIB("maghrib", "Maghrib", true),
-    ISHA("isha", "Isha", true);
+enum class Prayer(val key: String, val labelRes: Int, val obligatory: Boolean) {
+    FAJR("fajr", R.string.prayer_fajr, true),
+    SUNRISE("sunrise", R.string.prayer_sunrise, false),
+    DHUHR("dhuhr", R.string.prayer_dhuhr, true),
+    ASR("asr", R.string.prayer_asr, true),
+    MAGHRIB("maghrib", R.string.prayer_maghrib, true),
+    ISHA("isha", R.string.prayer_isha, true);
+
+    fun label(context: android.content.Context): String = context.getString(labelRes)
 
     companion object { val OBLIGATORY = entries.filter { it.obligatory } }
 }
@@ -102,6 +105,6 @@ class Engine(private val settings: Settings) {
     fun hijriDate(now: Long): String = try {
         val local = Instant.ofEpochSecond(now).atZone(zone).toLocalDate()
         val h = HijrahChronology.INSTANCE.date(local)
-        h.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH))
+        h.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.getDefault()))
     } catch (e: Exception) { "" }
 }

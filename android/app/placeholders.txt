@@ -1,0 +1,9 @@
+Placeholder order for formatted strings (generated):
+settings_minutes: n
+notif_prayerTitle: prayer
+notif_prayerBody: prayer, time
+notif_preTitle: prayer, n
+notif_preBody: prayer, time
+notif_snoozedTitle: prayer
+notif_snooze: n
+vscode_locationSet: label

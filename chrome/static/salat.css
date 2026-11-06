@@ -65,7 +65,7 @@ ul.times li {
   padding: 7px 6px; border-bottom: 1px solid var(--line);
 }
 ul.times li.current { background: var(--card); border-radius: 8px; border-color: transparent; font-weight: 600; }
-ul.times li.current .time::before { content: "●"; color: var(--accent); font-size: 9px; margin-right: 8px; vertical-align: 1px; }
+ul.times li.current .time::before { content: "●"; color: var(--accent); font-size: 9px; margin-inline-end: 8px; vertical-align: 1px; }
 ul.times li.passed { color: var(--muted); }
 ul.times li.sunrise { color: var(--muted); font-size: 13px; }
 ul.times .time { font-variant-numeric: tabular-nums; }

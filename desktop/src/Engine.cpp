@@ -10,6 +10,7 @@
 
 #include "Platform.h"
 #include "Settings.h"
+#include "Tr.h"
 #include "adhan/adhan.h"
 
 namespace {
@@ -29,6 +30,7 @@ Engine::Engine(Settings* settings, QObject* parent) : QObject(parent), m_setting
     m_tick.setTimerType(Qt::VeryCoarseTimer);
     connect(&m_tick, &QTimer::timeout, this, &Engine::onTick);
     connect(m_settings, &Settings::changed, this, &Engine::recompute);
+    connect(&Tr::instance(), &Tr::changed, this, &Engine::recompute);
     m_lastSystemTz = QTimeZone::systemTimeZoneId();
     recompute();
     // Align the tick to the wall-clock minute so the countdown flips on time.
@@ -37,19 +39,19 @@ Engine::Engine(Settings* settings, QObject* parent) : QObject(parent), m_setting
     m_lastTick = nowEpoch();
 }
 
-QString Engine::labelFor(Prayer p) {
+QString Engine::keyFor(Prayer p) {
     switch (p) {
-        case Prayer::Fajr: return QStringLiteral("Fajr");
-        case Prayer::Sunrise: return QStringLiteral("Sunrise");
-        case Prayer::Dhuhr: return QStringLiteral("Dhuhr");
-        case Prayer::Asr: return QStringLiteral("Asr");
-        case Prayer::Maghrib: return QStringLiteral("Maghrib");
-        case Prayer::Isha: return QStringLiteral("Isha");
+        case Prayer::Fajr: return QStringLiteral("fajr");
+        case Prayer::Sunrise: return QStringLiteral("sunrise");
+        case Prayer::Dhuhr: return QStringLiteral("dhuhr");
+        case Prayer::Asr: return QStringLiteral("asr");
+        case Prayer::Maghrib: return QStringLiteral("maghrib");
+        case Prayer::Isha: return QStringLiteral("isha");
     }
     return {};
 }
 
-QString Engine::keyFor(Prayer p) { return labelFor(p).toLower(); }
+QString Engine::labelFor(Prayer p) { return Tr::instance().prayer(keyFor(p)); }
 
 // ---- computation ------------------------------------------------------------
 
@@ -186,16 +188,18 @@ void Engine::drainDue(qint64 now) {
 
 void Engine::fire(const Event& e, bool snoozed) {
     const QString label = labelFor(e.prayer);
+    const Tr& tr = Tr::instance();
     QString title, message;
     if (e.pre) {
-        title = QStringLiteral("%1 in %2 min").arg(label).arg(m_settings->preReminderMinutes());
-        message = QStringLiteral("%1 prayer is at %2.").arg(label, formatTime(e.at + m_settings->preReminderMinutes() * 60));
+        const int n = m_settings->preReminderMinutes();
+        title = tr.f("notif.preTitle", {{"prayer", label}, {"n", n}});
+        message = tr.f("notif.preBody", {{"prayer", label}, {"time", formatTime(e.at + n * 60)}});
     } else if (snoozed) {
-        title = QStringLiteral("%1 — snoozed reminder").arg(label);
-        message = QStringLiteral("You asked to be reminded again.");
+        title = tr.f("notif.snoozedTitle", {{"prayer", label}});
+        message = tr.t("notif.snoozedBody");
     } else {
-        title = QStringLiteral("%1 time").arg(label);
-        message = QStringLiteral("It is time for %1 prayer (%2).").arg(label, formatTime(e.at));
+        title = tr.f("notif.prayerTitle", {{"prayer", label}});
+        message = tr.f("notif.prayerBody", {{"prayer", label}, {"time", formatTime(e.at)}});
     }
     if (!e.pre) { m_lastFired = e; m_hasLastFired = true; }
     emit notify(title, message, !e.pre);
@@ -219,7 +223,7 @@ void Engine::testNotification() {
 
 QString Engine::formatTime(qint64 epoch) const {
     const QDateTime dt = QDateTime::fromSecsSinceEpoch(epoch, QTimeZone(m_settings->timezone().toUtf8()));
-    return m_settings->hour12() ? QLocale(QLocale::English).toString(dt, QStringLiteral("h:mm AP")) : dt.toString(QStringLiteral("HH:mm"));
+    return m_settings->hour12() ? QLocale(QLocale::English).toString(dt, QStringLiteral("h:mm AP")) : dt.toString(QStringLiteral("HH:mm"));  // Latin digits in every language
 }
 
 QString Engine::nextKey() const { return m_nextKey; }
@@ -238,16 +242,15 @@ QString Engine::countdown() const {
 
 QString Engine::gregorianDate() const {
     const QDateTime now = QDateTime::currentDateTime().toTimeZone(QTimeZone(m_settings->timezone().toUtf8()));
-    return QLocale().toString(now.date(), QStringLiteral("ddd, d MMM"));
+    return Tr::instance().locale().toString(now.date(), QStringLiteral("ddd, d MMM"));
 }
 
 QString Engine::hijriDate() const {
     // Tabular (civil) Islamic calendar: can differ by ±1 day from Umm al-Qura / sighting.
     const QDate today = QDateTime::currentDateTime().toTimeZone(QTimeZone(m_settings->timezone().toUtf8())).date();
     const QCalendar cal(QCalendar::System::IslamicCivil);
-    const auto parts = cal.partsFromDate(today);
-    if (!parts.isValid()) return {};
-    return QStringLiteral("%1 %2, %3").arg(cal.monthName(QLocale::English, parts.month, parts.year)).arg(parts.day).arg(parts.year);
+    if (!cal.partsFromDate(today).isValid()) return {};
+    return cal.dateTimeToString(QStringLiteral("d MMMM yyyy"), QDateTime(), today, QTime(), Tr::instance().locale());
 }
 
 QString Engine::methodLabel() const {
@@ -260,8 +263,8 @@ QString Engine::methodLabel() const {
 }
 
 QString Engine::trayText() const {
-    if (m_nextKey.isEmpty()) return QStringLiteral("Salat");
-    return QStringLiteral("%1 %2 · in %3").arg(nextLabel(), nextTime(), countdown());
+    if (m_nextKey.isEmpty()) return Tr::instance().t("app.name");
+    return QStringLiteral("%1 %2 · %3 %4").arg(nextLabel(), nextTime(), Tr::instance().t("home.in"), countdown());
 }
 
 QVariantList Engine::previewToday() const {

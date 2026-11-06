@@ -39,6 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import io.github.hatemselim94.salat.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -53,11 +55,11 @@ import io.github.hatemselim94.salat.core.Settings
 import io.github.hatemselim94.salat.notify.Notifications
 
 private val RULES = listOf(
-    "recommended" to "Automatic", "middleOfTheNight" to "Middle of the night",
-    "seventhOfTheNight" to "One-seventh of the night", "twilightAngle" to "Twilight angle",
+    "recommended" to R.string.rule_recommended, "middleOfTheNight" to R.string.rule_middleOfTheNight,
+    "seventhOfTheNight" to R.string.rule_seventhOfTheNight, "twilightAngle" to R.string.rule_twilightAngle,
 )
-private val PRE_OPTIONS = listOf(0 to "Off", 5 to "5 min", 10 to "10 min", 15 to "15 min", 20 to "20 min", 30 to "30 min")
-private val SNOOZE_OPTIONS = listOf(5 to "5 min", 10 to "10 min", 15 to "15 min", 20 to "20 min", 30 to "30 min")
+private val PRE_VALUES = listOf(0, 5, 10, 15, 20, 30)
+private val SNOOZE_VALUES = listOf(5, 10, 15, 20, 30)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,22 +69,24 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
     val fg = MaterialTheme.colorScheme.onBackground
     // `revision` is read so the screen recomposes after any settings write.
     @Suppress("UNUSED_VARIABLE") val rev = revision
+    val minutes: (Int) -> String = { n -> if (n == 0) context.getString(R.string.settings_off) else context.getString(R.string.settings_minutes, n.toString()) }
+    val rules = RULES.map { (id, res) -> id to stringResource(res).substringBefore(" (") }
 
     Column(Modifier.fillMaxSize().statusBarsPadding()) {
         TopAppBar(
-            title = { Text("Settings", fontWeight = FontWeight.SemiBold) },
-            navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") } },
+            title = { Text(stringResource(R.string.settings_title), fontWeight = FontWeight.SemiBold) },
+            navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.settings_back)) } },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
         )
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
 
-            Card("Location") {
+            Card(stringResource(R.string.settings_location)) {
                 var query by remember { mutableStateOf(settings.label) }
                 var results by remember { mutableStateOf(emptyList<City>()) }
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it; results = Cities.search(context, it, 6) },
-                    label = { Text("City") },
+                    label = { Text(stringResource(R.string.settings_city)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -100,51 +104,51 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    NumberField("Latitude", "%.4f".format(java.util.Locale.ROOT, settings.latitude), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -90.0..90.0) settings.latitude = it } }
-                    NumberField("Longitude", "%.4f".format(java.util.Locale.ROOT, settings.longitude), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -180.0..180.0) settings.longitude = it } }
+                    NumberField(stringResource(R.string.settings_latitude), "%.4f".format(java.util.Locale.ROOT, settings.latitude), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -90.0..90.0) settings.latitude = it } }
+                    NumberField(stringResource(R.string.settings_longitude), "%.4f".format(java.util.Locale.ROOT, settings.longitude), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -180.0..180.0) settings.longitude = it } }
                 }
                 var tz by remember { mutableStateOf(settings.timezone) }
-                OutlinedTextField(value = tz, onValueChange = { tz = it; settings.timezone = it }, label = { Text("Time zone") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = tz, onValueChange = { tz = it; settings.timezone = it }, label = { Text(stringResource(R.string.settings_timezone)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
             }
 
-            Card("Calculation") {
-                Picker("Method", Method.entries.filter { it != Method.OTHER }.map { it to it.label }, settings.method) { settings.method = it }
-                Picker("Asr", listOf(Madhab.SHAFI to "Standard (Shafi, Maliki, Hanbali)", Madhab.HANAFI to "Hanafi (later)"), settings.madhab) { settings.madhab = it }
-                Picker("High-latitude rule", RULES, settings.highLatitudeRule) { settings.highLatitudeRule = it }
-                Text("Adjustments (minutes)", color = fg)
-                Text("Shift individual prayers to match a local timetable.", color = muted, fontSize = 12.sp)
+            Card(stringResource(R.string.settings_calculation)) {
+                Picker(stringResource(R.string.settings_method), Method.entries.filter { it != Method.OTHER }.map { it to it.label }, settings.method) { settings.method = it }
+                Picker(stringResource(R.string.settings_asr), listOf(Madhab.SHAFI to stringResource(R.string.settings_asrStandard), Madhab.HANAFI to stringResource(R.string.settings_asrHanafi)), settings.madhab) { settings.madhab = it }
+                Picker(stringResource(R.string.settings_highLatRule), rules, settings.highLatitudeRule) { settings.highLatitudeRule = it }
+                Text(stringResource(R.string.settings_adjustments), color = fg)
+                Text(stringResource(R.string.settings_adjustmentsHint), color = muted, fontSize = 12.sp)
                 for (rowPrayers in Prayer.entries.chunked(3)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         for (p in rowPrayers) {
-                            NumberField(p.label, settings.adjustment(p.key).toString(), Modifier.weight(1f)) { v -> v.toIntOrNull()?.let { settings.setAdjustment(p.key, it) } }
+                            NumberField(p.label(context), settings.adjustment(p.key).toString(), Modifier.weight(1f)) { v -> v.toIntOrNull()?.let { settings.setAdjustment(p.key, it) } }
                         }
                     }
                 }
                 val now = System.currentTimeMillis() / 1000
                 val day = engine.computeDay(now)
-                Text("Today with these settings", color = muted, fontSize = 12.sp)
+                Text(stringResource(R.string.settings_preview), color = muted, fontSize = 12.sp)
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     for (p in Prayer.entries) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(p.label, color = muted, fontSize = 11.sp)
+                            Text(p.label(context), color = muted, fontSize = 11.sp)
                             Text(engine.formatTime(day[p]), color = fg, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
             }
 
-            Card("Reminders") {
-                ToggleRow("Notify at prayer times", settings.notificationsEnabled) { settings.notificationsEnabled = it }
-                Picker("Heads-up before each prayer", PRE_OPTIONS, settings.preReminderMinutes) { settings.preReminderMinutes = it }
-                ToggleRow("Play a short chime", settings.sound, hint = "A quiet tone, not an adhan recording.") { settings.sound = it }
-                Picker("Snooze length", SNOOZE_OPTIONS, settings.snoozeMinutes) { settings.snoozeMinutes = it }
-                ToggleRow("12-hour clock", settings.hour12) { settings.hour12 = it }
+            Card(stringResource(R.string.settings_reminders)) {
+                ToggleRow(stringResource(R.string.settings_notify), settings.notificationsEnabled) { settings.notificationsEnabled = it }
+                Picker(stringResource(R.string.settings_preReminder), PRE_VALUES.map { it to minutes(it) }, settings.preReminderMinutes) { settings.preReminderMinutes = it }
+                ToggleRow(stringResource(R.string.settings_chime), settings.sound, hint = stringResource(R.string.settings_chimeHint)) { settings.sound = it }
+                Picker(stringResource(R.string.settings_snooze), SNOOZE_VALUES.map { it to minutes(it) }, settings.snoozeMinutes) { settings.snoozeMinutes = it }
+                ToggleRow(stringResource(R.string.settings_hour12), settings.hour12) { settings.hour12 = it }
                 TextButton(onClick = { Notifications.show(context, settings, engine, Prayer.DHUHR, pre = false, epoch = System.currentTimeMillis() / 1000) }) {
-                    Text("Send a test notification")
+                    Text(stringResource(R.string.settings_testNotification))
                 }
             }
 
-            Text("Salat is free and open source (MIT) · github.com/HatemSelim94/salat", color = muted, fontSize = 12.sp, modifier = Modifier.padding(bottom = 24.dp))
+            Text("Salat · " + stringResource(R.string.settings_foss) + " · github.com/HatemSelim94/salat", color = muted, fontSize = 12.sp, modifier = Modifier.padding(bottom = 24.dp))
         }
     }
 }

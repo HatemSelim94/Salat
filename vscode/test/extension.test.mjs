@@ -6,7 +6,7 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 
-function makeVscode(config = {}) {
+function makeVscode(config = {}, uiLanguage = 'en') {
   const messages = [];
   const items = [];
   let cfgListener;
@@ -21,6 +21,7 @@ function makeVscode(config = {}) {
       createQuickPick: () => ({ onDidChangeValue() {}, onDidAccept() {}, onDidHide() {}, show() {}, hide() {}, dispose() {} }),
       setStatusBarMessage() {},
     },
+    env: { language: uiLanguage },
     commands: { registerCommand: () => ({ dispose() {} }), executeCommand: async () => {} },
     workspace: {
       getConfiguration: () => ({
@@ -87,4 +88,18 @@ test('compact mode drops the clock time', () => {
   ext.activate({ subscriptions: [] });
   assert.match(vs._items[0].text, /^\$\(bell\) \w+ (<1m|\d+m|\d+h \d{2}m)$/);
   ext.deactivate();
+});
+
+test('follows the editor language and the salat.language override', () => {
+  const de = makeVscode({}, 'de');
+  const extDe = loadExtension(de);
+  extDe.activate({ subscriptions: [] });
+  assert.match(de._items[0].tooltip.value, /Sonnenaufgang/);
+  extDe.deactivate();
+
+  const ar = makeVscode({ language: 'ar' }, 'en-US');
+  const extAr = loadExtension(ar);
+  extAr.activate({ subscriptions: [] });
+  assert.match(ar._items[0].text, /\$\(bell\) (الفجر|الظهر|العصر|المغرب|العشاء) /);
+  extAr.deactivate();
 });

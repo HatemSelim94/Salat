@@ -15,6 +15,7 @@
 #include "Engine.h"
 #include "Settings.h"
 #include "Tray.h"
+#include "Tr.h"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);  // QApplication (not QGuiApplication) for QSystemTrayIcon + QMenu
@@ -46,6 +47,8 @@ int main(int argc, char* argv[]) {
     QQuickStyle::setStyle(QStringLiteral("Material"));
 
     Settings settings;
+    Tr::instance().setPreference(settings.language());
+    QObject::connect(&settings, &Settings::changed, &app, [&settings] { Tr::instance().setPreference(settings.language()); });
     Engine engine(&settings);
 
     const bool systemDark = QGuiApplication::palette().color(QPalette::Window).lightness() < 128;
@@ -54,6 +57,7 @@ int main(int argc, char* argv[]) {
     QQmlApplicationEngine qml;
     qml.rootContext()->setContextProperty(QStringLiteral("engine"), &engine);
     qml.rootContext()->setContextProperty(QStringLiteral("settingsObj"), &settings);
+    qml.rootContext()->setContextProperty(QStringLiteral("Tr"), &Tr::instance());
     qml.rootContext()->setContextProperty(QStringLiteral("useDarkTheme"), useDark);
     qml.rootContext()->setContextProperty(QStringLiteral("initialPage"), parser.value(page));
     qml.addImportPath(QStringLiteral("qrc:/"));

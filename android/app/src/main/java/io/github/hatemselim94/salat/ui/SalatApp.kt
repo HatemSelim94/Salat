@@ -34,6 +34,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import io.github.hatemselim94.salat.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,11 +87,11 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
                 .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(14.dp))
                 .padding(16.dp),
         ) {
-            Text("Next prayer", fontSize = 12.sp, color = muted)
-            Text(next.prayer.label, fontSize = 28.sp, fontWeight = FontWeight.SemiBold, color = fg)
+            Text(stringResource(R.string.home_nextPrayer), fontSize = 12.sp, color = muted)
+            Text(next.prayer.label(context), fontSize = 28.sp, fontWeight = FontWeight.SemiBold, color = fg)
             val tomorrow = engine.computeDay(next.epoch).date != day.date
             Row {
-                Text(engine.formatTime(next.epoch) + (if (tomorrow) " tomorrow" else "") + " · in ", fontSize = 13.sp, color = muted)
+                Text(engine.formatTime(next.epoch) + (if (tomorrow) " " + stringResource(R.string.home_tomorrow) else "") + " · " + stringResource(R.string.home_in) + " ", fontSize = 13.sp, color = muted)
                 Text(engine.countdown(now, next.epoch), fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = fg)
             }
         }
@@ -107,7 +109,7 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
                     .padding(horizontal = 10.dp, vertical = 11.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(p.label, color = color, fontSize = if (p.obligatory) 15.sp else 14.sp,
+                Text(p.label(context), color = color, fontSize = if (p.obligatory) 15.sp else 14.sp,
                     fontWeight = if (isCurrent) FontWeight.SemiBold else FontWeight.Normal, modifier = Modifier.weight(1f))
                 if (isCurrent) {
                     Box(Modifier.size(7.dp).background(MaterialTheme.colorScheme.primary, CircleShape))
@@ -121,12 +123,12 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
 
         Spacer(Modifier.height(14.dp))
         if (!settings.locationConfigured) {
-            NoticeCard("Location guessed from your time zone. Tap to set your city for exact times.", onClick = onOpenSettings)
+            NoticeCard(stringResource(R.string.home_locationGuessed) + " " + stringResource(R.string.home_setCity) + " " + stringResource(R.string.home_forExactTimes), onClick = onOpenSettings)
         }
         val pm = context.getSystemService(PowerManager::class.java)
         if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {
             NoticeCard(
-                "To make sure reminders fire on time, allow Salat to run without battery restrictions.",
+                stringResource(R.string.home_battery),
                 onClick = {
                     context.startActivity(Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 },
@@ -134,7 +136,7 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
         }
         if (Build.VERSION.SDK_INT in 31..32 && !Scheduler.canScheduleExact(context)) {
             NoticeCard(
-                "Android needs permission for exact alarms so reminders are on the minute. Tap to allow.",
+                stringResource(R.string.home_exactAlarm),
                 onClick = {
                     context.startActivity(Intent(AndroidSettings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 },
@@ -144,7 +146,7 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
         Spacer(Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(settings.method.label, fontSize = 12.sp, color = muted, modifier = Modifier.weight(1f))
-            TextButton(onClick = onOpenSettings) { Text("Settings") }
+            TextButton(onClick = onOpenSettings) { Text(stringResource(R.string.home_settings)) }
         }
     }
 }

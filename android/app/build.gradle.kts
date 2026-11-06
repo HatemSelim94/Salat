@@ -19,7 +19,7 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         // Only ship the resources we actually use (keeps the APK small).
-        resourceConfigurations += listOf("en")
+        resourceConfigurations += listOf("en", "ar", "de")
     }
 
     buildTypes {

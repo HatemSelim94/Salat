@@ -127,3 +127,16 @@ test('mergeSettings fills gaps and keeps stored values', () => {
   assert.equal(merged.notifications.snoozeMinutes, 10);
   assert.equal(merged.location.label, 'Stuttgart');
 });
+
+test('i18n: resolve, translate, placeholders, fallback', async () => {
+  const { t, resolveLanguage, prayerLabel, isRtl } = await import('../dist/index.js');
+  assert.equal(resolveLanguage('auto', 'de-DE'), 'de');
+  assert.equal(resolveLanguage('auto', 'ar-EG'), 'ar');
+  assert.equal(resolveLanguage('auto', 'fr-FR'), 'en');
+  assert.equal(resolveLanguage('ar', 'en-US'), 'ar');
+  assert.equal(t('en', 'notif.preTitle', { prayer: 'Asr', n: 10 }), 'Asr in 10 min');
+  assert.equal(t('de', 'notif.preTitle', { prayer: 'Asr', n: 10 }), 'Asr in 10 Min.');
+  assert.equal(prayerLabel('ar', 'maghrib'), 'المغرب');
+  assert.equal(t('de', 'does.not.exist'), 'does.not.exist');
+  assert.ok(isRtl('ar') && !isRtl('de'));
+});

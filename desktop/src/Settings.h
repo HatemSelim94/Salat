@@ -26,6 +26,7 @@ class Settings : public QObject {
     Q_PROPERTY(bool hour12 READ hour12 WRITE setHour12 NOTIFY changed)
     Q_PROPERTY(bool autostart READ autostart WRITE setAutostart NOTIFY changed)
     Q_PROPERTY(bool startHidden READ startHidden WRITE setStartHidden NOTIFY changed)
+    Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY changed)
 
 public:
     explicit Settings(QObject* parent = nullptr);
@@ -45,6 +46,7 @@ public:
     bool hour12() const;
     bool autostart() const;
     bool startHidden() const;
+    QString language() const;
 
     void setLatitude(double v);
     void setLongitude(double v);
@@ -60,6 +62,7 @@ public:
     void setHour12(bool v);
     void setAutostart(bool v);
     void setStartHidden(bool v);
+    void setLanguage(const QString& v);
 
     /// Per-prayer minute offsets: keys fajr, sunrise, dhuhr, asr, maghrib, isha.
     Q_INVOKABLE int adjustment(const QString& prayer) const;

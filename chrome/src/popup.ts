@@ -1,7 +1,9 @@
 import {
   METHODS,
-  PRAYER_LABELS,
   civilDate,
+  intlLocale,
+  prayerLabel,
+  t,
   computeDay,
   currentPrayer,
   formatCountdown,
@@ -10,6 +12,7 @@ import {
   type PrayerName,
 } from '@salat/core';
 import { load } from './storage.js';
+import { localiseDocument, pageLanguage } from './ui-i18n.js';
 
 const ORDER: PrayerName[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
 
@@ -17,6 +20,8 @@ const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as 
 
 async function render(): Promise<void> {
   const { settings, extras } = await load();
+  const lang = pageLanguage(settings);
+  localiseDocument(lang);
   const tz = settings.location.timezone;
   const now = new Date();
   const day = computeDay(settings, now);
@@ -24,30 +29,30 @@ async function render(): Promise<void> {
   const current = currentPrayer(settings, now);
 
   $('location').textContent = settings.location.label;
-  $('gregorian').textContent = new Intl.DateTimeFormat(undefined, {
+  $('gregorian').textContent = new Intl.DateTimeFormat(intlLocale(lang), {
     timeZone: tz, weekday: 'short', day: 'numeric', month: 'short',
   }).format(now);
   try {
-    $('hijri').textContent = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+    $('hijri').textContent = new Intl.DateTimeFormat(`${intlLocale(lang)}-u-ca-islamic-umalqura`, {
       timeZone: tz, day: 'numeric', month: 'long', year: 'numeric',
-    }).format(now).replace(/ AH$/, '');
+    }).format(now).replace(/ AH$/, '').replace(/ هـ$/, '');
   } catch { $('hijri').textContent = ''; }
 
-  $('next-name').textContent = PRAYER_LABELS[next.name];
-  const tomorrow = civilDate(next.time, tz).day !== civilDate(now, tz).day ? ' tomorrow' : '';
-  $('next-in').innerHTML = `${formatTime(next.time, tz, settings.hour12)}${tomorrow} · in <b>${formatCountdown(now, next.time)}</b>`;
+  $('next-name').textContent = prayerLabel(lang, next.name);
+  const tomorrow = civilDate(next.time, tz).day !== civilDate(now, tz).day ? ` ${t(lang, 'home.tomorrow')}` : '';
+  $('next-in').innerHTML = `${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t(lang, 'home.in')} <b>${formatCountdown(now, next.time)}</b>`;
 
   const list = $('times');
   list.innerHTML = '';
   for (const name of ORDER) {
     const li = document.createElement('li');
-    const t = day[name];
+    const time = day[name];
     li.className = name === 'sunrise' ? 'sunrise' : '';
     if (name !== 'sunrise') {
-      if (name === current.name && t.getTime() <= now.getTime()) li.classList.add('current');
-      else if (t.getTime() <= now.getTime()) li.classList.add('passed');
-    } else if (t.getTime() <= now.getTime()) li.classList.add('passed');
-    li.innerHTML = `<span>${PRAYER_LABELS[name]}</span><span class="time">${formatTime(t, tz, settings.hour12)}</span>`;
+      if (name === current.name && time.getTime() <= now.getTime()) li.classList.add('current');
+      else if (time.getTime() <= now.getTime()) li.classList.add('passed');
+    } else if (time.getTime() <= now.getTime()) li.classList.add('passed');
+    li.innerHTML = `<span>${prayerLabel(lang, name)}</span><span class="time">${formatTime(time, tz, settings.hour12)}</span>`;
     list.appendChild(li);
   }
 
@@ -56,11 +61,11 @@ async function render(): Promise<void> {
   const notice = $('notice');
   if (!extras.configured) {
     notice.hidden = false;
-    notice.innerHTML = `Location guessed from your time zone. <a href="#" id="fix-location">Set your city</a> for exact times.`;
+    notice.innerHTML = `${t(lang, 'home.locationGuessed')} <a href="#" id="fix-location">${t(lang, 'home.setCity')}</a> ${t(lang, 'home.forExactTimes')}`;
     notice.querySelector('#fix-location')?.addEventListener('click', openOptions);
   } else if (!settings.notifications.enabled) {
     notice.hidden = false;
-    notice.textContent = 'Reminders are turned off.';
+    notice.textContent = t(lang, 'home.remindersOff');
   } else {
     notice.hidden = true;
   }

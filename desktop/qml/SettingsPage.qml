@@ -15,8 +15,10 @@ Page {
         ["NorthAmerica", "ISNA (North America)"], ["Kuwait", "Kuwait"], ["Qatar", "Qatar"], ["Singapore", "Singapore"],
         ["Tehran", "Tehran"], ["Turkey", "Diyanet (Turkey)"]]
     readonly property var rules: [
-        ["recommended", "Automatic"], ["middleOfTheNight", "Middle of the night"],
-        ["seventhOfTheNight", "One-seventh of the night"], ["twilightAngle", "Twilight angle"]]
+        ["recommended", Tr.t("rule.recommended", Tr.rev).split(" (")[0]], ["middleOfTheNight", Tr.t("rule.middleOfTheNight", Tr.rev)],
+        ["seventhOfTheNight", Tr.t("rule.seventhOfTheNight", Tr.rev)], ["twilightAngle", Tr.t("rule.twilightAngle", Tr.rev)]]
+    readonly property var languages: [["auto", Tr.t("settings.languageAuto", Tr.rev)], ["en", "English"], ["ar", "العربية"], ["de", "Deutsch"]]
+    function minutesLabel(n) { return n === 0 ? Tr.t("settings.off", Tr.rev) : Tr.f("settings.minutes", { n: n }, Tr.rev) }
     readonly property var prayers: ["fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"]
 
     function indexOfKey(list, key) { for (let i = 0; i < list.length; i++) if (list[i][0] === key) return i; return 0 }
@@ -26,8 +28,8 @@ Page {
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 8
-            ToolButton { text: "‹"; font.pixelSize: 24; onClicked: page.back() }
-            Label { text: "Settings"; font.pixelSize: 17; font.weight: Font.DemiBold; color: Theme.fg; Layout.fillWidth: true }
+            ToolButton { text: Tr.rtl ? "›" : "‹"; font.pixelSize: 24; onClicked: page.back() }
+            Label { text: Tr.t("settings.title", Tr.rev); font.pixelSize: 17; font.weight: Font.DemiBold; color: Theme.fg; Layout.fillWidth: true }
         }
     }
 
@@ -46,14 +48,14 @@ Page {
 
             // ---- Location --------------------------------------------------
             SettingsCard {
-                title: "Location"
+                title: Tr.t("settings.location", Tr.rev)
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 6
                     TextField {
                         id: cityField
                         Layout.fillWidth: true
-                        placeholderText: "Search a city…"
+                        placeholderText: Tr.t("settings.searchCity", Tr.rev)
                         text: settingsObj.label
                         onTextEdited: results.model = Cities.search(text, 6)
                         onActiveFocusChanged: if (!activeFocus) results.model = []
@@ -90,19 +92,19 @@ Page {
                     RowLayout {
                         spacing: 8
                         Layout.fillWidth: true
-                        LabeledField { label: "Latitude"; text: settingsObj.latitude.toFixed(2); onCommitted: (v) => settingsObj.latitude = Number(v) }
-                        LabeledField { label: "Longitude"; text: settingsObj.longitude.toFixed(2); onCommitted: (v) => settingsObj.longitude = Number(v) }
-                        LabeledField { label: "Time zone"; text: settingsObj.timezone; onCommitted: (v) => settingsObj.timezone = v; Layout.preferredWidth: 140 }
+                        LabeledField { label: Tr.t("settings.latitude", Tr.rev); text: settingsObj.latitude.toFixed(2); onCommitted: (v) => settingsObj.latitude = Number(v) }
+                        LabeledField { label: Tr.t("settings.longitude", Tr.rev); text: settingsObj.longitude.toFixed(2); onCommitted: (v) => settingsObj.longitude = Number(v) }
+                        LabeledField { label: Tr.t("settings.timezone", Tr.rev); text: settingsObj.timezone; onCommitted: (v) => settingsObj.timezone = v; Layout.preferredWidth: 140 }
                     }
                 }
             }
 
             // ---- Calculation -----------------------------------------------
             SettingsCard {
-                title: "Calculation"
+                title: Tr.t("settings.calculation", Tr.rev)
                 SettingRow {
-                    label: "Method"
-                    hint: "Use what your local mosque or country authority uses."
+                    label: Tr.t("settings.method", Tr.rev)
+                    hint: Tr.t("settings.methodHint", Tr.rev)
                     stacked: true
                     ComboBox {
                         model: page.methods.map(m => m[1])
@@ -116,11 +118,11 @@ Page {
                     Layout.fillWidth: true
                     spacing: 12
                     SettingRow {
-                        label: "Asr"
-                        hint: "Hanafi is later."
+                        label: Tr.t("settings.asr", Tr.rev)
+                        hint: Tr.t("settings.asrHint", Tr.rev)
                         stacked: true
                         ComboBox {
-                            model: ["Standard", "Hanafi"]
+                            model: [Tr.t("settings.asrStandard", Tr.rev).split(" (")[0], Tr.t("settings.asrHanafi", Tr.rev)]
                             currentIndex: settingsObj.madhab === "hanafi" ? 1 : 0
                             onActivated: (i) => settingsObj.madhab = i === 1 ? "hanafi" : "shafi"
                             font.pixelSize: 13
@@ -128,8 +130,8 @@ Page {
                         }
                     }
                     SettingRow {
-                        label: "High-latitude rule"
-                        hint: "Summer, north of ~48°."
+                        label: Tr.t("settings.highLatRule", Tr.rev)
+                        hint: Tr.t("settings.highLatHint", Tr.rev)
                         stacked: true
                         ComboBox {
                             model: page.rules.map(r => r[1])
@@ -143,8 +145,8 @@ Page {
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 4
-                    Label { text: "Adjustments (minutes)"; color: Theme.fg }
-                    Label { text: "Shift individual prayers to match a local timetable."; color: Theme.muted; font.pixelSize: 12 }
+                    Label { text: Tr.t("settings.adjustments", Tr.rev); color: Theme.fg }
+                    Label { text: Tr.t("settings.adjustmentsHint", Tr.rev); color: Theme.muted; font.pixelSize: 12; wrapMode: Text.WordWrap; Layout.fillWidth: true }
                     GridLayout {
                         columns: 3
                         columnSpacing: 12
@@ -154,7 +156,7 @@ Page {
                             model: page.prayers
                             delegate: RowLayout {
                                 required property string modelData
-                                Label { text: modelData.charAt(0).toUpperCase() + modelData.slice(1); color: Theme.fg; Layout.fillWidth: true }
+                                Label { text: Tr.t("prayer." + modelData, Tr.rev); color: Theme.fg; Layout.fillWidth: true }
                                 TextField {
                                     text: settingsObj.adjustment(modelData)
                                     validator: IntValidator { bottom: -60; top: 60 }
@@ -170,7 +172,7 @@ Page {
                 ColumnLayout {
                     Layout.fillWidth: true
                     spacing: 4
-                    Label { text: "Today with these settings"; color: Theme.muted; font.pixelSize: 12 }
+                    Label { text: Tr.t("settings.preview", Tr.rev); color: Theme.muted; font.pixelSize: 12 }
                     RowLayout {
                         Layout.fillWidth: true
                         Repeater {
@@ -189,42 +191,52 @@ Page {
 
             // ---- Reminders -------------------------------------------------
             SettingsCard {
-                title: "Reminders"
-                SettingRow { label: "Notify at prayer times"; Switch { checked: settingsObj.notificationsEnabled; onToggled: settingsObj.notificationsEnabled = checked } }
+                title: Tr.t("settings.reminders", Tr.rev)
+                SettingRow { label: Tr.t("settings.notify", Tr.rev); Switch { checked: settingsObj.notificationsEnabled; onToggled: settingsObj.notificationsEnabled = checked } }
                 SettingRow {
-                    label: "Heads-up before each prayer"
+                    label: Tr.t("settings.preReminder", Tr.rev)
                     ComboBox {
                         readonly property var values: [0, 5, 10, 15, 20, 30]
-                        model: ["Off", "5 min", "10 min", "15 min", "20 min", "30 min"]
+                        model: values.map(v => page.minutesLabel(v))
                         currentIndex: Math.max(0, values.indexOf(settingsObj.preReminderMinutes))
                         onActivated: (i) => settingsObj.preReminderMinutes = values[i]
                         font.pixelSize: 13
                         Layout.preferredWidth: 110
                     }
                 }
-                SettingRow { label: "Play a short chime"; hint: "A quiet tone, not an adhan recording."; Switch { checked: settingsObj.sound; onToggled: settingsObj.sound = checked } }
+                SettingRow { label: Tr.t("settings.chime", Tr.rev); hint: Tr.t("settings.chimeHint", Tr.rev); Switch { checked: settingsObj.sound; onToggled: settingsObj.sound = checked } }
                 SettingRow {
-                    label: "Snooze length"
+                    label: Tr.t("settings.snooze", Tr.rev)
                     ComboBox {
                         readonly property var values: [5, 10, 15, 20, 30]
-                        model: ["5 min", "10 min", "15 min", "20 min", "30 min"]
+                        model: values.map(v => page.minutesLabel(v))
                         currentIndex: Math.max(0, values.indexOf(settingsObj.snoozeMinutes))
                         onActivated: (i) => settingsObj.snoozeMinutes = values[i]
                         font.pixelSize: 13
                         Layout.preferredWidth: 110
                     }
                 }
-                SettingRow { label: "12-hour clock"; Switch { checked: settingsObj.hour12; onToggled: settingsObj.hour12 = checked } }
-                Button { text: "Send a test notification"; flat: true; font.capitalization: Font.MixedCase; onClicked: engine.testNotification() }
+                SettingRow { label: Tr.t("settings.hour12", Tr.rev); Switch { checked: settingsObj.hour12; onToggled: settingsObj.hour12 = checked } }
+                Button { text: Tr.t("settings.testNotification", Tr.rev); flat: true; font.capitalization: Font.MixedCase; onClicked: engine.testNotification() }
             }
 
             // ---- App -------------------------------------------------------
             SettingsCard {
-                title: "App"
-                SettingRow { label: "Start with the system"; hint: "Runs quietly in the tray at login."; Switch { checked: settingsObj.autostart; onToggled: settingsObj.autostart = checked } }
-                SettingRow { label: "Start hidden in the tray"; Switch { checked: settingsObj.startHidden; onToggled: settingsObj.startHidden = checked } }
+                title: Tr.t("settings.app", Tr.rev)
+                SettingRow {
+                    label: Tr.t("settings.language", Tr.rev)
+                    ComboBox {
+                        model: page.languages.map(l => l[1])
+                        currentIndex: page.indexOfKey(page.languages, settingsObj.language)
+                        onActivated: (i) => settingsObj.language = page.languages[i][0]
+                        font.pixelSize: 13
+                        Layout.preferredWidth: 130
+                    }
+                }
+                SettingRow { label: Tr.t("settings.autostart", Tr.rev); hint: Tr.t("settings.autostartHint", Tr.rev); Switch { checked: settingsObj.autostart; onToggled: settingsObj.autostart = checked } }
+                SettingRow { label: Tr.t("settings.startHidden", Tr.rev); Switch { checked: settingsObj.startHidden; onToggled: settingsObj.startHidden = checked } }
                 Label {
-                    text: "Salat " + Qt.application.version + " · free and open source (MIT) · <a href='https://github.com/HatemSelim94/salat'>GitHub</a>"
+                    text: "Salat " + Qt.application.version + " · " + Tr.t("settings.foss", Tr.rev) + " · <a href='https://github.com/HatemSelim94/salat'>GitHub</a>"
                     color: Theme.muted; font.pixelSize: 12; linkColor: Theme.accent
                     onLinkActivated: (link) => Qt.openUrlExternally(link)
                 }

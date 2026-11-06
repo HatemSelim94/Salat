@@ -77,6 +77,8 @@ export interface Settings {
   };
   /** 12- or 24-hour clock in the UI. */
   hour12: boolean;
+  /** UI language; 'auto' follows the system / host application. */
+  language: 'auto' | 'en' | 'ar' | 'de';
 }
 
 export const METHODS: readonly { id: MethodId; label: string }[] = [
@@ -115,6 +117,7 @@ export function defaultSettings(location: Location): Settings {
       snoozeMinutes: 10,
     },
     hour12: false,
+    language: 'auto',
   };
 }
 
@@ -130,5 +133,6 @@ export function mergeSettings(stored: unknown, fallback: Settings): Settings {
     adjustments: { ...fallback.adjustments, ...(s.adjustments ?? {}) },
     notifications: { ...fallback.notifications, ...(s.notifications ?? {}) },
     hour12: s.hour12 ?? fallback.hour12,
+    language: s.language ?? fallback.language,
   };
 }

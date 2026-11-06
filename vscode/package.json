@@ -19,9 +19,9 @@
   "capabilities": { "untrustedWorkspaces": { "supported": true }, "virtualWorkspaces": true },
   "contributes": {
     "commands": [
-      { "command": "salat.showTimes", "title": "Salat: Show Today's Prayer Times" },
-      { "command": "salat.setCity", "title": "Salat: Set City" },
-      { "command": "salat.openSettings", "title": "Salat: Open Settings" }
+      { "command": "salat.showTimes", "title": "%cmd.showTimes%" },
+      { "command": "salat.setCity", "title": "%cmd.setCity%" },
+      { "command": "salat.openSettings", "title": "%cmd.openSettings%" }
     ],
     "configuration": {
       "title": "Salat",
@@ -108,6 +108,13 @@
           "type": "boolean",
           "default": true,
           "description": "Show the next prayer and countdown in the status bar."
+        },
+        "salat.language": {
+          "type": "string",
+          "default": "auto",
+          "enum": ["auto", "en", "ar", "de"],
+          "enumDescriptions": ["Follow VS Code's display language", "English", "العربية", "Deutsch"],
+          "description": "Language of the status bar, notifications and quick picks."
         },
         "salat.statusBar.compact": {
           "type": "boolean",

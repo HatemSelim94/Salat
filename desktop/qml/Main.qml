@@ -10,8 +10,10 @@ ApplicationWindow {
     height: 600
     minimumWidth: 320
     minimumHeight: 480
-    title: "Salat"
+    title: Tr.t("app.name", Tr.rev)
     color: Theme.bg
+    LayoutMirroring.enabled: Tr.rtl
+    LayoutMirroring.childrenInherit: true
 
     Material.theme: useDarkTheme ? Material.Dark : Material.Light
     Material.accent: Theme.accent

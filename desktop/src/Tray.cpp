@@ -6,17 +6,23 @@
 #include <QTimer>
 
 #include "Engine.h"
+#include "Tr.h"
 
 Tray::Tray(Engine* engine, QQuickWindow* window, QObject* parent)
     : QObject(parent), m_engine(engine), m_window(window), m_icon(QIcon(QStringLiteral(":/Salat/resources/icons/icon256.png"))) {
     m_nextAction = m_menu.addAction(engine->trayText());
     m_nextAction->setEnabled(false);
     m_menu.addSeparator();
-    m_menu.addAction(QStringLiteral("Open Salat"), this, &Tray::showWindow);
-    m_snoozeAction = m_menu.addAction(QStringLiteral("Snooze last reminder"), engine, &Engine::snooze);
+    m_openAction = m_menu.addAction(Tr::instance().t("tray.open"), this, &Tray::showWindow);
+    m_snoozeAction = m_menu.addAction(Tr::instance().t("tray.snoozeLast"), engine, &Engine::snooze);
     m_snoozeAction->setVisible(false);
     m_menu.addSeparator();
-    m_menu.addAction(QStringLiteral("Quit"), qApp, &QApplication::quit);
+    m_quitAction = m_menu.addAction(Tr::instance().t("tray.quit"), qApp, &QApplication::quit);
+    connect(&Tr::instance(), &Tr::changed, this, [this] {
+        m_openAction->setText(Tr::instance().t("tray.open"));
+        m_snoozeAction->setText(Tr::instance().t("tray.snoozeLast"));
+        m_quitAction->setText(Tr::instance().t("tray.quit"));
+    });
     m_icon.setContextMenu(&m_menu);
     m_icon.setToolTip(engine->trayText());
 

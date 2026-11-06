@@ -67,6 +67,7 @@ int Settings::snoozeMinutes() const { return m_s.value("notify/snoozeMinutes", 1
 bool Settings::hour12() const { return m_s.value("ui/hour12", false).toBool(); }
 bool Settings::autostart() const { return Platform::isAutostartEnabled(); }
 bool Settings::startHidden() const { return m_s.value("ui/startHidden", true).toBool(); }
+QString Settings::language() const { return m_s.value("ui/language", QStringLiteral("auto")).toString(); }
 
 void Settings::setLatitude(double v) { put(kLat, v); }
 void Settings::setLongitude(double v) { put(kLng, v); }
@@ -83,6 +84,7 @@ void Settings::setSound(bool v) { put(QStringLiteral("notify/sound"), v); }
 void Settings::setSnoozeMinutes(int v) { put(QStringLiteral("notify/snoozeMinutes"), qBound(1, v, 60)); }
 void Settings::setHour12(bool v) { put(QStringLiteral("ui/hour12"), v); }
 void Settings::setStartHidden(bool v) { put(QStringLiteral("ui/startHidden"), v); }
+void Settings::setLanguage(const QString& v) { put(QStringLiteral("ui/language"), v); }
 void Settings::setAutostart(bool v) {
     if (Platform::isAutostartEnabled() == v) return;
     Platform::setAutostartEnabled(v);
