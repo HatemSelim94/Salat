@@ -28,8 +28,10 @@ data class DayTimes(val date: LocalDate, val times: Map<Prayer, Long>) {
 
 data class PrayerEvent(val prayer: Prayer, val epoch: Long)
 
-/** A notification to schedule. [pre] = heads-up before the prayer. */
-data class ScheduledEvent(val pre: Boolean, val prayer: Prayer, val epoch: Long)
+/** A notification to schedule. [kind]: "prayer" | "pre" (heads-up) | "jumuah" (Friday reminder). */
+data class ScheduledEvent(val kind: String, val prayer: Prayer, val epoch: Long, val quiet: Boolean) {
+    val pre get() = kind == "pre"
+}
 
 /** Pure computation on top of [Adhan]; no Android dependencies beyond java.time. */
 class Engine(private val settings: Settings) {
@@ -42,10 +44,11 @@ class Engine(private val settings: Settings) {
             CivilDate(local.year, local.monthValue, local.dayOfMonth),
             settings.calculationParameters(),
         )
-        return DayTimes(local, mapOf(
+        val day = DayTimes(local, mapOf(
             Prayer.FAJR to t.fajr, Prayer.SUNRISE to t.sunrise, Prayer.DHUHR to t.dhuhr,
             Prayer.ASR to t.asr, Prayer.MAGHRIB to t.maghrib, Prayer.ISHA to t.isha,
         ))
+        return if (settings.timetable.containsKey(local.toString())) Features.applyTimetable(settings, day) else day
     }
 
     /** Next obligatory prayer strictly after [now] (wraps to tomorrow's Fajr). */
@@ -72,14 +75,17 @@ class Engine(private val settings: Settings) {
     fun upcomingEvents(now: Long, horizonSeconds: Long = 36 * 3600): List<ScheduledEvent> {
         if (!settings.notificationsEnabled) return emptyList()
         val pre = settings.preReminderMinutes
+        val jm = if (settings.jumuahEnabled) settings.jumuahReminderMinutes else 0
         val out = mutableListOf<ScheduledEvent>()
         for (off in 0..2) {
             val d = computeDay(now, off)
+            val friday = Features.isFriday(d.date)
             for (p in Prayer.OBLIGATORY) {
                 val t = d[p]
                 if (t <= now || t > now + horizonSeconds) continue
-                if (pre > 0 && t - pre * 60 > now) out += ScheduledEvent(true, p, t - pre * 60)
-                out += ScheduledEvent(false, p, t)
+                if (pre > 0 && t - pre * 60 > now) out += ScheduledEvent("pre", p, t - pre * 60, Features.inQuietHours(settings, t - pre * 60))
+                if (friday && p == Prayer.DHUHR && jm > 0 && t - jm * 60 > now) out += ScheduledEvent("jumuah", p, t - jm * 60, Features.inQuietHours(settings, t - jm * 60))
+                out += ScheduledEvent("prayer", p, t, Features.inQuietHours(settings, t))
             }
         }
         return out.sortedBy { it.epoch }
@@ -90,6 +96,13 @@ class Engine(private val settings: Settings) {
         val fmt = if (settings.hour12) DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH) else DateTimeFormatter.ofPattern("HH:mm")
         return dt.format(fmt)
     }
+
+    /** Always 24 h, Latin digits — for CSV export. */
+    fun formatTime24(epoch: Long): String = Instant.ofEpochSecond(epoch).atZone(zone).format(DateTimeFormatter.ofPattern("HH:mm"))
+
+    /** Display label for a prayer on a given day (Jumu'ah on Fridays). */
+    fun label(context: android.content.Context, prayer: Prayer, date: LocalDate): String =
+        if (prayer == Prayer.DHUHR && settings.jumuahEnabled && Features.isFriday(date)) context.getString(R.string.prayer_jumuah) else prayer.label(context)
 
     fun countdown(now: Long, target: Long): String {
         val total = Math.max(0L, Math.round((target - now) / 60.0))

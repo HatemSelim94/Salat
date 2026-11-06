@@ -79,6 +79,19 @@ export interface Settings {
   hour12: boolean;
   /** UI language; 'auto' follows the system / host application. */
   language: 'auto' | 'en' | 'ar' | 'de';
+  /** Minutes after the adhan time at which the congregation (iqamah) prays. 0/absent = not shown. */
+  iqamah: Partial<Record<PrayerName, number>>;
+  /** Friday: label Dhuhr as Jumu'ah, optional extra reminder N minutes before it (0 = off). */
+  jumuah: { enabled: boolean; reminderMinutes: number };
+  /** Ramadan view (Suhoor/Iftar countdown): auto = during the Hijri month of Ramadan. */
+  ramadan: 'auto' | 'on' | 'off';
+  /** Silent notifications (no sound) between from and to, local time "HH:MM". */
+  quietHours: { enabled: boolean; from: string; to: string };
+  /**
+   * Imported mosque timetable: ISO date → "HH:MM" per prayer in the location's zone.
+   * Dates present here override the astronomical calculation.
+   */
+  timetable: Record<string, Partial<Record<PrayerName, string>>>;
 }
 
 export const METHODS: readonly { id: MethodId; label: string }[] = [
@@ -118,6 +131,11 @@ export function defaultSettings(location: Location): Settings {
     },
     hour12: false,
     language: 'auto',
+    iqamah: {},
+    jumuah: { enabled: true, reminderMinutes: 0 },
+    ramadan: 'auto',
+    quietHours: { enabled: false, from: '22:00', to: '06:00' },
+    timetable: {},
   };
 }
 
@@ -134,5 +152,10 @@ export function mergeSettings(stored: unknown, fallback: Settings): Settings {
     notifications: { ...fallback.notifications, ...(s.notifications ?? {}) },
     hour12: s.hour12 ?? fallback.hour12,
     language: s.language ?? fallback.language,
+    iqamah: { ...fallback.iqamah, ...(s.iqamah ?? {}) },
+    jumuah: { ...fallback.jumuah, ...(s.jumuah ?? {}) },
+    ramadan: s.ramadan ?? fallback.ramadan,
+    quietHours: { ...fallback.quietHours, ...(s.quietHours ?? {}) },
+    timetable: s.timetable ?? fallback.timetable,
   };
 }

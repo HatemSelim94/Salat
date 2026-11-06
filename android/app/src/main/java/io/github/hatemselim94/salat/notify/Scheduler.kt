@@ -21,7 +21,8 @@ object Scheduler {
     const val ACTION_FIRE = "io.github.hatemselim94.salat.FIRE"
     const val ACTION_SNOOZE = "io.github.hatemselim94.salat.SNOOZE"
     const val EXTRA_PRAYER = "prayer"
-    const val EXTRA_PRE = "pre"
+    const val EXTRA_KIND = "kind"
+    const val EXTRA_QUIET = "quiet"
     const val EXTRA_EPOCH = "epoch"
     /** Events older than this at fire time are considered missed (device was off) and skipped. */
     const val STALE_SECONDS = 15 * 60
@@ -38,7 +39,8 @@ object Scheduler {
         val intent = Intent(context, AlarmReceiver::class.java)
             .setAction(ACTION_FIRE)
             .putExtra(EXTRA_PRAYER, next.prayer.key)
-            .putExtra(EXTRA_PRE, next.pre)
+            .putExtra(EXTRA_KIND, next.kind)
+            .putExtra(EXTRA_QUIET, next.quiet)
             .putExtra(EXTRA_EPOCH, next.epoch)
         val fire = pendingIntent(context, REQUEST_NEXT, intent)
         setExact(am, next.epoch * 1000, fire)

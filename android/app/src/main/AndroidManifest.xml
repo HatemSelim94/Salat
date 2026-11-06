@@ -33,6 +33,15 @@
 
         <receiver android:name=".notify.AlarmReceiver" android:exported="false" />
 
+        <!-- Lets the share sheet read the exported CSV from the cache directory. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
+
         <receiver android:name=".notify.BootReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

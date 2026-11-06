@@ -13,18 +13,19 @@ class AlarmReceiver : BroadcastReceiver() {
         val prayer = Prayer.entries.firstOrNull { it.key == intent.getStringExtra(Scheduler.EXTRA_PRAYER) } ?: Prayer.DHUHR
         when (intent.action) {
             Scheduler.ACTION_FIRE -> {
-                val pre = intent.getBooleanExtra(Scheduler.EXTRA_PRE, false)
+                val kind = intent.getStringExtra(Scheduler.EXTRA_KIND) ?: "prayer"
+                val quiet = intent.getBooleanExtra(Scheduler.EXTRA_QUIET, false)
                 val epoch = intent.getLongExtra(Scheduler.EXTRA_EPOCH, 0L)
                 val now = System.currentTimeMillis() / 1000
                 if (now - epoch <= Scheduler.STALE_SECONDS) {
                     val settings = Settings(context)
-                    Notifications.show(context, settings, Engine(settings), prayer, pre, epoch)
+                    Notifications.show(context, settings, Engine(settings), prayer, kind, epoch, quiet = quiet)
                 }
                 Scheduler.reschedule(context)
             }
             Scheduler.ACTION_SNOOZE -> {
                 val settings = Settings(context)
-                Notifications.show(context, settings, Engine(settings), prayer, pre = false, epoch = 0L, snoozed = true)
+                Notifications.show(context, settings, Engine(settings), prayer, "prayer", 0L, snoozed = true)
             }
             Notifications.ACTION_SNOOZE_CLICKED -> {
                 Notifications.cancel(context)

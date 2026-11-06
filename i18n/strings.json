@@ -35,6 +35,21 @@
     "ar": "العشاء",
     "de": "Isha"
   },
+  "prayer.jumuah": {
+    "en": "Jumu'ah",
+    "ar": "الجمعة",
+    "de": "Jumu'a"
+  },
+  "prayer.suhoor": {
+    "en": "Suhoor ends",
+    "ar": "نهاية السحور",
+    "de": "Suhur endet"
+  },
+  "prayer.iftar": {
+    "en": "Iftar",
+    "ar": "الإفطار",
+    "de": "Iftar"
+  },
   "home.nextPrayer": {
     "en": "Next prayer",
     "ar": "الصلاة القادمة",
@@ -104,6 +119,61 @@
     "en": "Allow exact alarms for Salat so reminders are on the minute.",
     "ar": "اسمح بالمنبهات الدقيقة لتطبيق صلاة لتصل التذكيرات في الدقيقة نفسها.",
     "de": "Erlaube exakte Alarme für Salat, damit Erinnerungen minutengenau sind."
+  },
+  "home.ramadan": {
+    "en": "Ramadan",
+    "ar": "رمضان",
+    "de": "Ramadan"
+  },
+  "home.iqamah": {
+    "en": "Iqamah",
+    "ar": "الإقامة",
+    "de": "Iqama"
+  },
+  "home.qibla": {
+    "en": "Qibla",
+    "ar": "القبلة",
+    "de": "Qibla"
+  },
+  "home.qiblaBearing": {
+    "en": "{deg}° from north",
+    "ar": "{deg}° من الشمال",
+    "de": "{deg}° von Norden"
+  },
+  "home.qiblaDistance": {
+    "en": "{km} km to the Kaaba",
+    "ar": "{km} كم إلى الكعبة",
+    "de": "{km} km bis zur Kaaba"
+  },
+  "home.qiblaCompassHint": {
+    "en": "Hold the phone flat and away from metal. The arrow points to the Qibla.",
+    "ar": "أمسك الهاتف مستويًا وبعيدًا عن المعادن. السهم يشير إلى القبلة.",
+    "de": "Telefon flach und fern von Metall halten. Der Pfeil zeigt zur Qibla."
+  },
+  "home.qiblaNoCompass": {
+    "en": "This device has no compass; use the bearing with a map.",
+    "ar": "هذا الجهاز بلا بوصلة؛ استخدم الاتجاه مع خريطة.",
+    "de": "Dieses Gerät hat keinen Kompass; nutze die Gradzahl mit einer Karte."
+  },
+  "home.month": {
+    "en": "Month",
+    "ar": "الشهر",
+    "de": "Monat"
+  },
+  "month.title": {
+    "en": "Monthly timetable",
+    "ar": "جدول الشهر",
+    "de": "Monatsplan"
+  },
+  "month.export": {
+    "en": "Export CSV",
+    "ar": "تصدير CSV",
+    "de": "CSV exportieren"
+  },
+  "month.today": {
+    "en": "Today",
+    "ar": "اليوم",
+    "de": "Heute"
   },
   "settings.title": {
     "en": "Settings",
@@ -330,6 +400,96 @@
     "ar": "مجاني للاستخدام · © حاتم سليم",
     "de": "kostenlos nutzbar · © Hatem Selim"
   },
+  "month.imported": {
+    "en": "from imported timetable",
+    "ar": "من الجدول المستورد",
+    "de": "aus importiertem Plan"
+  },
+  "settings.iqamah": {
+    "en": "Iqamah (minutes after adhan)",
+    "ar": "الإقامة (دقائق بعد الأذان)",
+    "de": "Iqama (Minuten nach dem Adhan)"
+  },
+  "settings.iqamahHint": {
+    "en": "Shown next to each prayer when set. 0 hides it.",
+    "ar": "تُعرض بجانب كل صلاة عند ضبطها. ٠ يخفيها.",
+    "de": "Wird neben jedem Gebet angezeigt. 0 blendet sie aus."
+  },
+  "settings.jumuah": {
+    "en": "Show Jumu'ah on Fridays",
+    "ar": "إظهار الجمعة أيام الجمعة",
+    "de": "Freitags Jumu'a anzeigen"
+  },
+  "settings.jumuahReminder": {
+    "en": "Jumu'ah reminder before Dhuhr",
+    "ar": "تذكير الجمعة قبل الظهر",
+    "de": "Jumu'a-Erinnerung vor Dhuhr"
+  },
+  "settings.ramadan": {
+    "en": "Ramadan view",
+    "ar": "عرض رمضان",
+    "de": "Ramadan-Ansicht"
+  },
+  "settings.ramadanAuto": {
+    "en": "Automatic (Hijri calendar)",
+    "ar": "تلقائي (التقويم الهجري)",
+    "de": "Automatisch (Hidschri-Kalender)"
+  },
+  "settings.on": {
+    "en": "On",
+    "ar": "تشغيل",
+    "de": "An"
+  },
+  "settings.quietHours": {
+    "en": "Quiet hours",
+    "ar": "ساعات الهدوء",
+    "de": "Ruhezeiten"
+  },
+  "settings.quietHoursHint": {
+    "en": "Reminders in this window are silent (no sound).",
+    "ar": "التذكيرات في هذه الفترة صامتة (بلا صوت).",
+    "de": "Erinnerungen in diesem Zeitraum sind stumm (kein Ton)."
+  },
+  "settings.from": {
+    "en": "From",
+    "ar": "من",
+    "de": "Von"
+  },
+  "settings.to": {
+    "en": "To",
+    "ar": "إلى",
+    "de": "Bis"
+  },
+  "settings.timetable": {
+    "en": "Mosque timetable",
+    "ar": "جدول المسجد",
+    "de": "Moschee-Gebetskalender"
+  },
+  "settings.timetableHint": {
+    "en": "Import a CSV (date, fajr, sunrise, dhuhr, asr, maghrib, isha). Dates in the file replace the calculated times.",
+    "ar": "استورد ملف CSV (التاريخ، الفجر، الشروق، الظهر، العصر، المغرب، العشاء). التواريخ في الملف تحل محل الأوقات المحسوبة.",
+    "de": "CSV importieren (Datum, Fajr, Sonnenaufgang, Dhuhr, Asr, Maghrib, Isha). Daten in der Datei ersetzen die berechneten Zeiten."
+  },
+  "settings.timetableImport": {
+    "en": "Import CSV…",
+    "ar": "استيراد CSV…",
+    "de": "CSV importieren…"
+  },
+  "settings.timetableClear": {
+    "en": "Remove imported timetable",
+    "ar": "إزالة الجدول المستورد",
+    "de": "Importierten Plan entfernen"
+  },
+  "settings.timetableStatus": {
+    "en": "{days} days imported",
+    "ar": "تم استيراد {days} يومًا",
+    "de": "{days} Tage importiert"
+  },
+  "settings.timetableErrors": {
+    "en": "{n} rows could not be read",
+    "ar": "تعذّرت قراءة {n} صفوف",
+    "de": "{n} Zeilen konnten nicht gelesen werden"
+  },
   "rule.recommended": {
     "en": "Automatic (recommended for latitude)",
     "ar": "تلقائي (موصى به حسب خط العرض)",
@@ -389,6 +549,16 @@
     "en": "Snoozed — again in {n} min",
     "ar": "تم التأجيل — مرة أخرى بعد {n} د",
     "de": "Verschoben – erneut in {n} Min."
+  },
+  "notif.jumuahTitle": {
+    "en": "Jumu'ah in {n} min",
+    "ar": "الجمعة بعد {n} د",
+    "de": "Jumu'a in {n} Min."
+  },
+  "notif.jumuahBody": {
+    "en": "Jumu'ah prayer is at {time}.",
+    "ar": "صلاة الجمعة في {time}.",
+    "de": "Das Jumu'a-Gebet ist um {time}."
   },
   "notif.dismiss": {
     "en": "Dismiss",

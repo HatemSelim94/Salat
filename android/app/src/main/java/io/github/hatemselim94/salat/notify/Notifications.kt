@@ -55,23 +55,28 @@ object Notifications {
         })
     }
 
-    fun show(context: Context, settings: Settings, engine: Engine, prayer: Prayer, pre: Boolean, epoch: Long, snoozed: Boolean = false) {
+    fun show(context: Context, settings: Settings, engine: Engine, prayer: Prayer, kind: String, epoch: Long, snoozed: Boolean = false, quiet: Boolean = false) {
+        val pre = kind == "pre"
         if (Build.VERSION.SDK_INT >= 33 &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         ensureChannels(context)
 
-        val label = prayer.label(context)
+        val date = java.time.Instant.ofEpochSecond(if (epoch > 0) epoch else System.currentTimeMillis() / 1000)
+            .atZone(java.time.ZoneId.of(settings.timezone)).toLocalDate()
+        val label = engine.label(context, prayer, date)
         val pre_n = settings.preReminderMinutes.toString()
         val (title, text) = when {
+            kind == "jumuah" -> context.getString(R.string.notif_jumuahTitle, settings.jumuahReminderMinutes.toString()) to
+                context.getString(R.string.notif_jumuahBody, engine.formatTime(epoch + settings.jumuahReminderMinutes * 60))
             pre -> context.getString(R.string.notif_preTitle, label, pre_n) to
                 context.getString(R.string.notif_preBody, label, engine.formatTime(epoch + settings.preReminderMinutes * 60))
             snoozed -> context.getString(R.string.notif_snoozedTitle, label) to context.getString(R.string.notif_snoozedBody)
             else -> context.getString(R.string.notif_prayerTitle, label) to context.getString(R.string.notif_prayerBody, label, engine.formatTime(epoch))
         }
         val channel = when {
-            pre -> CHANNEL_PRE
+            pre || kind == "jumuah" -> CHANNEL_PRE
+            quiet || settings.soundMode == "silent" -> CHANNEL_PRAYER_SILENT
             settings.soundMode == "chime" -> CHANNEL_PRAYER_CHIME
-            settings.soundMode == "silent" -> CHANNEL_PRAYER_SILENT
             else -> CHANNEL_PRAYER_DEFAULT
         }
 
@@ -88,7 +93,7 @@ object Notifications {
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setPriority(if (pre) NotificationCompat.PRIORITY_DEFAULT else NotificationCompat.PRIORITY_HIGH)
             .setTimeoutAfter(60 * 60 * 1000L) // disappears after an hour on its own
-        if (!pre) {
+        if (!pre && kind != "jumuah") {
             val snooze = PendingIntent.getBroadcast(
                 context, 3,
                 Intent(context, AlarmReceiver::class.java).setAction(ACTION_SNOOZE_CLICKED).putExtra(Scheduler.EXTRA_PRAYER, prayer.key),

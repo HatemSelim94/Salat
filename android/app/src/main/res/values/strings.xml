@@ -8,6 +8,9 @@
     <string name="prayer_asr" translatable="true">Asr</string>
     <string name="prayer_maghrib" translatable="true">Maghrib</string>
     <string name="prayer_isha" translatable="true">Isha</string>
+    <string name="prayer_jumuah" translatable="true">Jumu\'ah</string>
+    <string name="prayer_suhoor" translatable="true">Suhoor ends</string>
+    <string name="prayer_iftar" translatable="true">Iftar</string>
     <string name="home_nextPrayer" translatable="true">Next prayer</string>
     <string name="home_in" translatable="true">in</string>
     <string name="home_tomorrow" translatable="true">tomorrow</string>
@@ -22,6 +25,17 @@
     <string name="home_setCityShort" translatable="true">Set city</string>
     <string name="home_batteryShort" translatable="true">Turn off battery optimisation for Salat so reminders arrive on time.</string>
     <string name="home_exactAlarmShort" translatable="true">Allow exact alarms for Salat so reminders are on the minute.</string>
+    <string name="home_ramadan" translatable="true">Ramadan</string>
+    <string name="home_iqamah" translatable="true">Iqamah</string>
+    <string name="home_qibla" translatable="true">Qibla</string>
+    <string name="home_qiblaBearing">%1$s° from north</string>
+    <string name="home_qiblaDistance">%1$s km to the Kaaba</string>
+    <string name="home_qiblaCompassHint" translatable="true">Hold the phone flat and away from metal. The arrow points to the Qibla.</string>
+    <string name="home_qiblaNoCompass" translatable="true">This device has no compass; use the bearing with a map.</string>
+    <string name="home_month" translatable="true">Month</string>
+    <string name="month_title" translatable="true">Monthly timetable</string>
+    <string name="month_export" translatable="true">Export CSV</string>
+    <string name="month_today" translatable="true">Today</string>
     <string name="settings_title" translatable="true">Settings</string>
     <string name="settings_back" translatable="true">Back</string>
     <string name="settings_lead" translatable="true">Everything is calculated on this device. Nothing is sent anywhere.</string>
@@ -67,6 +81,24 @@
     <string name="settings_startHidden" translatable="true">Start hidden in the tray</string>
     <string name="settings_saved" translatable="true">Saved</string>
     <string name="settings_foss" translatable="true">free to use · © Hatem Selim</string>
+    <string name="month_imported" translatable="true">from imported timetable</string>
+    <string name="settings_iqamah" translatable="true">Iqamah (minutes after adhan)</string>
+    <string name="settings_iqamahHint" translatable="true">Shown next to each prayer when set. 0 hides it.</string>
+    <string name="settings_jumuah" translatable="true">Show Jumu\'ah on Fridays</string>
+    <string name="settings_jumuahReminder" translatable="true">Jumu\'ah reminder before Dhuhr</string>
+    <string name="settings_ramadan" translatable="true">Ramadan view</string>
+    <string name="settings_ramadanAuto" translatable="true">Automatic (Hijri calendar)</string>
+    <string name="settings_on" translatable="true">On</string>
+    <string name="settings_quietHours" translatable="true">Quiet hours</string>
+    <string name="settings_quietHoursHint" translatable="true">Reminders in this window are silent (no sound).</string>
+    <string name="settings_from" translatable="true">From</string>
+    <string name="settings_to" translatable="true">To</string>
+    <string name="settings_timetable" translatable="true">Mosque timetable</string>
+    <string name="settings_timetableHint" translatable="true">Import a CSV (date, fajr, sunrise, dhuhr, asr, maghrib, isha). Dates in the file replace the calculated times.</string>
+    <string name="settings_timetableImport" translatable="true">Import CSV…</string>
+    <string name="settings_timetableClear" translatable="true">Remove imported timetable</string>
+    <string name="settings_timetableStatus">%1$s days imported</string>
+    <string name="settings_timetableErrors">%1$s rows could not be read</string>
     <string name="rule_recommended" translatable="true">Automatic (recommended for latitude)</string>
     <string name="rule_middleOfTheNight" translatable="true">Middle of the night</string>
     <string name="rule_seventhOfTheNight" translatable="true">One-seventh of the night</string>
@@ -79,6 +111,8 @@
     <string name="notif_snoozedBody" translatable="true">You asked to be reminded again.</string>
     <string name="notif_snooze">Snooze %1$s min</string>
     <string name="notif_snoozedToast">Snoozed — again in %1$s min</string>
+    <string name="notif_jumuahTitle">Jumu\'ah in %1$s min</string>
+    <string name="notif_jumuahBody">Jumu\'ah prayer is at %1$s.</string>
     <string name="notif_dismiss" translatable="true">Dismiss</string>
     <string name="notif_channelPrayer" translatable="true">Prayer times</string>
     <string name="notif_channelPrayerChime" translatable="true">Prayer times (with chime)</string>

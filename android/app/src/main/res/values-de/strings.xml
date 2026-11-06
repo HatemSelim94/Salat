@@ -8,6 +8,9 @@
     <string name="prayer_asr" translatable="true">Asr</string>
     <string name="prayer_maghrib" translatable="true">Maghrib</string>
     <string name="prayer_isha" translatable="true">Isha</string>
+    <string name="prayer_jumuah" translatable="true">Jumu\'a</string>
+    <string name="prayer_suhoor" translatable="true">Suhur endet</string>
+    <string name="prayer_iftar" translatable="true">Iftar</string>
     <string name="home_nextPrayer" translatable="true">Nächstes Gebet</string>
     <string name="home_in" translatable="true">in</string>
     <string name="home_tomorrow" translatable="true">morgen</string>
@@ -22,6 +25,17 @@
     <string name="home_setCityShort" translatable="true">Stadt wählen</string>
     <string name="home_batteryShort" translatable="true">Schalte die Akku-Optimierung für Salat aus, damit Erinnerungen pünktlich kommen.</string>
     <string name="home_exactAlarmShort" translatable="true">Erlaube exakte Alarme für Salat, damit Erinnerungen minutengenau sind.</string>
+    <string name="home_ramadan" translatable="true">Ramadan</string>
+    <string name="home_iqamah" translatable="true">Iqama</string>
+    <string name="home_qibla" translatable="true">Qibla</string>
+    <string name="home_qiblaBearing">%1$s° von Norden</string>
+    <string name="home_qiblaDistance">%1$s km bis zur Kaaba</string>
+    <string name="home_qiblaCompassHint" translatable="true">Telefon flach und fern von Metall halten. Der Pfeil zeigt zur Qibla.</string>
+    <string name="home_qiblaNoCompass" translatable="true">Dieses Gerät hat keinen Kompass; nutze die Gradzahl mit einer Karte.</string>
+    <string name="home_month" translatable="true">Monat</string>
+    <string name="month_title" translatable="true">Monatsplan</string>
+    <string name="month_export" translatable="true">CSV exportieren</string>
+    <string name="month_today" translatable="true">Heute</string>
     <string name="settings_title" translatable="true">Einstellungen</string>
     <string name="settings_back" translatable="true">Zurück</string>
     <string name="settings_lead" translatable="true">Alles wird auf diesem Gerät berechnet. Nichts wird irgendwohin gesendet.</string>
@@ -67,6 +81,24 @@
     <string name="settings_startHidden" translatable="true">Versteckt im Infobereich starten</string>
     <string name="settings_saved" translatable="true">Gespeichert</string>
     <string name="settings_foss" translatable="true">kostenlos nutzbar · © Hatem Selim</string>
+    <string name="month_imported" translatable="true">aus importiertem Plan</string>
+    <string name="settings_iqamah" translatable="true">Iqama (Minuten nach dem Adhan)</string>
+    <string name="settings_iqamahHint" translatable="true">Wird neben jedem Gebet angezeigt. 0 blendet sie aus.</string>
+    <string name="settings_jumuah" translatable="true">Freitags Jumu\'a anzeigen</string>
+    <string name="settings_jumuahReminder" translatable="true">Jumu\'a-Erinnerung vor Dhuhr</string>
+    <string name="settings_ramadan" translatable="true">Ramadan-Ansicht</string>
+    <string name="settings_ramadanAuto" translatable="true">Automatisch (Hidschri-Kalender)</string>
+    <string name="settings_on" translatable="true">An</string>
+    <string name="settings_quietHours" translatable="true">Ruhezeiten</string>
+    <string name="settings_quietHoursHint" translatable="true">Erinnerungen in diesem Zeitraum sind stumm (kein Ton).</string>
+    <string name="settings_from" translatable="true">Von</string>
+    <string name="settings_to" translatable="true">Bis</string>
+    <string name="settings_timetable" translatable="true">Moschee-Gebetskalender</string>
+    <string name="settings_timetableHint" translatable="true">CSV importieren (Datum, Fajr, Sonnenaufgang, Dhuhr, Asr, Maghrib, Isha). Daten in der Datei ersetzen die berechneten Zeiten.</string>
+    <string name="settings_timetableImport" translatable="true">CSV importieren…</string>
+    <string name="settings_timetableClear" translatable="true">Importierten Plan entfernen</string>
+    <string name="settings_timetableStatus">%1$s Tage importiert</string>
+    <string name="settings_timetableErrors">%1$s Zeilen konnten nicht gelesen werden</string>
     <string name="rule_recommended" translatable="true">Automatisch (empfohlen für den Breitengrad)</string>
     <string name="rule_middleOfTheNight" translatable="true">Mitte der Nacht</string>
     <string name="rule_seventhOfTheNight" translatable="true">Ein Siebtel der Nacht</string>
@@ -79,6 +111,8 @@
     <string name="notif_snoozedBody" translatable="true">Du wolltest noch einmal erinnert werden.</string>
     <string name="notif_snooze">%1$s Min. später</string>
     <string name="notif_snoozedToast">Verschoben – erneut in %1$s Min.</string>
+    <string name="notif_jumuahTitle">Jumu\'a in %1$s Min.</string>
+    <string name="notif_jumuahBody">Das Jumu\'a-Gebet ist um %1$s.</string>
     <string name="notif_dismiss" translatable="true">Schließen</string>
     <string name="notif_channelPrayer" translatable="true">Gebetszeiten</string>
     <string name="notif_channelPrayerChime" translatable="true">Gebetszeiten (mit Ton)</string>

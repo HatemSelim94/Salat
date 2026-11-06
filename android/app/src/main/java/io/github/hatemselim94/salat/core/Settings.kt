@@ -71,6 +71,43 @@ class Settings(context: Context) {
         get() = prefs.getBoolean("hour12", false)
         set(v) = prefs.edit().putBoolean("hour12", v).apply()
 
+    fun iqamah(prayer: String): Int = prefs.getInt("iqamah_$prayer", 0)
+    fun setIqamah(prayer: String, minutes: Int) = prefs.edit().putInt("iqamah_$prayer", minutes.coerceIn(0, 120)).apply()
+    var jumuahEnabled: Boolean
+        get() = prefs.getBoolean("jumuah_enabled", true)
+        set(v) = prefs.edit().putBoolean("jumuah_enabled", v).apply()
+    var jumuahReminderMinutes: Int
+        get() = prefs.getInt("jumuah_reminder", 0)
+        set(v) = prefs.edit().putInt("jumuah_reminder", v.coerceIn(0, 180)).apply()
+    /** "auto" | "on" | "off" */
+    var ramadan: String
+        get() = prefs.getString("ramadan", "auto")!!
+        set(v) = prefs.edit().putString("ramadan", v).apply()
+    var quietHoursEnabled: Boolean
+        get() = prefs.getBoolean("quiet_enabled", false)
+        set(v) = prefs.edit().putBoolean("quiet_enabled", v).apply()
+    var quietFrom: String
+        get() = prefs.getString("quiet_from", "22:00")!!
+        set(v) { if (Features.minutesOfDay(v) != null) prefs.edit().putString("quiet_from", v).apply() }
+    var quietTo: String
+        get() = prefs.getString("quiet_to", "06:00")!!
+        set(v) { if (Features.minutesOfDay(v) != null) prefs.edit().putString("quiet_to", v).apply() }
+
+    /** Imported mosque timetable (date → prayer → HH:MM), kept in a file; the prefs only hold a revision counter. */
+    private val timetableFile = java.io.File(appContext.filesDir, "timetable.json")
+    @Volatile private var timetableCache: Map<String, Map<String, String>>? = null
+    val timetable: Map<String, Map<String, String>>
+        get() = timetableCache ?: synchronized(this) {
+            timetableCache ?: (if (timetableFile.exists()) Features.timetableFromJson(timetableFile.readText()) else emptyMap()).also { timetableCache = it }
+        }
+    fun setTimetable(entries: Map<String, Map<String, String>>) {
+        synchronized(this) {
+            if (entries.isEmpty()) timetableFile.delete() else timetableFile.writeText(Features.timetableToJson(entries))
+            timetableCache = entries
+        }
+        prefs.edit().putInt("timetable_rev", prefs.getInt("timetable_rev", 0) + 1).apply() // notifies listeners
+    }
+
     fun setLocation(lat: Double, lng: Double, tz: String, label: String) {
         prefs.edit()
             .putLong(KEY_LAT, lat.toRawBits()).putLong(KEY_LNG, lng.toRawBits())

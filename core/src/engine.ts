@@ -8,6 +8,7 @@ import {
 } from 'adhan';
 import type { HighLatitudeRuleId, MethodId, PrayerName, Settings } from './settings.js';
 import { PRAYERS } from './settings.js';
+import { applyTimetable, inQuietHours, isFriday } from './features.js';
 
 export interface DayTimes {
   /** Civil date (in the location's time zone) these times belong to, as YYYY-MM-DD. */
@@ -26,10 +27,12 @@ export interface PrayerEvent {
 }
 
 export interface ScheduledEvent {
-  /** 'prayer' = the prayer time itself, 'pre' = heads-up before it. */
-  kind: 'prayer' | 'pre';
+  /** 'prayer' = the prayer time itself, 'pre' = heads-up before it, 'jumuah' = Friday reminder before Dhuhr. */
+  kind: 'prayer' | 'pre' | 'jumuah';
   name: PrayerName;
   at: Date;
+  /** True when the event falls inside quiet hours: notify without sound. */
+  quiet: boolean;
 }
 
 const METHOD_FACTORIES: Record<MethodId, () => CalculationParameters> = {
@@ -111,7 +114,7 @@ export function computeDay(settings: Settings, instant: Date, dayOffset = 0): Da
   const base = civilDate(instant, timezone);
   const dateForAdhan = new Date(base.year, base.month - 1, base.day + dayOffset, 12, 0, 0, 0);
   const pt = new PrayerTimes(coords, dateForAdhan, buildParams(settings, coords));
-  return {
+  const day: DayTimes = {
     date: isoDate(civilDate(pt.dhuhr, timezone)),
     fajr: pt.fajr,
     sunrise: pt.sunrise,
@@ -120,6 +123,7 @@ export function computeDay(settings: Settings, instant: Date, dayOffset = 0): Da
     maghrib: pt.maghrib,
     isha: pt.isha,
   };
+  return settings.timetable[day.date] ? applyTimetable(settings, day) : day;
 }
 
 /** The five obligatory prayers of a day as an ordered list. */
@@ -159,15 +163,22 @@ export function upcomingEvents(settings: Settings, now: Date, horizonMs = 36 * 3
   const out: ScheduledEvent[] = [];
   const end = now.getTime() + horizonMs;
   const pre = settings.notifications.preReminderMinutes;
+  const jm = settings.jumuah.enabled ? settings.jumuah.reminderMinutes : 0;
   for (const offset of [0, 1, 2]) {
-    for (const p of prayerList(computeDay(settings, now, offset))) {
+    const day = computeDay(settings, now, offset);
+    const friday = isFriday(day.dhuhr, settings.location.timezone);
+    for (const p of prayerList(day)) {
       const t = p.time.getTime();
       if (t <= now.getTime() || t > end) continue;
       if (pre > 0) {
         const preAt = t - pre * 60_000;
-        if (preAt > now.getTime()) out.push({ kind: 'pre', name: p.name, at: new Date(preAt) });
+        if (preAt > now.getTime()) out.push({ kind: 'pre', name: p.name, at: new Date(preAt), quiet: inQuietHours(settings, new Date(preAt)) });
       }
-      out.push({ kind: 'prayer', name: p.name, at: p.time });
+      if (friday && p.name === 'dhuhr' && jm > 0) {
+        const jAt = t - jm * 60_000;
+        if (jAt > now.getTime()) out.push({ kind: 'jumuah', name: 'dhuhr', at: new Date(jAt), quiet: inQuietHours(settings, new Date(jAt)) });
+      }
+      out.push({ kind: 'prayer', name: p.name, at: p.time, quiet: inQuietHours(settings, p.time) });
     }
   }
   out.sort((a, b) => a.at.getTime() - b.at.getTime());

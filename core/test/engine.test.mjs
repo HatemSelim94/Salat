@@ -153,3 +153,71 @@ test('DST transition days and a leap day compute cleanly', () => {
     assert.ok(dh === 12 || dh === 13, `${iso}: dhuhr hour ${dh}`);
   }
 });
+
+test('features: qibla, hijri/ramadan, jumuah, iqamah, quiet hours', async () => {
+  const f = await import('../dist/index.js');
+  const s = defaultSettings(STUTTGART);
+  // Stuttgart → Kaaba: roughly south-east, ~130°; Makkah itself is undefined-ish but finite.
+  const q = f.qiblaBearing(48.78, 9.18);
+  assert.ok(q > 125 && q < 140, `qibla ${q}`);
+  assert.ok(Math.abs(f.distanceToKaabaKm(48.78, 9.18) - 4150) < 150);
+  // 6 Nov 2026 is a Friday; 7 Nov is not.
+  assert.equal(f.isFriday(new Date('2026-11-06T12:00:00Z'), 'Europe/Berlin'), true);
+  assert.equal(f.isFriday(new Date('2026-11-07T12:00:00Z'), 'Europe/Berlin'), false);
+  assert.equal(f.prayerDisplayLabel('en', s, 'dhuhr', new Date('2026-11-06T12:00:00Z')), "Jumu'ah");
+  assert.equal(f.prayerDisplayLabel('en', s, 'dhuhr', new Date('2026-11-07T12:00:00Z')), 'Dhuhr');
+  // Hijri: 6 Nov 2026 ≈ 26 Jumada I 1448; Ramadan 1448 starts around 7 Feb 2027.
+  const h = f.hijriDate(new Date('2026-11-06T12:00:00Z'), 'Europe/Berlin');
+  assert.ok(h && h.year === 1448 && h.month === 5, JSON.stringify(h));
+  assert.equal(f.isRamadan(s, new Date('2026-11-06T12:00:00Z')), false);
+  assert.equal(f.isRamadan(s, new Date('2027-02-20T12:00:00Z')), true);
+  s.ramadan = 'on';
+  assert.equal(f.isRamadan(s, new Date('2026-11-06T12:00:00Z')), true);
+  // Iqamah
+  s.iqamah = { asr: 15 };
+  const day = computeDay(s, new Date('2026-11-06T12:00:00Z'));
+  assert.equal(f.iqamahTime(s, 'asr', day.asr).getTime() - day.asr.getTime(), 15 * 60_000);
+  assert.equal(f.iqamahTime(s, 'fajr', day.fajr), null);
+  // Quiet hours wrapping midnight (22:00–06:00 Berlin): 23:30 local is quiet, 12:00 is not.
+  s.quietHours = { enabled: true, from: '22:00', to: '06:00' };
+  assert.equal(f.inQuietHours(s, new Date('2026-11-06T22:30:00Z')), true);   // 23:30 CET
+  assert.equal(f.inQuietHours(s, new Date('2026-11-06T11:00:00Z')), false);  // 12:00 CET
+  assert.equal(f.inQuietHours(s, new Date('2026-11-06T04:30:00Z')), true);   // 05:30 CET
+  const evs = upcomingEvents(s, new Date('2026-11-06T00:30:00Z'), 24 * 3600_000);
+  assert.equal(evs.find((e) => e.name === 'fajr' && e.kind === 'prayer').quiet, true);
+  assert.equal(evs.find((e) => e.name === 'dhuhr' && e.kind === 'prayer').quiet, false);
+  // Jumu'ah reminder appears only on Friday
+  s.jumuah = { enabled: true, reminderMinutes: 45 };
+  const fri = upcomingEvents(s, new Date('2026-11-06T00:30:00Z'), 24 * 3600_000);
+  const j = fri.find((e) => e.kind === 'jumuah');
+  assert.ok(j && day.dhuhr.getTime() - j.at.getTime() === 45 * 60_000);
+  const sat = upcomingEvents(s, new Date('2026-11-07T00:30:00Z'), 24 * 3600_000);
+  assert.equal(sat.find((e) => e.kind === 'jumuah'), undefined);
+});
+
+test('features: month table, CSV export, timetable import + override', async () => {
+  const f = await import('../dist/index.js');
+  const s = defaultSettings(STUTTGART);
+  const rows = f.monthTable(s, 2026, 11);
+  assert.equal(rows.length, 30);
+  assert.equal(rows[0].date, '2026-11-01');
+  assert.equal(rows[5].friday, true);
+  const csv = f.monthCsv(s, rows);
+  assert.match(csv.split('\n')[0], /^date,fajr,sunrise,dhuhr,asr,maghrib,isha$/);
+  assert.match(csv.split("\n")[6], /^2026-11-06,05:30,07:18,12:08,14:30,16:55,18:37$/); // matches the Stuttgart sanity output
+  // Import: header in German, semicolon separated, DD.MM.YYYY dates
+  const imp = f.parseTimetableCsv('Datum;Fajr;Sonnenaufgang;Dhuhr;Asr;Maghrib;Isha\n06.11.2026;05:40;07:20;12:10;14:35;17:00;18:45\nbad;x;x;x;x;x;x\n');
+  assert.equal(imp.days, 1);
+  assert.equal(imp.errors.length, 1);
+  assert.deepEqual(imp.entries['2026-11-06'], { fajr: '05:40', sunrise: '07:20', dhuhr: '12:10', asr: '14:35', maghrib: '17:00', isha: '18:45' });
+  s.timetable = imp.entries;
+  const day = computeDay(s, new Date('2026-11-06T12:00:00Z'));
+  assert.equal(formatTime(day.fajr, 'Europe/Berlin', false), '05:40');
+  assert.equal(formatTime(day.isha, 'Europe/Berlin', false), '18:45');
+  // Unlisted date still calculated
+  const other = computeDay(s, new Date('2026-11-07T12:00:00Z'));
+  assert.notEqual(formatTime(other.fajr, 'Europe/Berlin', false), '05:40');
+  // DST-correct instant construction
+  assert.equal(formatTime(f.instantFor('2026-07-01', '05:00', 'Europe/Berlin'), 'Europe/Berlin', false), '05:00');
+  assert.equal(f.instantFor('2026-07-01', '05:00', 'Europe/Berlin').toISOString(), '2026-07-01T03:00:00.000Z');
+});

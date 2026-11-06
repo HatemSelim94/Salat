@@ -1,6 +1,7 @@
 package io.github.hatemselim94.salat.ui
 
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import android.os.Build
 import android.net.Uri
 import android.os.PowerManager
@@ -46,22 +47,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.hatemselim94.salat.core.Engine
+import io.github.hatemselim94.salat.core.Features
 import io.github.hatemselim94.salat.core.Prayer
 import io.github.hatemselim94.salat.core.Settings
 import io.github.hatemselim94.salat.notify.Scheduler
 import kotlinx.coroutines.delay
 
+enum class Screen { HOME, SETTINGS, MONTH, QIBLA }
+
 @Composable
 fun SalatApp(settings: Settings, engine: Engine, revision: Int) {
-    var showSettings by remember { mutableStateOf(false) }
+    var screen by remember { mutableStateOf(Screen.HOME) }
+    BackHandler(enabled = screen != Screen.HOME) { screen = Screen.HOME }
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        if (showSettings) SettingsScreen(settings = settings, engine = engine, revision = revision, onBack = { showSettings = false })
-        else HomeScreen(settings = settings, engine = engine, revision = revision, onOpenSettings = { showSettings = true })
+        when (screen) {
+            Screen.SETTINGS -> SettingsScreen(settings = settings, engine = engine, revision = revision, onBack = { screen = Screen.HOME })
+            Screen.MONTH -> MonthScreen(settings = settings, engine = engine, revision = revision, onBack = { screen = Screen.HOME })
+            Screen.QIBLA -> QiblaScreen(settings = settings, onBack = { screen = Screen.HOME })
+            Screen.HOME -> HomeScreen(settings = settings, engine = engine, revision = revision, onNavigate = { screen = it })
+        }
     }
 }
 
 @Composable
-fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings: () -> Unit) {
+fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onNavigate: (Screen) -> Unit) {
+    val onOpenSettings = { onNavigate(Screen.SETTINGS) }
     val context = LocalContext.current
     var now by remember { mutableLongStateOf(System.currentTimeMillis() / 1000) }
     LaunchedEffect(Unit) {
@@ -89,13 +99,38 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
         }
         Spacer(Modifier.height(14.dp))
 
+        val ramadan = remember(revision, day.date) { Features.isRamadan(settings, day.date) }
+        if (ramadan) {
+            // Suhoor ends at Fajr, Iftar at Maghrib: show whichever is next.
+            val suhoorNext = now < day[Prayer.FAJR]
+            val iftarNext = !suhoorNext && now < day[Prayer.MAGHRIB]
+            val (label, at) = when {
+                suhoorNext -> stringResource(R.string.prayer_suhoor) to day[Prayer.FAJR]
+                iftarNext -> stringResource(R.string.prayer_iftar) to day[Prayer.MAGHRIB]
+                else -> stringResource(R.string.prayer_suhoor) to engine.computeDay(now, 1)[Prayer.FAJR]
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.home_ramadan), fontSize = 11.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+                    Text(label, fontSize = 15.sp, color = fg, fontWeight = FontWeight.SemiBold)
+                }
+                Text(engine.formatTime(at) + " · " + engine.countdown(now, at), fontSize = 13.sp, color = fg)
+            }
+            Spacer(Modifier.height(10.dp))
+        }
+
         Column(
             modifier = Modifier.fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(14.dp))
                 .padding(16.dp),
         ) {
             Text(stringResource(R.string.home_nextPrayer), fontSize = 12.sp, color = muted)
-            Text(next.prayer.label(context), fontSize = 28.sp, fontWeight = FontWeight.SemiBold, color = fg)
+            Text(engine.label(context, next.prayer, engine.computeDay(next.epoch).date), fontSize = 28.sp, fontWeight = FontWeight.SemiBold, color = fg)
             val tomorrow = engine.computeDay(next.epoch).date != day.date
             Row {
                 Text(engine.formatTime(next.epoch) + (if (tomorrow) " " + stringResource(R.string.home_tomorrow) else "") + " · " + stringResource(R.string.home_in) + " ", fontSize = 13.sp, color = muted)
@@ -116,8 +151,13 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
                     .padding(horizontal = 10.dp, vertical = 11.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(p.label(context), color = color, fontSize = if (p.obligatory) 15.sp else 14.sp,
+                Text(engine.label(context, p, day.date), color = color, fontSize = if (p.obligatory) 15.sp else 14.sp,
                     fontWeight = if (isCurrent) FontWeight.SemiBold else FontWeight.Normal, modifier = Modifier.weight(1f))
+                val iq = settings.iqamah(p.key)
+                if (p.obligatory && iq > 0) {
+                    Text(stringResource(R.string.home_iqamah).take(3) + " " + engine.formatTime(t + iq * 60), color = muted, fontSize = 11.sp)
+                    Spacer(Modifier.width(10.dp))
+                }
                 if (isCurrent) {
                     Box(Modifier.size(7.dp).background(MaterialTheme.colorScheme.primary, CircleShape))
                     Spacer(Modifier.width(8.dp))
@@ -157,6 +197,8 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
         Spacer(Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(settings.method.label, fontSize = 12.sp, color = muted, modifier = Modifier.weight(1f))
+            TextButton(onClick = { onNavigate(Screen.MONTH) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.home_month)) }
+            TextButton(onClick = { onNavigate(Screen.QIBLA) }, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.home_qibla)) }
             TextButton(onClick = onOpenSettings, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.home_settings)) }
         }
     }

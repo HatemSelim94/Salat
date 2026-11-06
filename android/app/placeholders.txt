@@ -1,5 +1,9 @@
 Placeholder order for formatted strings (generated):
+home_qiblaBearing: deg
+home_qiblaDistance: km
 settings_minutes: n
+settings_timetableStatus: days
+settings_timetableErrors: n
 notif_prayerTitle: prayer
 notif_prayerBody: prayer, time
 notif_preTitle: prayer, n
@@ -7,4 +11,6 @@ notif_preBody: prayer, time
 notif_snoozedTitle: prayer
 notif_snooze: n
 notif_snoozedToast: n
+notif_jumuahTitle: n
+notif_jumuahBody: time
 vscode_locationSet: label

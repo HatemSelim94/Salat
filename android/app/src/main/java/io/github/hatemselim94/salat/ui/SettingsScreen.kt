@@ -41,7 +41,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalContext
+import io.github.hatemselim94.salat.core.Features
 import androidx.compose.ui.res.stringResource
 import io.github.hatemselim94.salat.R
 import androidx.compose.ui.text.font.FontWeight
@@ -150,9 +153,58 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
                 ) { settings.soundMode = it }
                 Picker(stringResource(R.string.settings_snooze), SNOOZE_VALUES.map { it to minutes(it) }, settings.snoozeMinutes) { settings.snoozeMinutes = it }
                 ToggleRow(stringResource(R.string.settings_hour12), settings.hour12) { settings.hour12 = it }
-                TextButton(onClick = { Notifications.show(context, settings, engine, Prayer.DHUHR, pre = false, epoch = System.currentTimeMillis() / 1000) }) {
+                TextButton(onClick = { Notifications.show(context, settings, engine, Prayer.DHUHR, "prayer", System.currentTimeMillis() / 1000) }) {
                     Text(stringResource(R.string.settings_testNotification))
                 }
+            }
+
+            Card(stringResource(R.string.settings_iqamah)) {
+                Text(stringResource(R.string.settings_iqamahHint), color = muted, fontSize = 12.sp)
+                for (rowPrayers in Prayer.OBLIGATORY.chunked(3)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        for (p in rowPrayers) {
+                            NumberField(p.label(context), settings.iqamah(p.key).toString(), Modifier.weight(1f)) { v -> v.toIntOrNull()?.let { settings.setIqamah(p.key, it) } }
+                        }
+                    }
+                }
+                ToggleRow(stringResource(R.string.settings_jumuah), settings.jumuahEnabled) { settings.jumuahEnabled = it }
+                Picker(stringResource(R.string.settings_jumuahReminder), listOf(0, 15, 30, 45, 60, 90).map { it to minutes(it) }, settings.jumuahReminderMinutes) { settings.jumuahReminderMinutes = it }
+                Picker(
+                    stringResource(R.string.settings_ramadan),
+                    listOf("auto" to stringResource(R.string.settings_ramadanAuto), "on" to stringResource(R.string.settings_on), "off" to stringResource(R.string.settings_off)),
+                    settings.ramadan,
+                ) { settings.ramadan = it }
+            }
+
+            Card(stringResource(R.string.settings_quietHours)) {
+                ToggleRow(stringResource(R.string.settings_quietHours), settings.quietHoursEnabled, hint = stringResource(R.string.settings_quietHoursHint)) { settings.quietHoursEnabled = it }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    NumberField(stringResource(R.string.settings_from), settings.quietFrom, Modifier.weight(1f), numeric = false) { settings.quietFrom = it }
+                    NumberField(stringResource(R.string.settings_to), settings.quietTo, Modifier.weight(1f), numeric = false) { settings.quietTo = it }
+                }
+            }
+
+            Card(stringResource(R.string.settings_timetable)) {
+                Text(stringResource(R.string.settings_timetableHint), color = muted, fontSize = 12.sp)
+                var importMsg by remember { mutableStateOf("") }
+                val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                    if (uri == null) return@rememberLauncherForActivityResult
+                    val text = runCatching { context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText() }.getOrNull() ?: ""
+                    val result = Features.parseTimetableCsv(text)
+                    if (result.days > 0) settings.setTimetable(settings.timetable + result.entries)
+                    importMsg = context.getString(R.string.settings_timetableStatus, result.days.toString()) +
+                        if (result.errors.isNotEmpty()) " · " + context.getString(R.string.settings_timetableErrors, result.errors.size.toString()) else ""
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    TextButton(onClick = { picker.launch(arrayOf("text/*", "text/csv", "text/comma-separated-values", "application/csv", "application/vnd.ms-excel", "*/*")) }) {
+                        Text(stringResource(R.string.settings_timetableImport))
+                    }
+                    if (settings.timetable.isNotEmpty()) {
+                        TextButton(onClick = { settings.setTimetable(emptyMap()); importMsg = "" }) { Text(stringResource(R.string.settings_timetableClear)) }
+                    }
+                }
+                val status = if (importMsg.isNotEmpty()) importMsg else if (settings.timetable.isNotEmpty()) stringResource(R.string.settings_timetableStatus, settings.timetable.size.toString()) else ""
+                if (status.isNotEmpty()) Text(status, color = muted, fontSize = 12.sp)
             }
 
             Text("Salat · " + stringResource(R.string.settings_foss) + " · github.com/HatemSelim94/salat", color = muted, fontSize = 12.sp, modifier = Modifier.padding(bottom = 24.dp))
@@ -210,14 +262,14 @@ private fun <T> Picker(label: String, options: List<Pair<T, String>>, selected: 
 
 /** Edits locally and commits when focus leaves, so typing "48." is not reset mid-way by a recomposition. */
 @Composable
-private fun NumberField(label: String, initial: String, modifier: Modifier = Modifier, onCommit: (String) -> Unit) {
+private fun NumberField(label: String, initial: String, modifier: Modifier = Modifier, numeric: Boolean = true, onCommit: (String) -> Unit) {
     var text by remember { mutableStateOf(initial) }
     OutlinedTextField(
         value = text,
         onValueChange = { text = it },
         label = { Text(label) },
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        keyboardOptions = KeyboardOptions(keyboardType = if (numeric) KeyboardType.Number else KeyboardType.Text),
         modifier = modifier.onFocusChanged { if (!it.isFocused && text != initial) onCommit(text) },
     )
 }
