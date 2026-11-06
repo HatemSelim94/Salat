@@ -43,6 +43,9 @@ qt_add_qml_module(salat
         qml/SettingRow.qml
         qml/LabeledField.qml
         qml/Theme.qml
+        qml/PrayerGlyph.qml
+        qml/NavGlyph.qml
+        qml/DayProgress.qml
     SOURCES
         src/Cities.h src/Cities.cpp
     RESOURCES

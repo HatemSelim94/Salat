@@ -153,6 +153,19 @@ void Engine::rebuildToday() {
         m_today.push_back(row);
     }
 
+    // Period of the day and progress along it (Fajr → next Fajr).
+    m_period = now < today.fajr ? "night" : now < today.sunrise ? "dawn" : now < today.dhuhr ? "morning"
+             : now < today.asr ? "day" : now < today.maghrib ? "afternoon" : now < today.isha ? "dusk" : "night";
+    const qint64 nextFajr = computeDay(now, 1).fajr;
+    const double span = std::max<qint64>(1, nextFajr - today.fajr);
+    m_dayProgress = std::clamp((now - today.fajr) / span, 0.0, 1.0);
+    m_dayDots.clear();
+    for (Prayer p : kObligatory) {
+        const qint64 t = timeOf(today, p);
+        QVariantMap dot; dot["frac"] = std::clamp((t - today.fajr) / span, 0.0, 1.0); dot["passed"] = t <= now;
+        m_dayDots.push_back(dot);
+    }
+
     // Next obligatory prayer strictly after now (wraps to tomorrow's Fajr).
     m_nextKey.clear();
     for (int off = 0; off < 3 && m_nextKey.isEmpty(); ++off) {

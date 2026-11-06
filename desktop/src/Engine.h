@@ -34,6 +34,11 @@ class Engine : public QObject {
     Q_PROPERTY(QString ramadanCountdown READ ramadanCountdown NOTIFY updated)
     Q_PROPERTY(double qiblaBearing READ qiblaBearing NOTIFY updated)
     Q_PROPERTY(double qiblaDistanceKm READ qiblaDistanceKm NOTIFY updated)
+    /// "night"|"dawn"|"morning"|"day"|"afternoon"|"dusk" — colours the next-prayer card.
+    Q_PROPERTY(QString period READ period NOTIFY updated)
+    /// 0..1 from today's Fajr to tomorrow's Fajr; dayDots are the five obligatory prayers on that scale.
+    Q_PROPERTY(double dayProgress READ dayProgress NOTIFY updated)
+    Q_PROPERTY(QVariantList dayDots READ dayDots NOTIFY updated)
 
 public:
     enum class Prayer { Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha };
@@ -51,6 +56,9 @@ public:
     explicit Engine(Settings* settings, QObject* parent = nullptr);
 
     QVariantList today() const { return m_today; }
+    QString period() const { return m_period; }
+    double dayProgress() const { return m_dayProgress; }
+    QVariantList dayDots() const { return m_dayDots; }
     QString nextKey() const;
     QString nextLabel() const;
     QString nextTime() const;
@@ -112,6 +120,9 @@ private:
 
     Settings* m_settings;
     QVariantList m_today;
+    QString m_period = "day";
+    double m_dayProgress = 0;
+    QVariantList m_dayDots;
     QString m_nextKey;
     qint64 m_nextAt = 0;
     bool m_nextIsTomorrow = false;

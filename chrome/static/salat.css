@@ -46,31 +46,76 @@ a:hover { text-decoration: underline; }
 
 /* ---------- popup ---------- */
 .popup { width: 300px; padding: 14px 16px 12px; }
-.popup header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
-.popup header h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: 0.01em; }
-.popup header .date { font-size: 12px; color: var(--muted); text-align: right; }
+.popup header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.popup header .loc { display: flex; align-items: center; gap: 6px; color: var(--fg); min-width: 0; }
+.popup header .loc:hover { text-decoration: none; color: var(--accent); }
+.popup header .pin { color: var(--accent); flex: none; }
+.popup header h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: 0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.popup header .date { font-size: 11px; text-align: right; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 4px 9px; flex: none; line-height: 1.35; }
+.popup header .date #hijri { color: var(--fg); font-weight: 500; }
+.popup header .date #gregorian { color: var(--muted); }
+
+/* Next-prayer card, coloured by the period of the day */
 .next {
-  background: var(--accent-soft);
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-bottom: 10px;
+  --p0: #e4f0ec; --p1: #d2e6df; --pfg: #1d1f1e; --pmuted: #5e6e68;
+  background: linear-gradient(100deg, var(--p0), var(--p1));
+  color: var(--pfg);
+  border-radius: 14px;
+  padding: 14px 16px 12px;
+  margin-bottom: 12px;
+  transition: background .9s;
 }
-.next .label { font-size: 12px; color: var(--muted); }
-.next .name { font-size: 22px; font-weight: 600; margin: 2px 0 0; }
-.next .in { font-size: 13px; color: var(--muted); }
-.next .in b { color: var(--fg); font-weight: 600; }
-ul.times { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+.next.night { --p0: #243b4a; --p1: #1b2a36; --pfg: #f2efe6; --pmuted: #b9c4cc; }
+.next.dawn { --p0: #f6d9b8; --p1: #e8c2a0; --pfg: #2b2520; --pmuted: #6f5f52; }
+.next.morning { --p0: #dcebf3; --p1: #c9e0ee; --pfg: #1d2a33; --pmuted: #5f7280; }
+.next.afternoon { --p0: #f3e6cf; --p1: #ebd7b4; --pfg: #2b2520; --pmuted: #6f6150; }
+.next.dusk { --p0: #e9c3a6; --p1: #c89a8a; --pfg: #2b2020; --pmuted: #6e5450; }
+@media (prefers-color-scheme: dark) {
+  .next { --p0: #223730; --p1: #1a2a25; --pfg: #ecebe6; --pmuted: #96a09b; }
+  .next.night { --p0: #1b2a36; --p1: #121c24; --pfg: #ecebe6; --pmuted: #9aa8b3; }
+  .next.dawn { --p0: #4b3a2e; --p1: #34281f; --pfg: #f2e6d8; --pmuted: #bba894; }
+  .next.morning { --p0: #2a3e4c; --p1: #1e2e39; --pfg: #e6eef3; --pmuted: #9fb0bc; }
+  .next.afternoon { --p0: #4a3d2a; --p1: #342b1e; --pfg: #f2e8d6; --pmuted: #bdae94; }
+  .next.dusk { --p0: #4c3030; --p1: #352222; --pfg: #f2e2da; --pmuted: #c0a49c; }
+}
+.next .row { align-items: flex-start; }
+.next .label { font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--pmuted); }
+.next .name { font-size: 26px; font-weight: 700; margin: 2px 0 0; line-height: 1.15; }
+.next .in { font-size: 13px; color: var(--pmuted); margin-top: 2px; }
+.next .in b { color: var(--pfg); font-weight: 600; }
+.next .big-glyph { color: var(--pfg); opacity: .85; margin-top: 4px; }
+.next .progress { display: block; margin-top: 10px; }
+.next .progress .track { stroke: var(--pfg); opacity: .18; stroke-width: 3; stroke-linecap: round; fill: var(--pfg); }
+.next .progress .fill { stroke: var(--pfg); opacity: .9; stroke-width: 3; stroke-linecap: round; fill: var(--pfg); }
+.next .progress circle.track { stroke: none; opacity: .25; }
+.next .progress circle.fill { stroke: none; }
+
+ul.times { list-style: none; padding: 0; margin: 0; }
 ul.times li {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 7px 6px; border-bottom: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: 7px 8px 7px 0; border-bottom: 1px solid var(--line); border-radius: 8px;
+  position: relative; margin-inline-start: 0;
 }
-ul.times li.current { background: var(--card); border-radius: 8px; border-color: transparent; font-weight: 600; }
-ul.times li.current .time::before { content: "●"; color: var(--accent); font-size: 9px; margin-inline-end: 8px; vertical-align: 1px; }
-ul.times li.passed { color: var(--muted); }
+ul.times li:last-child { border-bottom-color: transparent; }
+ul.times li .glyph { flex: none; color: var(--fg); opacity: .9; margin-inline: 10px 2px; }
+ul.times li .bar { width: 3px; height: 18px; border-radius: 2px; background: transparent; flex: none; }
+ul.times li.current { background: var(--card); border-bottom-color: transparent; font-weight: 600; }
+ul.times li.current .bar { background: var(--accent); }
+ul.times li.current .glyph { color: var(--accent); opacity: 1; }
+ul.times li.passed, ul.times li.passed .glyph { color: var(--muted); }
 ul.times li.sunrise { color: var(--muted); font-size: 13px; }
-ul.times .time { font-variant-numeric: tabular-nums; }
-.popup footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 10px; font-size: 12px; }
+ul.times li.sunrise .glyph { color: var(--muted); opacity: .75; }
+ul.times .label { flex: 1; }
+ul.times .time { font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 500; }
+ul.times li.sunrise .time { font-size: 13px; font-weight: 400; }
+ul.times li.current .time { font-weight: 600; }
+.popup footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; font-size: 11px; }
+.popup footer .meta { display: flex; flex-direction: column; min-width: 0; line-height: 1.4; }
 .popup footer .muted { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.popup footer .links { display: flex; gap: 4px; flex: none; }
+.popup footer .links a { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 10px; border-radius: 8px; color: var(--muted); font-size: 10px; margin: 0; }
+.popup footer .links a:hover { background: var(--card); color: var(--accent); text-decoration: none; }
+.popup footer .links .ico { display: block; line-height: 0; }
 .popup .notice {
   margin-top: 8px; font-size: 12px; padding: 8px 10px; border-radius: 8px;
   background: var(--card); border: 1px solid var(--line);
@@ -81,8 +126,6 @@ ul.times .time { font-variant-numeric: tabular-nums; }
 .ramadan .name { font-weight: 600; }
 .ramadan .time { font-variant-numeric: tabular-nums; }
 .iqamah { font-size: 11px; color: var(--muted); margin-inline-end: 10px; }
-.qibla { font-size: 12px; margin-top: 8px; }
-.popup footer .links a { margin-inline-start: 12px; }
 
 /* ---------- month page ---------- */
 .month { max-width: 680px; margin: 0 auto; padding: 24px 20px 40px; }

@@ -17,6 +17,7 @@ import {
 } from '@salat/core';
 import { load } from './storage.js';
 import { localiseDocument, pageLanguage } from './ui-i18n.js';
+import { dayProgress, navGlyph, periodFor, pinGlyph, prayerGlyph } from './glyphs.js';
 
 const ORDER: PrayerName[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
 
@@ -43,6 +44,17 @@ async function render(): Promise<void> {
   } catch { $('hijri').textContent = ''; }
 
   $('next-name').textContent = prayerDisplayLabel(lang, settings, next.name, next.time);
+  $('next-glyph').innerHTML = prayerGlyph(next.name, 36);
+  const ms = (d: Date) => d.getTime();
+  $('next').className = `next ${periodFor(ms(now), ms(day.fajr), ms(day.sunrise), ms(day.dhuhr), ms(day.asr), ms(day.maghrib), ms(day.isha))}`;
+  const nextFajr = ms(computeDay(settings, now, 1).fajr);
+  const span = Math.max(1, nextFajr - ms(day.fajr));
+  const frac = (d: Date) => (ms(d) - ms(day.fajr)) / span;
+  $('progress').innerHTML = dayProgress(
+    (ms(now) - ms(day.fajr)) / span,
+    (['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const).map((n) => ({ frac: frac(day[n]), passed: ms(day[n]) <= ms(now) })),
+    268,
+  );
   const tomorrow = civilDate(next.time, tz).day !== civilDate(now, tz).day ? ` ${t(lang, 'home.tomorrow')}` : '';
   $('next-in').innerHTML = `${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t(lang, 'home.in')} <b>${formatCountdown(now, next.time)}</b>`;
 
@@ -58,7 +70,7 @@ async function render(): Promise<void> {
     } else if (time.getTime() <= now.getTime()) li.classList.add('passed');
     const iq = name !== 'sunrise' ? iqamahTime(settings, name, time) : null;
     const iqHtml = iq ? `<span class="iqamah">${t(lang, 'home.iqamah').slice(0, 3)} ${formatTime(iq, tz, settings.hour12)}</span>` : '';
-    li.innerHTML = `<span>${prayerDisplayLabel(lang, settings, name, time)}</span><span>${iqHtml}<span class="time">${formatTime(time, tz, settings.hour12)}</span></span>`;
+    li.innerHTML = `<span class="bar"></span>${prayerGlyph(name, name === 'sunrise' ? 16 : 18)}<span class="label">${prayerDisplayLabel(lang, settings, name, time)}</span><span>${iqHtml}<span class="time">${formatTime(time, tz, settings.hour12)}</span></span>`;
     list.appendChild(li);
   }
 
@@ -76,7 +88,7 @@ async function render(): Promise<void> {
   } else ram.hidden = true;
 
   const { latitude, longitude } = settings.location;
-  $('qibla').textContent = `${t(lang, 'home.qibla')}: ${t(lang, 'home.qiblaBearing', { deg: Math.round(qiblaBearing(latitude, longitude)) })} · ${t(lang, 'home.qiblaDistance', { km: Math.round(distanceToKaabaKm(latitude, longitude)).toLocaleString(intlLocale(lang)) })}`;
+  $('qibla').textContent = `${t(lang, 'home.qibla')} ${t(lang, 'home.qiblaBearing', { deg: Math.round(qiblaBearing(latitude, longitude)) })} · ${t(lang, 'home.qiblaDistance', { km: Math.round(distanceToKaabaKm(latitude, longitude)).toLocaleString(intlLocale(lang)) })}`;
 
   const notice = $('notice');
   if (!extras.configured) {
@@ -96,7 +108,11 @@ function openOptions(e: Event): void {
   chrome.runtime.openOptionsPage();
 }
 
+$('pin').innerHTML = pinGlyph;
+$('ico-month').innerHTML = navGlyph('calendar');
+$('ico-settings').innerHTML = navGlyph('gear');
 $('open-options').addEventListener('click', openOptions);
+$('location-link').addEventListener('click', openOptions);
 $('open-month').addEventListener('click', (e) => {
   e.preventDefault();
   chrome.tabs.create({ url: chrome.runtime.getURL('month.html') });
