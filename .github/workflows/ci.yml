@@ -57,10 +57,18 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgl1-mesa-dev libxkbcommon-dev libegl1 libfontconfig1 libfuse2
 
+      # macOS 15 SDK (Xcode 16) dropped the AGL framework; Qt 6.8 binaries still link it. 6.9 is built against the new SDK.
       - uses: jurplel/install-qt-action@v4
         with:
-          version: ${{ env.QT_VERSION }}
+          version: ${{ runner.os == 'macOS' && '6.9.*' || env.QT_VERSION }}
           cache: true
+
+      - name: Strip legacy AGL references (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          files=$(grep -rl 'AGL' "$QT_ROOT_DIR/lib/cmake" || true)
+          for f in $files; do sed -i '' -e 's/-framework AGL//g; s/;AGL//g; s/AGL;//g' "$f"; done
+          echo "patched: ${files:-nothing}"
 
       - name: Configure
         run: cmake -S desktop -B desktop/build -DCMAKE_BUILD_TYPE=Release
