@@ -1,0 +1,203 @@
+package io.github.hatemselim94.salat.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import io.github.hatemselim94.salat.core.Cities
+import io.github.hatemselim94.salat.core.City
+import io.github.hatemselim94.salat.core.Engine
+import io.github.hatemselim94.salat.core.Madhab
+import io.github.hatemselim94.salat.core.Method
+import io.github.hatemselim94.salat.core.Prayer
+import io.github.hatemselim94.salat.core.Settings
+import io.github.hatemselim94.salat.notify.Notifications
+
+private val RULES = listOf(
+    "recommended" to "Automatic", "middleOfTheNight" to "Middle of the night",
+    "seventhOfTheNight" to "One-seventh of the night", "twilightAngle" to "Twilight angle",
+)
+private val PRE_OPTIONS = listOf(0 to "Off", 5 to "5 min", 10 to "10 min", 15 to "15 min", 20 to "20 min", 30 to "30 min")
+private val SNOOZE_OPTIONS = listOf(5 to "5 min", 10 to "10 min", 15 to "15 min", 20 to "20 min", 30 to "30 min")
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: () -> Unit) {
+    val context = LocalContext.current
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    val fg = MaterialTheme.colorScheme.onBackground
+    // `revision` is read so the screen recomposes after any settings write.
+    @Suppress("UNUSED_VARIABLE") val rev = revision
+
+    Column(Modifier.fillMaxSize().statusBarsPadding()) {
+        TopAppBar(
+            title = { Text("Settings", fontWeight = FontWeight.SemiBold) },
+            navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") } },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+        )
+        Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+
+            Card("Location") {
+                var query by remember { mutableStateOf(settings.label) }
+                var results by remember { mutableStateOf(emptyList<City>()) }
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { query = it; results = Cities.search(context, it, 6) },
+                    label = { Text("City") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                for (c in results) {
+                    Row(
+                        Modifier.fillMaxWidth().clickable {
+                            settings.setLocation(c.lat, c.lng, c.tz, c.label)
+                            query = c.label
+                            results = emptyList()
+                        }.padding(vertical = 8.dp, horizontal = 4.dp),
+                    ) {
+                        Text(c.label, color = fg, modifier = Modifier.weight(1f))
+                        Text(c.tz, color = muted, fontSize = 12.sp)
+                    }
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    NumberField("Latitude", settings.latitude.toString(), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -90.0..90.0) settings.latitude = it } }
+                    NumberField("Longitude", settings.longitude.toString(), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { if (it in -180.0..180.0) settings.longitude = it } }
+                }
+                var tz by remember { mutableStateOf(settings.timezone) }
+                OutlinedTextField(value = tz, onValueChange = { tz = it; settings.timezone = it }, label = { Text("Time zone") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            }
+
+            Card("Calculation") {
+                Picker("Method", Method.entries.filter { it != Method.OTHER }.map { it to it.label }, settings.method) { settings.method = it }
+                Picker("Asr", listOf(Madhab.SHAFI to "Standard (Shafi, Maliki, Hanbali)", Madhab.HANAFI to "Hanafi (later)"), settings.madhab) { settings.madhab = it }
+                Picker("High-latitude rule", RULES, settings.highLatitudeRule) { settings.highLatitudeRule = it }
+                Text("Adjustments (minutes)", color = fg)
+                Text("Shift individual prayers to match a local timetable.", color = muted, fontSize = 12.sp)
+                for (rowPrayers in Prayer.entries.chunked(3)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        for (p in rowPrayers) {
+                            NumberField(p.label, settings.adjustment(p.key).toString(), Modifier.weight(1f)) { v -> v.toIntOrNull()?.let { settings.setAdjustment(p.key, it) } }
+                        }
+                    }
+                }
+                val now = System.currentTimeMillis() / 1000
+                val day = engine.computeDay(now)
+                Text("Today with these settings", color = muted, fontSize = 12.sp)
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    for (p in Prayer.entries) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(p.label, color = muted, fontSize = 11.sp)
+                            Text(engine.formatTime(day[p]), color = fg, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+                }
+            }
+
+            Card("Reminders") {
+                ToggleRow("Notify at prayer times", settings.notificationsEnabled) { settings.notificationsEnabled = it }
+                Picker("Heads-up before each prayer", PRE_OPTIONS, settings.preReminderMinutes) { settings.preReminderMinutes = it }
+                ToggleRow("Play a short chime", settings.sound, hint = "A quiet tone, not an adhan recording.") { settings.sound = it }
+                Picker("Snooze length", SNOOZE_OPTIONS, settings.snoozeMinutes) { settings.snoozeMinutes = it }
+                ToggleRow("12-hour clock", settings.hour12) { settings.hour12 = it }
+                TextButton(onClick = { Notifications.show(context, settings, engine, Prayer.DHUHR, pre = false, epoch = System.currentTimeMillis() / 1000) }) {
+                    Text("Send a test notification")
+                }
+            }
+
+            Text("Salat is free and open source (MIT) · github.com/HatemSelim94/salat", color = muted, fontSize = 12.sp, modifier = Modifier.padding(bottom = 24.dp))
+        }
+    }
+}
+
+@Composable
+private fun Card(title: String, content: @Composable () -> Unit) {
+    Column(
+        Modifier.fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(14.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Text(title.uppercase(), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 1.sp)
+        content()
+    }
+}
+
+@Composable
+private fun ToggleRow(label: String, checked: Boolean, hint: String = "", onChange: (Boolean) -> Unit) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text(label, color = MaterialTheme.colorScheme.onBackground)
+            if (hint.isNotEmpty()) Text(hint, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+        }
+        Switch(checked = checked, onCheckedChange = onChange)
+    }
+}
+
+@Composable
+private fun <T> Picker(label: String, options: List<Pair<T, String>>, selected: T, onSelect: (T) -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    Row(Modifier.fillMaxWidth().clickable { open = true }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(label, color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.weight(1f))
+        Spacer(Modifier.width(12.dp))
+        Text(options.firstOrNull { it.first == selected }?.second ?: "", color = MaterialTheme.colorScheme.primary)
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            for ((value, text) in options) {
+                DropdownMenuItem(text = { Text(text) }, onClick = { onSelect(value); open = false })
+            }
+        }
+    }
+}
+
+@Composable
+private fun NumberField(label: String, initial: String, modifier: Modifier = Modifier, onCommit: (String) -> Unit) {
+    var text by remember(initial) { mutableStateOf(initial) }
+    OutlinedTextField(
+        value = text,
+        onValueChange = { text = it; onCommit(it) },
+        label = { Text(label) },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = modifier,
+    )
+}

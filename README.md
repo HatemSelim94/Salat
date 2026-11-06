@@ -8,7 +8,7 @@ Lightweight, offline, non-annoying prayer-time reminders — for your desktop, y
 | Chrome extension | [`chrome/`](chrome) | Manifest V3, vanilla TS | ✅ working, unpublished |
 | VS Code extension | [`vscode/`](vscode) | VS Code API | ✅ packaged, unpublished |
 | Desktop app | [`desktop/`](desktop) | C++17, Qt 6 / QML | ✅ builds on Linux; Windows/macOS untested |
-| Android app | [`android/`](android) | Kotlin, Jetpack Compose | 🚧 |
+| Android app | [`android/`](android) | Kotlin, Jetpack Compose | ⚠️ written, not yet compiled (no SDK access here) |
 
 ## Principles
 
