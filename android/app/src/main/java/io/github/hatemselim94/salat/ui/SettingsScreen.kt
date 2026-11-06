@@ -144,7 +144,7 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
                 Picker(stringResource(R.string.settings_preReminder), PRE_VALUES.map { it to minutes(it) }, settings.preReminderMinutes) { settings.preReminderMinutes = it }
                 Picker(
                     stringResource(R.string.settings_sound),
-                    listOf("default" to stringResource(R.string.settings_soundDefault), "chime" to stringResource(R.string.settings_soundChime), "silent" to stringResource(R.string.settings_soundSilent)),
+                    listOf("chime" to stringResource(R.string.settings_soundChime), "default" to stringResource(R.string.settings_soundDefault), "silent" to stringResource(R.string.settings_soundSilent)),
                     settings.soundMode,
                 ) { settings.soundMode = it }
                 Picker(stringResource(R.string.settings_snooze), SNOOZE_VALUES.map { it to minutes(it) }, settings.snoozeMinutes) { settings.snoozeMinutes = it }

@@ -70,7 +70,7 @@ export interface Settings {
     enabled: boolean;
     /** Minutes before the prayer for an optional heads-up. 0 = off. */
     preReminderMinutes: number;
-    /** Play a sound (adhan) with the notification. Off by default. */
+    /** Play the chime with the notification. On by default — a reminder you cannot hear is not a reminder. */
     sound: boolean;
     /** Snooze length offered on the notification. */
     snoozeMinutes: number;
@@ -113,7 +113,7 @@ export function defaultSettings(location: Location): Settings {
     notifications: {
       enabled: true,
       preReminderMinutes: 0,
-      sound: false,
+      sound: true,
       snoozeMinutes: 10,
     },
     hour12: false,

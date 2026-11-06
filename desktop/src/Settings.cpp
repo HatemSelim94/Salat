@@ -62,7 +62,7 @@ QString Settings::madhab() const { return m_s.value("calc/madhab", QStringLitera
 QString Settings::highLatitudeRule() const { return m_s.value("calc/highLatitudeRule", QStringLiteral("recommended")).toString(); }
 bool Settings::notificationsEnabled() const { return m_s.value("notify/enabled", true).toBool(); }
 int Settings::preReminderMinutes() const { return m_s.value("notify/preReminderMinutes", 0).toInt(); }
-bool Settings::sound() const { return m_s.value("notify/sound", false).toBool(); }
+bool Settings::sound() const { return m_s.value("notify/sound", true).toBool(); }
 int Settings::snoozeMinutes() const { return m_s.value("notify/snoozeMinutes", 10).toInt(); }
 bool Settings::hour12() const { return m_s.value("ui/hour12", false).toBool(); }
 bool Settings::autostart() const { return Platform::isAutostartEnabled(); }

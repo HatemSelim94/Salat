@@ -60,9 +60,9 @@ class Settings(context: Context) {
     var preReminderMinutes: Int
         get() = prefs.getInt("notify_pre", 0)
         set(v) = prefs.edit().putInt("notify_pre", v.coerceIn(0, 60)).apply()
-    /** "silent" | "default" (system notification sound) | "chime". Phones default to the system sound. */
+    /** "silent" | "default" (system notification sound) | "chime". The chime is the default: distinctive, and on by default. */
     var soundMode: String
-        get() = prefs.getString("notify_soundMode", "default")!!
+        get() = prefs.getString("notify_soundMode", "chime")!!
         set(v) = prefs.edit().putString("notify_soundMode", v).apply()
     var snoozeMinutes: Int
         get() = prefs.getInt("notify_snooze", 10)
