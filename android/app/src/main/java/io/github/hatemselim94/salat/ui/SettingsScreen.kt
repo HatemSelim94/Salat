@@ -48,7 +48,9 @@ import io.github.hatemselim94.salat.core.Features
 import androidx.compose.ui.res.stringResource
 import io.github.hatemselim94.salat.R
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.hatemselim94.salat.core.Cities
@@ -87,20 +89,24 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
 
             Card(stringResource(R.string.settings_location)) {
-                var query by remember { mutableStateOf(settings.label) }
+                var query by remember { mutableStateOf(TextFieldValue(settings.label)) }
                 var results by remember { mutableStateOf(emptyList<City>()) }
+                var selectedOnce by remember { mutableStateOf(false) }
                 OutlinedTextField(
                     value = query,
-                    onValueChange = { query = it; results = Cities.search(context, it, 6) },
+                    onValueChange = { query = it; results = Cities.search(context, it.text, 6) },
                     label = { Text(stringResource(R.string.settings_city)) },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().onFocusChanged {
+                        // First focus selects the whole text so typing replaces the old city.
+                        if (it.isFocused && !selectedOnce) { selectedOnce = true; query = query.copy(selection = TextRange(0, query.text.length)) }
+                    },
                 )
                 for (c in results) {
                     Row(
                         Modifier.fillMaxWidth().clickable {
                             settings.setLocation(c.lat, c.lng, c.tz, c.label)
-                            query = c.label
+                            query = TextFieldValue(c.label)
                             results = emptyList()
                         }.padding(vertical = 8.dp, horizontal = 4.dp),
                     ) {

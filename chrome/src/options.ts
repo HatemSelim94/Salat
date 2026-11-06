@@ -188,6 +188,7 @@ function setupCitySearch(): void {
     [...list.children].forEach((li, i) => li.setAttribute('aria-selected', String(i === active)));
   });
   box.addEventListener('blur', () => setTimeout(close, 120));
+  box.addEventListener('focus', () => box.select());
 }
 
 // ---- init -----------------------------------------------------------------

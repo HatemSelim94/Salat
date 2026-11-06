@@ -58,7 +58,7 @@ Page {
                         placeholderText: Tr.t("settings.searchCity", Tr.rev)
                         text: settingsObj.label
                         onTextEdited: results.model = Cities.search(text, 6)
-                        onActiveFocusChanged: if (!activeFocus) results.model = []
+                        onActiveFocusChanged: { if (activeFocus) selectAll(); else results.model = [] }
                     }
                     Rectangle {
                         Layout.fillWidth: true
