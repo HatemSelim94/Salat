@@ -18,6 +18,10 @@
     <string name="home_remindersOff" translatable="true">Erinnerungen sind ausgeschaltet.</string>
     <string name="home_battery" translatable="true">Damit Erinnerungen pünktlich kommen, erlaube Salat, ohne Akku-Einschränkungen zu laufen.</string>
     <string name="home_exactAlarm" translatable="true">Android braucht die Berechtigung für exakte Alarme, damit Erinnerungen minutengenau sind. Tippen zum Erlauben.</string>
+    <string name="home_allow" translatable="true">Erlauben</string>
+    <string name="home_setCityShort" translatable="true">Stadt wählen</string>
+    <string name="home_batteryShort" translatable="true">Erinnerungen können sich verspäten: Akku-Optimierung ist für Salat aktiv.</string>
+    <string name="home_exactAlarmShort" translatable="true">Für minutengenaue Erinnerungen wird die Berechtigung für exakte Alarme benötigt.</string>
     <string name="settings_title" translatable="true">Einstellungen</string>
     <string name="settings_back" translatable="true">Zurück</string>
     <string name="settings_lead" translatable="true">Alles wird auf diesem Gerät berechnet. Nichts wird irgendwohin gesendet.</string>

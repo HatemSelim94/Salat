@@ -85,6 +85,26 @@
     "ar": "يحتاج أندرويد إلى إذن المنبهات الدقيقة لتصل التذكيرات في الدقيقة نفسها. اضغط للسماح.",
     "de": "Android braucht die Berechtigung für exakte Alarme, damit Erinnerungen minutengenau sind. Tippen zum Erlauben."
   },
+  "home.allow": {
+    "en": "Allow",
+    "ar": "السماح",
+    "de": "Erlauben"
+  },
+  "home.setCityShort": {
+    "en": "Set city",
+    "ar": "اختر المدينة",
+    "de": "Stadt wählen"
+  },
+  "home.batteryShort": {
+    "en": "Reminders may be late: battery optimisation is on for Salat.",
+    "ar": "قد تتأخر التذكيرات: تحسين البطارية مفعّل لتطبيق صلاة.",
+    "de": "Erinnerungen können sich verspäten: Akku-Optimierung ist für Salat aktiv."
+  },
+  "home.exactAlarmShort": {
+    "en": "Exact-alarm permission is needed for on-the-minute reminders.",
+    "ar": "يلزم إذن المنبهات الدقيقة لتذكيرات في الدقيقة نفسها.",
+    "de": "Für minutengenaue Erinnerungen wird die Berechtigung für exakte Alarme benötigt."
+  },
   "settings.title": {
     "en": "Settings",
     "ar": "الإعدادات",

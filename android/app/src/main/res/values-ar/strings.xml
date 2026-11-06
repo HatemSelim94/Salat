@@ -18,6 +18,10 @@
     <string name="home_remindersOff" translatable="true">التذكيرات متوقفة.</string>
     <string name="home_battery" translatable="true">لضمان وصول التذكيرات في وقتها، اسمح لتطبيق صلاة بالعمل دون قيود البطارية.</string>
     <string name="home_exactAlarm" translatable="true">يحتاج أندرويد إلى إذن المنبهات الدقيقة لتصل التذكيرات في الدقيقة نفسها. اضغط للسماح.</string>
+    <string name="home_allow" translatable="true">السماح</string>
+    <string name="home_setCityShort" translatable="true">اختر المدينة</string>
+    <string name="home_batteryShort" translatable="true">قد تتأخر التذكيرات: تحسين البطارية مفعّل لتطبيق صلاة.</string>
+    <string name="home_exactAlarmShort" translatable="true">يلزم إذن المنبهات الدقيقة لتذكيرات في الدقيقة نفسها.</string>
     <string name="settings_title" translatable="true">الإعدادات</string>
     <string name="settings_back" translatable="true">رجوع</string>
     <string name="settings_lead" translatable="true">يُحسب كل شيء على هذا الجهاز. لا يُرسل أي شيء إلى أي مكان.</string>

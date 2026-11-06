@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -126,24 +128,18 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
 
         Spacer(Modifier.height(14.dp))
         if (!settings.locationConfigured) {
-            NoticeCard(stringResource(R.string.home_locationGuessed) + " " + stringResource(R.string.home_setCity) + " " + stringResource(R.string.home_forExactTimes), onClick = onOpenSettings)
+            ActionCard(stringResource(R.string.home_locationGuessed), stringResource(R.string.home_setCityShort), onClick = onOpenSettings)
         }
         val pm = context.getSystemService(PowerManager::class.java)
         if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {
-            NoticeCard(
-                stringResource(R.string.home_battery),
-                onClick = {
-                    context.startActivity(Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                },
-            )
+            ActionCard(stringResource(R.string.home_batteryShort), stringResource(R.string.home_allow)) {
+                context.startActivity(Intent(AndroidSettings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
         }
         if (Build.VERSION.SDK_INT in 31..32 && !Scheduler.canScheduleExact(context)) {
-            NoticeCard(
-                stringResource(R.string.home_exactAlarm),
-                onClick = {
-                    context.startActivity(Intent(AndroidSettings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                },
-            )
+            ActionCard(stringResource(R.string.home_exactAlarmShort), stringResource(R.string.home_allow)) {
+                context.startActivity(Intent(AndroidSettings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            }
         }
 
         Spacer(Modifier.weight(1f))
@@ -154,16 +150,20 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onOpenSettings
     }
 }
 
+/** A message the user must act on, with an explicit button so it does not read as plain text. */
 @Composable
-private fun NoticeCard(text: String, onClick: () -> Unit) {
-    Text(
-        text,
-        fontSize = 13.sp,
-        color = MaterialTheme.colorScheme.onBackground,
+private fun ActionCard(text: String, action: String, onClick: () -> Unit) {
+    Row(
         modifier = Modifier.fillMaxWidth()
             .padding(bottom = 8.dp)
-            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
-            .padding(12.dp),
-    )
+            .padding(start = 14.dp, end = 6.dp, top = 6.dp, bottom = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text, fontSize = 13.sp, color = MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.weight(1f).padding(end = 8.dp))
+        Button(onClick = onClick, contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp), modifier = Modifier.heightIn(min = 40.dp)) {
+            Text(action, fontSize = 13.sp)
+        }
+    }
 }
