@@ -41,6 +41,10 @@ The source is published for transparency — read it to confirm nothing leaves y
 
 Every push builds everything on GitHub Actions (free for public repos): the Chrome zip, the `.vsix`, the Qt app for Windows (zip with Qt runtime), macOS (dmg) and Linux (AppImage), and the Android debug APK. Grab them from the latest run under *Actions → CI → Artifacts*. Pushing a tag like `v0.1.0` publishes the same files as a GitHub Release.
 
+## Contact
+
+hatemselimtech@gmail.com — bug reports, wrong times for your city, requests.
+
 ## Development
 
 ```sh

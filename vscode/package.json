@@ -9,7 +9,7 @@
   "icon": "icon.png",
   "repository": { "type": "git", "url": "https://github.com/HatemSelim94/salat" },
   "homepage": "https://github.com/HatemSelim94/salat/tree/main/vscode",
-  "bugs": { "url": "https://github.com/HatemSelim94/salat/issues" },
+  "bugs": { "email": "hatemselimtech@gmail.com" },
   "engines": { "vscode": "^1.90.0" },
   "categories": ["Other"],
   "keywords": ["prayer", "salah", "salat", "adhan", "athan", "muslim", "islam"],
