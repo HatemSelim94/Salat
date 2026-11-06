@@ -6,6 +6,7 @@
 import {
   formatTime,
   nextPrayer,
+  prayerDisplayLabel,
   prayerLabel,
   resolveLanguage,
   t,
@@ -37,7 +38,7 @@ async function reschedule(): Promise<void> {
   if (stored.settings.notifications.enabled) {
     // 30 h horizon: covers today + tomorrow's Fajr with margin.
     for (const ev of upcomingEvents(stored.settings, now, 30 * 3600_000)) {
-      await chrome.alarms.create(`${PREFIX}${ev.kind}:${ev.name}:${ev.at.getTime()}`, { when: ev.at.getTime() });
+      await chrome.alarms.create(`${PREFIX}${ev.kind}:${ev.name}:${ev.at.getTime()}:${ev.quiet ? 'q' : 'n'}`, { when: ev.at.getTime() });
     }
   }
   // Safety net: rebuild the schedule daily even if nothing else wakes us.
@@ -64,19 +65,23 @@ async function updateBadge(stored: Stored): Promise<void> {
 
 // ---- notifications --------------------------------------------------------
 
-async function notify(kind: 'prayer' | 'pre' | 'snooze', name: PrayerName, settings: Settings): Promise<void> {
+async function notify(kind: 'prayer' | 'pre' | 'snooze' | 'jumuah', name: PrayerName, settings: Settings, quiet = false): Promise<void> {
   const lang = langOf(settings);
-  const label = prayerLabel(lang, name);
+  const now = new Date();
+  const label = prayerDisplayLabel(lang, settings, name, now);
   const tz = settings.location.timezone;
   const n = settings.notifications.preReminderMinutes;
+  const jm = settings.jumuah.reminderMinutes;
   const title =
     kind === 'pre' ? t(lang, 'notif.preTitle', { prayer: label, n })
+    : kind === 'jumuah' ? t(lang, 'notif.jumuahTitle', { n: jm })
     : kind === 'snooze' ? t(lang, 'notif.snoozedTitle', { prayer: label })
     : t(lang, 'notif.prayerTitle', { prayer: label });
   const message =
     kind === 'pre' ? t(lang, 'notif.preBody', { prayer: label, time: formatTime(nextPrayerTime(settings, name), tz, settings.hour12) })
+    : kind === 'jumuah' ? t(lang, 'notif.jumuahBody', { time: formatTime(nextPrayerTime(settings, name), tz, settings.hour12) })
     : kind === 'snooze' ? t(lang, 'notif.snoozedBody')
-    : t(lang, 'notif.prayerBody', { prayer: label, time: formatTime(new Date(), tz, settings.hour12) });
+    : t(lang, 'notif.prayerBody', { prayer: label, time: formatTime(now, tz, settings.hour12) });
 
   const id = `${PREFIX}notif:${name}:${Date.now()}`;
   await chrome.notifications.create(id, {
@@ -89,7 +94,7 @@ async function notify(kind: 'prayer' | 'pre' | 'snooze', name: PrayerName, setti
     buttons: kind === 'prayer' ? [{ title: t(lang, 'notif.snooze', { n: settings.notifications.snoozeMinutes }) }] : [],
   });
 
-  if (kind === 'prayer' && settings.notifications.sound) await playChime();
+  if (kind === 'prayer' && settings.notifications.sound && !quiet) await playChime();
 }
 
 function nextPrayerTime(settings: Settings, name: PrayerName): Date {
@@ -135,9 +140,9 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     await notify('snooze', name, stored.settings);
     return;
   }
-  const [, kind, name] = alarm.name.split(':'); // salat:<kind>:<name>:<ts>
-  if (kind === 'prayer' || kind === 'pre') {
-    await notify(kind, name as PrayerName, stored.settings);
+  const [, kind, name, , q] = alarm.name.split(':'); // salat:<kind>:<name>:<ts>:<q|n>
+  if (kind === 'prayer' || kind === 'pre' || kind === 'jumuah') {
+    await notify(kind, name as PrayerName, stored.settings, q === 'q');
     if (kind === 'prayer') await updateBadge(stored);
     // After tomorrow's Fajr has been scheduled we may be running low; top up.
     const remaining = (await chrome.alarms.getAll()).filter((a) => a.name.startsWith(`${PREFIX}prayer:`));

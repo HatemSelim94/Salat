@@ -1,8 +1,12 @@
 import {
   METHODS,
   civilDate,
+  distanceToKaabaKm,
   intlLocale,
-  prayerLabel,
+  iqamahTime,
+  isRamadan,
+  prayerDisplayLabel,
+  qiblaBearing,
   t,
   computeDay,
   currentPrayer,
@@ -38,7 +42,7 @@ async function render(): Promise<void> {
     }).format(now).replace(/ AH$/, '').replace(/ هـ$/, '');
   } catch { $('hijri').textContent = ''; }
 
-  $('next-name').textContent = prayerLabel(lang, next.name);
+  $('next-name').textContent = prayerDisplayLabel(lang, settings, next.name, next.time);
   const tomorrow = civilDate(next.time, tz).day !== civilDate(now, tz).day ? ` ${t(lang, 'home.tomorrow')}` : '';
   $('next-in').innerHTML = `${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t(lang, 'home.in')} <b>${formatCountdown(now, next.time)}</b>`;
 
@@ -52,11 +56,27 @@ async function render(): Promise<void> {
       if (name === current.name && time.getTime() <= now.getTime()) li.classList.add('current');
       else if (time.getTime() <= now.getTime()) li.classList.add('passed');
     } else if (time.getTime() <= now.getTime()) li.classList.add('passed');
-    li.innerHTML = `<span>${prayerLabel(lang, name)}</span><span class="time">${formatTime(time, tz, settings.hour12)}</span>`;
+    const iq = name !== 'sunrise' ? iqamahTime(settings, name, time) : null;
+    const iqHtml = iq ? `<span class="iqamah">${t(lang, 'home.iqamah').slice(0, 3)} ${formatTime(iq, tz, settings.hour12)}</span>` : '';
+    li.innerHTML = `<span>${prayerDisplayLabel(lang, settings, name, time)}</span><span>${iqHtml}<span class="time">${formatTime(time, tz, settings.hour12)}</span></span>`;
     list.appendChild(li);
   }
 
   $('method').textContent = METHODS.find((m) => m.id === settings.method)?.label.split(',')[0] ?? '';
+
+  // Ramadan: Suhoor ends at Fajr, Iftar at Maghrib — whichever is next.
+  const ram = $('ramadan');
+  if (isRamadan(settings, now)) {
+    const suhoor = now < day.fajr;
+    const iftar = !suhoor && now < day.maghrib;
+    const at = suhoor ? day.fajr : iftar ? day.maghrib : computeDay(settings, now, 1).fajr;
+    ram.hidden = false;
+    $('ramadan-name').textContent = t(lang, iftar ? 'prayer.iftar' : 'prayer.suhoor');
+    $('ramadan-time').textContent = `${formatTime(at, tz, settings.hour12)} · ${formatCountdown(now, at)}`;
+  } else ram.hidden = true;
+
+  const { latitude, longitude } = settings.location;
+  $('qibla').textContent = `${t(lang, 'home.qibla')}: ${t(lang, 'home.qiblaBearing', { deg: Math.round(qiblaBearing(latitude, longitude)) })} · ${t(lang, 'home.qiblaDistance', { km: Math.round(distanceToKaabaKm(latitude, longitude)).toLocaleString(intlLocale(lang)) })}`;
 
   const notice = $('notice');
   if (!extras.configured) {
@@ -77,6 +97,10 @@ function openOptions(e: Event): void {
 }
 
 $('open-options').addEventListener('click', openOptions);
+$('open-month').addEventListener('click', (e) => {
+  e.preventDefault();
+  chrome.tabs.create({ url: chrome.runtime.getURL('month.html') });
+});
 void render();
 // The popup only lives while open; a 30 s tick keeps the countdown honest.
 setInterval(() => void render(), 30_000);

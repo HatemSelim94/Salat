@@ -13,6 +13,7 @@ const options = {
     popup: 'src/popup.ts',
     options: 'src/options.ts',
     offscreen: 'src/offscreen.ts',
+    month: 'src/month.ts',
   },
   bundle: true,
   format: 'esm',

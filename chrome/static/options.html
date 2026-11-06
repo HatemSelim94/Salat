@@ -51,6 +51,49 @@
   </section>
 
   <section>
+    <h2 data-i18n="settings.iqamah">Iqamah (minutes after adhan)</h2>
+    <div class="hint" style="margin-bottom:8px" data-i18n="settings.iqamahHint">Shown next to each prayer when set. 0 hides it.</div>
+    <div class="adjust" id="iqamah"></div>
+    <div class="field" style="margin-top:10px">
+      <label for="jumuah" data-i18n="settings.jumuah">Show Jumu'ah on Fridays</label>
+      <label class="toggle"><input id="jumuah" type="checkbox"><span></span></label>
+    </div>
+    <div class="field">
+      <label for="jumuah-reminder" data-i18n="settings.jumuahReminder">Jumu'ah reminder before Dhuhr</label>
+      <select id="jumuah-reminder"></select>
+    </div>
+    <div class="field">
+      <label for="ramadan" data-i18n="settings.ramadan">Ramadan view</label>
+      <select id="ramadan"></select>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="settings.quietHours">Quiet hours</h2>
+    <div class="field">
+      <label for="quiet"><span data-i18n="settings.quietHours">Quiet hours</span><div class="hint" data-i18n="settings.quietHoursHint">Reminders in this window are silent (no sound).</div></label>
+      <label class="toggle"><input id="quiet" type="checkbox"><span></span></label>
+    </div>
+    <div class="coords" style="grid-template-columns:1fr 1fr">
+      <label><span data-i18n="settings.from">From</span> <input id="quiet-from" type="time"></label>
+      <label><span data-i18n="settings.to">To</span> <input id="quiet-to" type="time"></label>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="settings.timetable">Mosque timetable</h2>
+    <div class="hint" style="margin-bottom:8px" data-i18n="settings.timetableHint">Import a CSV…</div>
+    <div class="row">
+      <span>
+        <button class="btn secondary" id="import" data-i18n="settings.timetableImport">Import CSV…</button>
+        <button class="btn secondary" id="clear-timetable" data-i18n="settings.timetableClear" hidden>Remove imported timetable</button>
+      </span>
+      <input id="import-file" type="file" accept=".csv,text/csv,text/plain" hidden>
+    </div>
+    <div class="status" id="timetable-status"></div>
+  </section>
+
+  <section>
     <h2 data-i18n="settings.reminders">Reminders</h2>
     <div class="field">
       <label for="enabled" data-i18n="settings.notify">Notify at prayer times</label>

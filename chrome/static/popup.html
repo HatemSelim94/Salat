@@ -10,6 +10,10 @@
     <h1 id="location">Salat</h1>
     <div class="date"><div id="hijri"></div><div id="gregorian"></div></div>
   </header>
+  <div class="ramadan" id="ramadan" hidden>
+    <div class="label" data-i18n="home.ramadan">Ramadan</div>
+    <div class="row"><span class="name" id="ramadan-name"></span><span class="time" id="ramadan-time"></span></div>
+  </div>
   <div class="next">
     <div class="label" data-i18n="home.nextPrayer">Next prayer</div>
     <div class="name" id="next-name">—</div>
@@ -17,9 +21,13 @@
   </div>
   <ul class="times" id="times"></ul>
   <div class="notice" id="notice" hidden></div>
+  <div class="qibla muted" id="qibla"></div>
   <footer>
     <span class="muted" id="method"></span>
-    <a href="#" id="open-options" data-i18n="home.settings">Settings</a>
+    <span class="links">
+      <a href="#" id="open-month" data-i18n="home.month">Month</a>
+      <a href="#" id="open-options" data-i18n="home.settings">Settings</a>
+    </span>
   </footer>
   <script type="module" src="popup.js"></script>
 </body>

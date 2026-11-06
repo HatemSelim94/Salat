@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Salat</title>
+  <link rel="stylesheet" href="salat.css">
+</head>
+<body class="month">
+  <h1 data-i18n="month.title">Monthly timetable</h1>
+  <div class="muted" id="subtitle"></div>
+  <div class="bar">
+    <div class="nav">
+      <button class="btn secondary" id="prev">‹</button>
+      <b id="month-name"></b>
+      <button class="btn secondary" id="next">›</button>
+      <button class="btn secondary" id="today" data-i18n="month.today">Today</button>
+    </div>
+    <button class="btn" id="export" data-i18n="month.export">Export CSV</button>
+  </div>
+  <table>
+    <thead><tr id="head"></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <script type="module" src="month.js"></script>
+</body>
+</html>

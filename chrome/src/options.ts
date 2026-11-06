@@ -6,11 +6,14 @@ import {
   HIGH_LATITUDE_RULES,
   LANGUAGES,
   METHODS,
+  PRAYERS,
   cityToLocation,
+  parseTimetableCsv,
   prayerLabel,
   t,
   type Language,
   type LanguagePref,
+  type Settings,
   computeDay,
   formatTime,
   searchCities,
@@ -59,7 +62,21 @@ function renderForm(): void {
   input('snooze').value = String(s.notifications.snoozeMinutes);
   input('hour12').checked = s.hour12;
   input('badge').checked = stored.extras.badge;
+  for (const p of PRAYERS) input(`iq-${p}`).value = String(s.iqamah[p] ?? 0);
+  input('jumuah').checked = s.jumuah.enabled;
+  select('jumuah-reminder').value = String(s.jumuah.reminderMinutes);
+  select('ramadan').value = s.ramadan;
+  input('quiet').checked = s.quietHours.enabled;
+  input('quiet-from').value = s.quietHours.from;
+  input('quiet-to').value = s.quietHours.to;
+  renderTimetableStatus();
   renderPreview();
+}
+
+function renderTimetableStatus(msg?: string): void {
+  const days = Object.keys(stored.settings.timetable).length;
+  $('timetable-status').textContent = msg ?? (days ? t(lang, 'settings.timetableStatus', { days }) : '');
+  $<HTMLButtonElement>('clear-timetable').hidden = days === 0;
 }
 
 function renderPreview(): void {
@@ -101,6 +118,14 @@ function readForm(): void {
   s.notifications.sound = input('sound').checked;
   s.notifications.snoozeMinutes = clamp(Number(input('snooze').value) || 10, 1, 60);
   s.hour12 = input('hour12').checked;
+  s.iqamah = {};
+  for (const p of PRAYERS) {
+    const v = Number(input(`iq-${p}`).value);
+    if (v > 0) s.iqamah[p] = Math.min(120, Math.round(v));
+  }
+  s.jumuah = { enabled: input('jumuah').checked, reminderMinutes: Number(select('jumuah-reminder').value) || 0 };
+  s.ramadan = select('ramadan').value as Settings['ramadan'];
+  s.quietHours = { enabled: input('quiet').checked, from: input('quiet-from').value || '22:00', to: input('quiet-to').value || '06:00' };
   const newLang = select('language').value as LanguagePref;
   if (newLang !== s.language) {
     s.language = newLang;
@@ -139,6 +164,15 @@ function applyLanguage(): void {
   fillSelect(select('method'), METHODS);
   fillSelect(select('hlr'), HIGH_LATITUDE_RULES.map((r) => ({ id: r.id, label: t(lang, `rule.${r.id}`) })));
   fillSelect(select('language'), LANGUAGES);
+  fillSelect(select('jumuah-reminder'), [0, 15, 30, 45, 60, 90].map((n) => ({ id: String(n), label: n === 0 ? t(lang, 'settings.off') : t(lang, 'settings.minutes', { n }) })));
+  fillSelect(select('ramadan'), [
+    { id: 'auto', label: t(lang, 'settings.ramadanAuto') }, { id: 'on', label: t(lang, 'settings.on') }, { id: 'off', label: t(lang, 'settings.off') },
+  ]);
+  document.querySelectorAll<HTMLLabelElement>('#iqamah label span').forEach((el) => {
+    el.textContent = prayerLabel(lang, el.dataset.prayer as PrayerName);
+  });
+  select('jumuah-reminder').value = String(stored.settings.jumuah.reminderMinutes);
+  select('ramadan').value = stored.settings.ramadan;
   document.querySelectorAll<HTMLLabelElement>('#adjust label span').forEach((el) => {
     el.textContent = prayerLabel(lang, el.dataset.prayer as PrayerName);
   });
@@ -215,8 +249,34 @@ async function init(): Promise<void> {
     label.innerHTML = `<span data-prayer="${p}"></span><input id="adj-${p}" type="number" min="-60" max="60" step="1">`;
     adj.appendChild(label);
   }
+  const iq = $('iqamah');
+  for (const p of PRAYERS) {
+    const label = document.createElement('label');
+    label.innerHTML = `<span data-prayer="${p}"></span><input id="iq-${p}" type="number" min="0" max="120" step="1">`;
+    iq.appendChild(label);
+  }
   applyLanguage();
   renderForm();
+
+  $('import').addEventListener('click', () => input('import-file').click());
+  input('import-file').addEventListener('change', async () => {
+    const file = input('import-file').files?.[0];
+    if (!file) return;
+    const result = parseTimetableCsv(await file.text());
+    if (result.days > 0) stored.settings.timetable = { ...stored.settings.timetable, ...result.entries };
+    await save(stored);
+    let msg = t(lang, 'settings.timetableStatus', { days: result.days });
+    if (result.errors.length) msg += ` · ${t(lang, 'settings.timetableErrors', { n: result.errors.length })}`;
+    renderTimetableStatus(msg);
+    renderPreview();
+    input('import-file').value = '';
+  });
+  $('clear-timetable').addEventListener('click', async () => {
+    stored.settings.timetable = {};
+    await save(stored);
+    renderTimetableStatus();
+    renderPreview();
+  });
   setupCitySearch();
 
   document.querySelectorAll<HTMLElement>('input:not(#city), select').forEach((el) => {
