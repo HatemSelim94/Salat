@@ -21,6 +21,7 @@ import io.github.hatemselim94.salat.core.Settings
 object Notifications {
     // Channel sound cannot be changed after creation, so the sound setting picks between two channels.
     private const val CHANNEL_PRAYER_SILENT = "prayer_silent"
+    private const val CHANNEL_PRAYER_DEFAULT = "prayer_default"
     private const val CHANNEL_PRAYER_CHIME = "prayer_chime"
     private const val CHANNEL_PRE = "pre_reminder"
     private const val NOTIFICATION_ID = 100
@@ -35,6 +36,10 @@ object Notifications {
             .build()
         nm.createNotificationChannel(NotificationChannel(CHANNEL_PRAYER_SILENT, context.getString(R.string.notif_channelPrayer), NotificationManager.IMPORTANCE_HIGH).apply {
             setSound(null, null)
+            enableVibration(true)
+        })
+        nm.createNotificationChannel(NotificationChannel(CHANNEL_PRAYER_DEFAULT, context.getString(R.string.notif_channelPrayerDefault), NotificationManager.IMPORTANCE_HIGH).apply {
+            setSound(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI, audio)
             enableVibration(true)
         })
         nm.createNotificationChannel(NotificationChannel(CHANNEL_PRAYER_CHIME, context.getString(R.string.notif_channelPrayerChime), NotificationManager.IMPORTANCE_HIGH).apply {
@@ -61,8 +66,9 @@ object Notifications {
         }
         val channel = when {
             pre -> CHANNEL_PRE
-            settings.sound -> CHANNEL_PRAYER_CHIME
-            else -> CHANNEL_PRAYER_SILENT
+            settings.soundMode == "chime" -> CHANNEL_PRAYER_CHIME
+            settings.soundMode == "silent" -> CHANNEL_PRAYER_SILENT
+            else -> CHANNEL_PRAYER_DEFAULT
         }
 
         val open = PendingIntent.getActivity(

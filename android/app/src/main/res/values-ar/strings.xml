@@ -47,6 +47,10 @@
     <string name="settings_minutes">%1$s د</string>
     <string name="settings_chime" translatable="true">تشغيل نغمة قصيرة</string>
     <string name="settings_chimeHint" translatable="true">نغمة هادئة، وليست تسجيل أذان.</string>
+    <string name="settings_sound" translatable="true">الصوت</string>
+    <string name="settings_soundSilent" translatable="true">صامت (اهتزاز فقط)</string>
+    <string name="settings_soundDefault" translatable="true">صوت إشعارات النظام</string>
+    <string name="settings_soundChime" translatable="true">نغمة قصيرة</string>
     <string name="settings_snooze" translatable="true">مدة الغفوة</string>
     <string name="settings_hour12" translatable="true">نظام ١٢ ساعة</string>
     <string name="settings_badge" translatable="true">إظهار الصلاة القادمة على أيقونة شريط الأدوات</string>
@@ -73,6 +77,7 @@
     <string name="notif_dismiss" translatable="true">تجاهل</string>
     <string name="notif_channelPrayer" translatable="true">أوقات الصلاة</string>
     <string name="notif_channelPrayerChime" translatable="true">أوقات الصلاة (مع نغمة)</string>
+    <string name="notif_channelPrayerDefault" translatable="true">أوقات الصلاة (صوت النظام)</string>
     <string name="notif_channelPre" translatable="true">تنبيه مسبق قبل الصلاة</string>
     <string name="tray_open" translatable="true">فتح صلاة</string>
     <string name="tray_snoozeLast" translatable="true">تأجيل آخر تذكير</string>

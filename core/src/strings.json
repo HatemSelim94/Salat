@@ -229,6 +229,26 @@
     "ar": "نغمة هادئة، وليست تسجيل أذان.",
     "de": "Ein leiser Ton, keine Adhan-Aufnahme."
   },
+  "settings.sound": {
+    "en": "Sound",
+    "ar": "الصوت",
+    "de": "Ton"
+  },
+  "settings.soundSilent": {
+    "en": "Silent (vibrate only)",
+    "ar": "صامت (اهتزاز فقط)",
+    "de": "Lautlos (nur Vibration)"
+  },
+  "settings.soundDefault": {
+    "en": "System notification sound",
+    "ar": "صوت إشعارات النظام",
+    "de": "System-Benachrichtigungston"
+  },
+  "settings.soundChime": {
+    "en": "Short chime",
+    "ar": "نغمة قصيرة",
+    "de": "Kurzer Ton"
+  },
   "settings.snooze": {
     "en": "Snooze length",
     "ar": "مدة الغفوة",
@@ -358,6 +378,11 @@
     "en": "Prayer times (with chime)",
     "ar": "أوقات الصلاة (مع نغمة)",
     "de": "Gebetszeiten (mit Ton)"
+  },
+  "notif.channelPrayerDefault": {
+    "en": "Prayer times (system sound)",
+    "ar": "أوقات الصلاة (صوت النظام)",
+    "de": "Gebetszeiten (Systemton)"
   },
   "notif.channelPre": {
     "en": "Heads-up before prayer",

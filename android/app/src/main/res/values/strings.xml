@@ -47,6 +47,10 @@
     <string name="settings_minutes">%1$s min</string>
     <string name="settings_chime" translatable="true">Play a short chime</string>
     <string name="settings_chimeHint" translatable="true">A quiet tone, not an adhan recording.</string>
+    <string name="settings_sound" translatable="true">Sound</string>
+    <string name="settings_soundSilent" translatable="true">Silent (vibrate only)</string>
+    <string name="settings_soundDefault" translatable="true">System notification sound</string>
+    <string name="settings_soundChime" translatable="true">Short chime</string>
     <string name="settings_snooze" translatable="true">Snooze length</string>
     <string name="settings_hour12" translatable="true">12-hour clock</string>
     <string name="settings_badge" translatable="true">Show next prayer on the toolbar icon</string>
@@ -73,6 +77,7 @@
     <string name="notif_dismiss" translatable="true">Dismiss</string>
     <string name="notif_channelPrayer" translatable="true">Prayer times</string>
     <string name="notif_channelPrayerChime" translatable="true">Prayer times (with chime)</string>
+    <string name="notif_channelPrayerDefault" translatable="true">Prayer times (system sound)</string>
     <string name="notif_channelPre" translatable="true">Heads-up before prayer</string>
     <string name="tray_open" translatable="true">Open Salat</string>
     <string name="tray_snoozeLast" translatable="true">Snooze last reminder</string>
