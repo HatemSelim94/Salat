@@ -236,8 +236,12 @@ Page {
                 SettingRow { label: Tr.t("settings.autostart", Tr.rev); hint: Tr.t("settings.autostartHint", Tr.rev); Switch { checked: settingsObj.autostart; onToggled: settingsObj.autostart = checked } }
                 SettingRow { label: Tr.t("settings.startHidden", Tr.rev); Switch { checked: settingsObj.startHidden; onToggled: settingsObj.startHidden = checked } }
                 Label {
-                    text: "Salat " + Qt.application.version + " · " + Tr.t("settings.foss", Tr.rev) + " · <a href='https://github.com/HatemSelim94/salat'>GitHub</a>"
-                    color: Theme.muted; font.pixelSize: 12; linkColor: Theme.accent
+                    readonly property string contact: About.contactEmail
+                    text: "Salat " + Qt.application.version
+                          + " · <a href='" + About.authorUrl + "'>" + Tr.f("settings.madeBy", { name: About.authorName }, Tr.rev) + "</a>"
+                          + (contact ? " · <a href='mailto:" + contact + "?subject=Salat%20desktop%20" + Qt.application.version + "'>" + Tr.t("settings.contact", Tr.rev) + "</a>" : "")
+                          + "<br>" + Tr.t("settings.foss", Tr.rev)
+                    color: Theme.muted; font.pixelSize: 12; linkColor: Theme.accent; wrapMode: Text.WordWrap; Layout.fillWidth: true
                     onLinkActivated: (link) => Qt.openUrlExternally(link)
                 }
             }

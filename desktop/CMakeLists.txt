@@ -23,6 +23,7 @@ qt_add_executable(salat
     src/Tray.cpp src/Tray.h
     src/Platform.cpp src/Platform.h
     src/Tr.cpp src/Tr.h
+    src/About.h
 )
 
 # Theme.qml is a singleton (must be declared before qt_add_qml_module).

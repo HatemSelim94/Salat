@@ -80,7 +80,9 @@
     <string name="settings_autostartHint" translatable="true">Läuft nach der Anmeldung still im Infobereich.</string>
     <string name="settings_startHidden" translatable="true">Versteckt im Infobereich starten</string>
     <string name="settings_saved" translatable="true">Gespeichert</string>
-    <string name="settings_foss" translatable="true">kostenlos nutzbar · © Hatem Selim</string>
+    <string name="settings_foss" translatable="true">Keine Werbung · kein Tracking · nichts verlässt dein Gerät</string>
+    <string name="settings_madeBy">Entwickelt von %1$s</string>
+    <string name="settings_contact" translatable="true">Kontakt</string>
     <string name="month_imported" translatable="true">aus importiertem Plan</string>
     <string name="settings_iqamah" translatable="true">Iqama (Minuten nach dem Adhan)</string>
     <string name="settings_iqamahHint" translatable="true">Wird neben jedem Gebet angezeigt. 0 blendet sie aus.</string>

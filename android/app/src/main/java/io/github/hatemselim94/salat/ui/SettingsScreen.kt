@@ -43,7 +43,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.ui.platform.LocalContext
+import io.github.hatemselim94.salat.About
 import io.github.hatemselim94.salat.core.Features
 import androidx.compose.ui.res.stringResource
 import io.github.hatemselim94.salat.R
@@ -213,7 +216,30 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
                 if (status.isNotEmpty()) Text(status, color = muted, fontSize = 12.sp)
             }
 
-            Text("Salat · " + stringResource(R.string.settings_foss) + " · github.com/HatemSelim94/salat", color = muted, fontSize = 12.sp, modifier = Modifier.padding(bottom = 24.dp))
+            Column(Modifier.padding(bottom = 24.dp)) {
+                val version = runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: ""
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Salat $version · ", color = muted, fontSize = 12.sp)
+                    Text(
+                        stringResource(R.string.settings_madeBy, About.AUTHOR_NAME),
+                        color = MaterialTheme.colorScheme.primary, fontSize = 12.sp,
+                        modifier = Modifier.clickable { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(About.AUTHOR_URL)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) },
+                    )
+                    if (About.CONTACT_EMAIL.isNotEmpty()) {
+                        Text(" · ", color = muted, fontSize = 12.sp)
+                        Text(
+                            stringResource(R.string.settings_contact),
+                            color = MaterialTheme.colorScheme.primary, fontSize = 12.sp,
+                            modifier = Modifier.clickable {
+                                val mail = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + About.CONTACT_EMAIL))
+                                    .putExtra(Intent.EXTRA_SUBJECT, "Salat Android $version").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                runCatching { context.startActivity(mail) }
+                            },
+                        )
+                    }
+                }
+                Text(stringResource(R.string.settings_foss), color = muted, fontSize = 12.sp)
+            }
         }
     }
 }

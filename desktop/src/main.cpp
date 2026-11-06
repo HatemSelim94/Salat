@@ -16,6 +16,7 @@
 #include "Settings.h"
 #include "Tray.h"
 #include "Tr.h"
+#include "About.h"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);  // QApplication (not QGuiApplication) for QSystemTrayIcon + QMenu
@@ -58,6 +59,8 @@ int main(int argc, char* argv[]) {
     qml.rootContext()->setContextProperty(QStringLiteral("engine"), &engine);
     qml.rootContext()->setContextProperty(QStringLiteral("settingsObj"), &settings);
     qml.rootContext()->setContextProperty(QStringLiteral("Tr"), &Tr::instance());
+    About about;
+    qml.rootContext()->setContextProperty(QStringLiteral("About"), &about);
     qml.rootContext()->setContextProperty(QStringLiteral("useDarkTheme"), useDark);
     qml.rootContext()->setContextProperty(QStringLiteral("initialPage"), parser.value(page));
     qml.addImportPath(QStringLiteral("qrc:/"));

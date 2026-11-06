@@ -80,7 +80,9 @@
     <string name="settings_autostartHint" translatable="true">Runs quietly in the tray at login.</string>
     <string name="settings_startHidden" translatable="true">Start hidden in the tray</string>
     <string name="settings_saved" translatable="true">Saved</string>
-    <string name="settings_foss" translatable="true">free to use · © Hatem Selim</string>
+    <string name="settings_foss" translatable="true">No ads · no tracking · nothing leaves your device</string>
+    <string name="settings_madeBy">Made by %1$s</string>
+    <string name="settings_contact" translatable="true">Contact</string>
     <string name="month_imported" translatable="true">from imported timetable</string>
     <string name="settings_iqamah" translatable="true">Iqamah (minutes after adhan)</string>
     <string name="settings_iqamahHint" translatable="true">Shown next to each prayer when set. 0 hides it.</string>

@@ -396,9 +396,19 @@
     "de": "Gespeichert"
   },
   "settings.foss": {
-    "en": "free to use · © Hatem Selim",
-    "ar": "مجاني للاستخدام · © حاتم سليم",
-    "de": "kostenlos nutzbar · © Hatem Selim"
+    "en": "No ads · no tracking · nothing leaves your device",
+    "ar": "بلا إعلانات · بلا تتبّع · لا يغادر شيء جهازك",
+    "de": "Keine Werbung · kein Tracking · nichts verlässt dein Gerät"
+  },
+  "settings.madeBy": {
+    "en": "Made by {name}",
+    "ar": "صنعه {name}",
+    "de": "Entwickelt von {name}"
+  },
+  "settings.contact": {
+    "en": "Contact",
+    "ar": "تواصل",
+    "de": "Kontakt"
   },
   "month.imported": {
     "en": "from imported timetable",

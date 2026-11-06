@@ -1,4 +1,8 @@
 import {
+  APP_VERSION,
+  AUTHOR_NAME,
+  AUTHOR_URL,
+  CONTACT_EMAIL,
   HIGH_LATITUDE_RULES,
   LANGUAGES,
   METHODS,
@@ -119,9 +123,19 @@ function isValidTimezone(tz: string): boolean {
   }
 }
 
+function renderFooter(): void {
+  const parts = [
+    `${t(lang, 'app.name')} ${APP_VERSION}`,
+    `<a href="${AUTHOR_URL}" target="_blank" rel="noopener">${t(lang, 'settings.madeBy', { name: AUTHOR_NAME })}</a>`,
+  ];
+  if (CONTACT_EMAIL) parts.push(`<a href="mailto:${CONTACT_EMAIL}?subject=Salat%20Chrome%20${APP_VERSION}">${t(lang, 'settings.contact')}</a>`);
+  $('footer').innerHTML = `${parts.join(' · ')}<br>${t(lang, 'settings.foss')}`;
+}
+
 function applyLanguage(): void {
   lang = pageLanguage(stored.settings);
   localiseDocument(lang);
+  renderFooter();
   fillSelect(select('method'), METHODS);
   fillSelect(select('hlr'), HIGH_LATITUDE_RULES.map((r) => ({ id: r.id, label: t(lang, `rule.${r.id}`) })));
   fillSelect(select('language'), LANGUAGES);

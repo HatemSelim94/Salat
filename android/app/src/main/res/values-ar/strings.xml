@@ -80,7 +80,9 @@
     <string name="settings_autostartHint" translatable="true">يعمل بهدوء في شريط النظام عند تسجيل الدخول.</string>
     <string name="settings_startHidden" translatable="true">البدء مخفيًا في شريط النظام</string>
     <string name="settings_saved" translatable="true">تم الحفظ</string>
-    <string name="settings_foss" translatable="true">مجاني للاستخدام · © حاتم سليم</string>
+    <string name="settings_foss" translatable="true">بلا إعلانات · بلا تتبّع · لا يغادر شيء جهازك</string>
+    <string name="settings_madeBy">صنعه %1$s</string>
+    <string name="settings_contact" translatable="true">تواصل</string>
     <string name="month_imported" translatable="true">من الجدول المستورد</string>
     <string name="settings_iqamah" translatable="true">الإقامة (دقائق بعد الأذان)</string>
     <string name="settings_iqamahHint" translatable="true">تُعرض بجانب كل صلاة عند ضبطها. ٠ يخفيها.</string>

@@ -2,6 +2,7 @@ Placeholder order for formatted strings (generated):
 home_qiblaBearing: deg
 home_qiblaDistance: km
 settings_minutes: n
+settings_madeBy: name
 settings_timetableStatus: days
 settings_timetableErrors: n
 notif_prayerTitle: prayer
