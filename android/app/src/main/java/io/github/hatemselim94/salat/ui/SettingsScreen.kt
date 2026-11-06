@@ -51,6 +51,9 @@ import io.github.hatemselim94.salat.core.Features
 import androidx.compose.ui.res.stringResource
 import io.github.hatemselim94.salat.R
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -95,15 +98,24 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
                 var query by remember { mutableStateOf(TextFieldValue(settings.label)) }
                 var results by remember { mutableStateOf(emptyList<City>()) }
                 var selectedOnce by remember { mutableStateOf(false) }
+                val cityInteraction = remember { MutableInteractionSource() }
+                val cityFocused by cityInteraction.collectIsFocusedAsState()
+                // First focus selects the whole text so typing replaces the old city. Done one frame after
+                // focus, because the text field moves the cursor to the end during the focus change itself.
+                LaunchedEffect(cityFocused) {
+                    if (cityFocused && !selectedOnce) {
+                        selectedOnce = true
+                        kotlinx.coroutines.delay(50)
+                        query = query.copy(selection = TextRange(0, query.text.length))
+                    }
+                }
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it; results = Cities.search(context, it.text, 6) },
                     label = { Text(stringResource(R.string.settings_city)) },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth().onFocusChanged {
-                        // First focus selects the whole text so typing replaces the old city.
-                        if (it.isFocused && !selectedOnce) { selectedOnce = true; query = query.copy(selection = TextRange(0, query.text.length)) }
-                    },
+                    interactionSource = cityInteraction,
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 for (c in results) {
                     Row(
