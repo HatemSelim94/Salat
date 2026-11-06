@@ -100,9 +100,9 @@
     "de": "Android braucht die Berechtigung für exakte Alarme, damit Erinnerungen minutengenau sind. Tippen zum Erlauben."
   },
   "home.allow": {
-    "en": "How?",
-    "ar": "كيف؟",
-    "de": "Wie?"
+    "en": "Fix",
+    "ar": "إصلاح",
+    "de": "Beheben"
   },
   "home.setCityShort": {
     "en": "Set city",
@@ -640,9 +640,9 @@
     "de": "Standort aus der Zeitzone geschätzt – „Salat: Stadt festlegen“ ausführen"
   },
   "home.batterySteps": {
-    "en": "1. Tap “Open app info” below.\n2. Tap “Battery”.\n3. Choose “Unrestricted”.\n4. Come back here; this card disappears when it is done.",
-    "ar": "١. اضغط «فتح معلومات التطبيق» بالأسفل.\n٢. اضغط «البطارية».\n٣. اختر «غير مقيّد».\n٤. عد إلى هنا؛ تختفي هذه البطاقة عند الانتهاء.",
-    "de": "1. Unten auf „App-Info öffnen“ tippen.\n2. Auf „Akku“ tippen.\n3. „Uneingeschränkt“ wählen.\n4. Hierher zurückkehren; die Karte verschwindet, sobald es erledigt ist."
+    "en": "Fix → Battery → Unrestricted",
+    "ar": "إصلاح ← البطارية ← غير مقيّد",
+    "de": "Beheben → Akku → Uneingeschränkt"
   },
   "home.whyBattery": {
     "en": "Samsung and other phones put apps to sleep to save battery, and a sleeping app cannot ring at Fajr. Salat uses almost no battery: it wakes once per prayer for a second.",

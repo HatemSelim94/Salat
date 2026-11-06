@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -173,20 +172,10 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onNavigate: (S
             ActionCard(stringResource(R.string.home_locationGuessed), stringResource(R.string.home_setCityShort), onClick = onOpenSettings)
         }
         val pm = context.getSystemService(PowerManager::class.java)
-        var explainBattery by remember { mutableStateOf(false) }
         if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {
-            ActionCard(stringResource(R.string.home_batteryShort), stringResource(R.string.home_allow)) { explainBattery = true }
-        }
-        if (explainBattery) {
-            AlertDialog(
-                onDismissRequest = { explainBattery = false },
-                title = { Text(stringResource(R.string.home_allow)) },
-                text = { Text(stringResource(R.string.home_whyBattery) + "\n\n" + stringResource(R.string.home_batterySteps)) },
-                confirmButton = {
-                    TextButton(onClick = { explainBattery = false; requestBatteryExemption(context) }) { Text(stringResource(R.string.home_continue)) }
-                },
-                dismissButton = { TextButton(onClick = { explainBattery = false }) { Text(stringResource(R.string.home_notNow)) } },
-            )
+            ActionCard(stringResource(R.string.home_batteryShort), stringResource(R.string.home_allow), hint = stringResource(R.string.home_batterySteps)) {
+                requestBatteryExemption(context)
+            }
         }
         if (Build.VERSION.SDK_INT in 31..32 && !Scheduler.canScheduleExact(context)) {
             ActionCard(stringResource(R.string.home_exactAlarmShort), stringResource(R.string.home_allow)) {
@@ -221,7 +210,7 @@ private fun requestBatteryExemption(context: android.content.Context) {
 
 /** A message the user must act on, with an explicit button so it does not read as plain text. */
 @Composable
-private fun ActionCard(text: String, action: String, onClick: () -> Unit) {
+private fun ActionCard(text: String, action: String, hint: String = "", onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth()
             .padding(bottom = 8.dp)
@@ -230,7 +219,10 @@ private fun ActionCard(text: String, action: String, onClick: () -> Unit) {
             .padding(start = 14.dp, end = 6.dp, top = 6.dp, bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text, fontSize = 13.sp, color = MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.weight(1f).padding(end = 8.dp))
+        Column(Modifier.weight(1f).padding(end = 8.dp)) {
+            Text(text, fontSize = 13.sp, color = MaterialTheme.colorScheme.onPrimaryContainer)
+            if (hint.isNotEmpty()) Text(hint, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
+        }
         Button(onClick = onClick, contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp), modifier = Modifier.heightIn(min = 40.dp)) {
             Text(action, fontSize = 13.sp)
         }
