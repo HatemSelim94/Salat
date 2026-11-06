@@ -27,6 +27,9 @@ class Settings : public QObject {
     Q_PROPERTY(bool autostart READ autostart WRITE setAutostart NOTIFY changed)
     Q_PROPERTY(bool startHidden READ startHidden WRITE setStartHidden NOTIFY changed)
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY changed)
+    Q_PROPERTY(double customFajrAngle READ customFajrAngle WRITE setCustomFajrAngle NOTIFY changed)
+    Q_PROPERTY(double customIshaAngle READ customIshaAngle WRITE setCustomIshaAngle NOTIFY changed)
+    Q_PROPERTY(int customIshaInterval READ customIshaInterval WRITE setCustomIshaInterval NOTIFY changed)
     Q_PROPERTY(bool jumuahEnabled READ jumuahEnabled WRITE setJumuahEnabled NOTIFY changed)
     Q_PROPERTY(int jumuahReminderMinutes READ jumuahReminderMinutes WRITE setJumuahReminderMinutes NOTIFY changed)
     Q_PROPERTY(QString ramadan READ ramadan WRITE setRamadan NOTIFY changed)
@@ -54,6 +57,9 @@ public:
     bool autostart() const;
     bool startHidden() const;
     QString language() const;
+    double customFajrAngle() const;
+    double customIshaAngle() const;
+    int customIshaInterval() const;
     bool jumuahEnabled() const;
     int jumuahReminderMinutes() const;
     QString ramadan() const;
@@ -79,6 +85,9 @@ public:
     void setAutostart(bool v);
     void setStartHidden(bool v);
     void setLanguage(const QString& v);
+    void setCustomFajrAngle(double v);
+    void setCustomIshaAngle(double v);
+    void setCustomIshaInterval(int v);
     void setJumuahEnabled(bool v);
     void setJumuahReminderMinutes(int v);
     void setRamadan(const QString& v);

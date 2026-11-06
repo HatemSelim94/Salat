@@ -77,6 +77,12 @@ bool Settings::hour12() const { return m_s.value("ui/hour12", false).toBool(); }
 bool Settings::autostart() const { return Platform::isAutostartEnabled(); }
 bool Settings::startHidden() const { return m_s.value("ui/startHidden", true).toBool(); }
 QString Settings::language() const { return m_s.value("ui/language", QStringLiteral("auto")).toString(); }
+double Settings::customFajrAngle() const { return m_s.value("calc/customFajrAngle", 18.0).toDouble(); }
+double Settings::customIshaAngle() const { return m_s.value("calc/customIshaAngle", 17.0).toDouble(); }
+int Settings::customIshaInterval() const { return m_s.value("calc/customIshaInterval", 0).toInt(); }
+void Settings::setCustomFajrAngle(double v) { if (v >= 5 && v <= 25) put(QStringLiteral("calc/customFajrAngle"), v); }
+void Settings::setCustomIshaAngle(double v) { if (v >= 5 && v <= 25) put(QStringLiteral("calc/customIshaAngle"), v); }
+void Settings::setCustomIshaInterval(int v) { put(QStringLiteral("calc/customIshaInterval"), qBound(0, v, 180)); }
 bool Settings::jumuahEnabled() const { return m_s.value("jumuah/enabled", true).toBool(); }
 int Settings::jumuahReminderMinutes() const { return m_s.value("jumuah/reminder", 0).toInt(); }
 QString Settings::ramadan() const { return m_s.value("ramadan", QStringLiteral("auto")).toString(); }

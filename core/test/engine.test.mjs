@@ -221,3 +221,21 @@ test('features: month table, CSV export, timetable import + override', async () 
   assert.equal(formatTime(f.instantFor('2026-07-01', '05:00', 'Europe/Berlin'), 'Europe/Berlin', false), '05:00');
   assert.equal(f.instantFor('2026-07-01', '05:00', 'Europe/Berlin').toISOString(), '2026-07-01T03:00:00.000Z');
 });
+
+test('custom method uses the given angles / interval', () => {
+  const s = defaultSettings(STUTTGART);
+  const mwl = computeDay(s, new Date('2026-11-07T12:00:00Z'));
+  s.method = 'Custom';
+  s.custom = { fajrAngle: 18, ishaAngle: 17, ishaInterval: 0 };
+  const same = computeDay(s, new Date('2026-11-07T12:00:00Z'));
+  // MWL = 18/17 but adds +1 min to Dhuhr; custom has no method adjustment.
+  assert.equal(same.fajr.getTime(), mwl.fajr.getTime());
+  assert.equal(same.isha.getTime(), mwl.isha.getTime());
+  assert.equal(mwl.dhuhr.getTime() - same.dhuhr.getTime(), 60_000);
+  s.custom = { fajrAngle: 15, ishaAngle: 15, ishaInterval: 0 };
+  const isna = computeDay(s, new Date('2026-11-07T12:00:00Z'));
+  assert.ok(isna.fajr > mwl.fajr && isna.isha < mwl.isha);
+  s.custom = { fajrAngle: 18, ishaAngle: 17, ishaInterval: 90 };
+  const interval = computeDay(s, new Date('2026-11-07T12:00:00Z'));
+  assert.equal(interval.isha.getTime() - interval.maghrib.getTime(), 90 * 60_000);
+});

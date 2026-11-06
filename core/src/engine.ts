@@ -48,9 +48,14 @@ const METHOD_FACTORIES: Record<MethodId, () => CalculationParameters> = {
   Singapore: CalculationMethod.Singapore,
   Tehran: CalculationMethod.Tehran,
   Turkey: CalculationMethod.Turkey,
+  Custom: CalculationMethod.Other,
 };
 
 type HighLatitudeRuleValue = CalculationParameters['highLatitudeRule'];
+
+function clampAngle(v: number, fallback: number): number {
+  return Number.isFinite(v) && v >= 5 && v <= 25 ? v : fallback;
+}
 
 function highLatitudeRule(id: HighLatitudeRuleId, coords: Coordinates): HighLatitudeRuleValue {
   switch (id) {
@@ -67,6 +72,11 @@ function highLatitudeRule(id: HighLatitudeRuleId, coords: Coordinates): HighLati
 
 function buildParams(settings: Settings, coords: Coordinates): CalculationParameters {
   const params = METHOD_FACTORIES[settings.method]();
+  if (settings.method === 'Custom') {
+    params.fajrAngle = clampAngle(settings.custom.fajrAngle, 18);
+    params.ishaAngle = clampAngle(settings.custom.ishaAngle, 17);
+    params.ishaInterval = Math.max(0, Math.min(180, Math.round(settings.custom.ishaInterval || 0)));
+  }
   params.madhab = settings.madhab === 'hanafi' ? AdhanMadhab.Hanafi : AdhanMadhab.Shafi;
   params.highLatitudeRule = highLatitudeRule(settings.highLatitudeRule, coords);
   const a = settings.adjustments;

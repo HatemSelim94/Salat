@@ -50,6 +50,10 @@ function renderForm(): void {
   input('lng').value = String(s.location.longitude);
   input('tz').value = s.location.timezone;
   select('method').value = s.method;
+  input('custom-fajr').value = String(s.custom.fajrAngle);
+  input('custom-isha').value = String(s.custom.ishaAngle);
+  input('custom-interval').value = String(s.custom.ishaInterval);
+  $('custom-row').hidden = s.method !== 'Custom';
   select('madhab').value = s.madhab;
   select('hlr').value = s.highLatitudeRule;
   select('language').value = s.language;
@@ -106,6 +110,12 @@ function readForm(): void {
   if (tz && isValidTimezone(tz)) s.location.timezone = tz;
   s.location.label = input('city').value.trim() || `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
   s.method = select('method').value as MethodId;
+  s.custom = {
+    fajrAngle: Number(input('custom-fajr').value) || 18,
+    ishaAngle: Number(input('custom-isha').value) || 17,
+    ishaInterval: Math.max(0, Number(input('custom-interval').value) || 0),
+  };
+  $('custom-row').hidden = s.method !== 'Custom';
   s.madhab = select('madhab').value as Madhab;
   s.highLatitudeRule = select('hlr').value as HighLatitudeRuleId;
   s.adjustments = {};

@@ -13,7 +13,7 @@ Page {
         ["MuslimWorldLeague", "Muslim World League"], ["Egyptian", "Egyptian General Authority"], ["Karachi", "Karachi"],
         ["UmmAlQura", "Umm al-Qura (Makkah)"], ["Dubai", "Dubai"], ["MoonsightingCommittee", "Moonsighting Committee"],
         ["NorthAmerica", "ISNA (North America)"], ["Kuwait", "Kuwait"], ["Qatar", "Qatar"], ["Singapore", "Singapore"],
-        ["Tehran", "Tehran"], ["Turkey", "Diyanet (Turkey)"]]
+        ["Tehran", "Tehran"], ["Turkey", "Diyanet (Turkey)"], ["Custom", Tr.t("settings.customAngles", Tr.rev)]]
     readonly property var rules: [
         ["recommended", Tr.t("rule.recommended", Tr.rev).split(" (")[0]], ["middleOfTheNight", Tr.t("rule.middleOfTheNight", Tr.rev)],
         ["seventhOfTheNight", Tr.t("rule.seventhOfTheNight", Tr.rev)], ["twilightAngle", Tr.t("rule.twilightAngle", Tr.rev)]]
@@ -113,6 +113,14 @@ Page {
                         font.pixelSize: 13
                         Layout.fillWidth: true
                     }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 8
+                    visible: settingsObj.method === "Custom"
+                    LabeledField { label: Tr.t("settings.fajrAngle", Tr.rev); text: settingsObj.customFajrAngle; onCommitted: (v) => settingsObj.customFajrAngle = Number(v) }
+                    LabeledField { label: Tr.t("settings.ishaAngle", Tr.rev); text: settingsObj.customIshaAngle; onCommitted: (v) => settingsObj.customIshaAngle = Number(v) }
+                    LabeledField { label: Tr.t("settings.ishaInterval", Tr.rev).split(" (")[0]; text: settingsObj.customIshaInterval; onCommitted: (v) => settingsObj.customIshaInterval = Number(v) }
                 }
                 RowLayout {
                     Layout.fillWidth: true

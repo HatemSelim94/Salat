@@ -16,7 +16,8 @@ export type MethodId =
   | 'Qatar'
   | 'Singapore'
   | 'Tehran'
-  | 'Turkey';
+  | 'Turkey'
+  | 'Custom';
 
 export type Madhab = 'shafi' | 'hanafi';
 
@@ -79,6 +80,8 @@ export interface Settings {
   hour12: boolean;
   /** UI language; 'auto' follows the system / host application. */
   language: 'auto' | 'en' | 'ar' | 'de';
+  /** Used when method === 'Custom': twilight angles in degrees below the horizon; ishaInterval > 0 replaces the Isha angle. */
+  custom: { fajrAngle: number; ishaAngle: number; ishaInterval: number };
   /** Minutes after the adhan time at which the congregation (iqamah) prays. 0/absent = not shown. */
   iqamah: Partial<Record<PrayerName, number>>;
   /** Friday: label Dhuhr as Jumu'ah, optional extra reminder N minutes before it (0 = off). */
@@ -107,6 +110,7 @@ export const METHODS: readonly { id: MethodId; label: string }[] = [
   { id: 'Singapore', label: 'Singapore' },
   { id: 'Tehran', label: 'Institute of Geophysics, Tehran' },
   { id: 'Turkey', label: 'Diyanet (Turkey)' },
+  { id: 'Custom', label: 'Custom angles' },
 ];
 
 export const HIGH_LATITUDE_RULES: readonly { id: HighLatitudeRuleId; label: string }[] = [
@@ -131,6 +135,7 @@ export function defaultSettings(location: Location): Settings {
     },
     hour12: false,
     language: 'auto',
+    custom: { fajrAngle: 18, ishaAngle: 17, ishaInterval: 0 },
     iqamah: {},
     jumuah: { enabled: true, reminderMinutes: 0 },
     ramadan: 'auto',
@@ -152,6 +157,7 @@ export function mergeSettings(stored: unknown, fallback: Settings): Settings {
     notifications: { ...fallback.notifications, ...(s.notifications ?? {}) },
     hour12: s.hour12 ?? fallback.hour12,
     language: s.language ?? fallback.language,
+    custom: { ...fallback.custom, ...(s.custom ?? {}) },
     iqamah: { ...fallback.iqamah, ...(s.iqamah ?? {}) },
     jumuah: { ...fallback.jumuah, ...(s.jumuah ?? {}) },
     ramadan: s.ramadan ?? fallback.ramadan,

@@ -72,6 +72,11 @@ Engine::DayTimes Engine::computeDate(const QDate& local) const {
 
     adhan::Coordinates coords{m_settings->latitude(), m_settings->longitude()};
     auto params = adhan::parametersFor(adhan::methodFromId(m_settings->method().toStdString()).value_or(adhan::Method::MuslimWorldLeague));
+    if (m_settings->method() == "Custom") {
+        params.fajrAngle = m_settings->customFajrAngle();
+        params.ishaAngle = m_settings->customIshaAngle();
+        params.ishaInterval = m_settings->customIshaInterval();
+    }
     params.madhab = m_settings->madhab() == "hanafi" ? adhan::Madhab::Hanafi : adhan::Madhab::Shafi;
     const QString rule = m_settings->highLatitudeRule();
     params.highLatitudeRule = rule == "middleOfTheNight"  ? adhan::HighLatitudeRule::MiddleOfTheNight
@@ -388,7 +393,7 @@ QString Engine::methodLabel() const {
         {"MuslimWorldLeague", "Muslim World League"}, {"Egyptian", "Egyptian General Authority"}, {"Karachi", "Karachi"},
         {"UmmAlQura", "Umm al-Qura"}, {"Dubai", "Dubai"}, {"MoonsightingCommittee", "Moonsighting Committee"},
         {"NorthAmerica", "ISNA"}, {"Kuwait", "Kuwait"}, {"Qatar", "Qatar"}, {"Singapore", "Singapore"}, {"Tehran", "Tehran"},
-        {"Turkey", "Diyanet"}};
+        {"Turkey", "Diyanet"}, {"Custom", "Custom angles"}};
     return labels.value(m_settings->method(), m_settings->method());
 }
 

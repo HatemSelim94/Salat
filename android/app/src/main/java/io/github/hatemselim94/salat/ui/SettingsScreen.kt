@@ -140,6 +140,13 @@ fun SettingsScreen(settings: Settings, engine: Engine, revision: Int, onBack: ()
 
             Card(stringResource(R.string.settings_calculation)) {
                 Picker(stringResource(R.string.settings_method), Method.entries.filter { it != Method.OTHER }.map { it to it.label }, settings.method) { settings.method = it }
+                if (settings.method == Method.CUSTOM) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        NumberField(stringResource(R.string.settings_fajrAngle), settings.customFajrAngle.toString(), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { settings.customFajrAngle = it } }
+                        NumberField(stringResource(R.string.settings_ishaAngle), settings.customIshaAngle.toString(), Modifier.weight(1f)) { v -> v.toDoubleOrNull()?.let { settings.customIshaAngle = it } }
+                    }
+                    NumberField(stringResource(R.string.settings_ishaInterval), settings.customIshaInterval.toString(), Modifier.fillMaxWidth()) { v -> v.toIntOrNull()?.let { settings.customIshaInterval = it } }
+                }
                 Picker(stringResource(R.string.settings_asr), listOf(Madhab.SHAFI to stringResource(R.string.settings_asrStandard), Madhab.HANAFI to stringResource(R.string.settings_asrHanafi)), settings.madhab) { settings.madhab = it }
                 Picker(stringResource(R.string.settings_highLatRule), rules, settings.highLatitudeRule) { settings.highLatitudeRule = it }
                 Text(stringResource(R.string.settings_adjustments), color = fg)

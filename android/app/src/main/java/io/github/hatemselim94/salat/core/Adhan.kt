@@ -36,6 +36,7 @@ enum class Method(val id: String, val label: String) {
     SINGAPORE("Singapore", "Singapore"),
     TEHRAN("Tehran", "Tehran"),
     TURKEY("Turkey", "Diyanet (Turkey)"),
+    CUSTOM("Custom", "Custom angles"),
     OTHER("Other", "Other");
 
     companion object {
@@ -82,6 +83,7 @@ data class CalculationParameters(
             Method.SINGAPORE -> CalculationParameters(m, 20.0, 18.0, methodAdjustments = Adjustments(dhuhr = 1), rounding = Rounding.UP)
             Method.TEHRAN -> CalculationParameters(m, 17.7, 14.0, maghribAngle = 4.5)
             Method.TURKEY -> CalculationParameters(m, 18.0, 17.0, methodAdjustments = Adjustments(sunrise = -7, dhuhr = 5, asr = 4, maghrib = 7))
+            Method.CUSTOM -> CalculationParameters(m)
             Method.OTHER -> CalculationParameters(m)
         }
 

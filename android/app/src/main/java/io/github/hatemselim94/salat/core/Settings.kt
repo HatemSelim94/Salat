@@ -51,6 +51,16 @@ class Settings(context: Context) {
         get() = prefs.getString("highLatitudeRule", "recommended")!!
         set(v) = prefs.edit().putString("highLatitudeRule", v).apply()
 
+    var customFajrAngle: Double
+        get() = prefs.getFloat("custom_fajr", 18f).toDouble()
+        set(v) { if (v in 5.0..25.0) prefs.edit().putFloat("custom_fajr", v.toFloat()).apply() }
+    var customIshaAngle: Double
+        get() = prefs.getFloat("custom_isha", 17f).toDouble()
+        set(v) { if (v in 5.0..25.0) prefs.edit().putFloat("custom_isha", v.toFloat()).apply() }
+    var customIshaInterval: Int
+        get() = prefs.getInt("custom_isha_interval", 0)
+        set(v) = prefs.edit().putInt("custom_isha_interval", v.coerceIn(0, 180)).apply()
+
     fun adjustment(prayer: String): Int = prefs.getInt("adjust_$prayer", 0)
     fun setAdjustment(prayer: String, minutes: Int) = prefs.edit().putInt("adjust_$prayer", minutes.coerceIn(-60, 60)).apply()
 
@@ -127,7 +137,9 @@ class Settings(context: Context) {
             "twilightAngle" -> HighLatitudeRule.TWILIGHT_ANGLE
             else -> CalculationParameters.recommendedHighLatitudeRule(coords)
         }
-        return CalculationParameters.forMethod(method).copy(
+        val base = CalculationParameters.forMethod(method)
+        val withCustom = if (method == Method.CUSTOM) base.copy(fajrAngle = customFajrAngle, ishaAngle = customIshaAngle, ishaInterval = customIshaInterval) else base
+        return withCustom.copy(
             madhab = madhab,
             highLatitudeRule = rule,
             adjustments = Adjustments(

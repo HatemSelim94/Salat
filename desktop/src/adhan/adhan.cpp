@@ -316,7 +316,7 @@ constexpr MethodName kMethodNames[] = {
     {Method::MuslimWorldLeague, "MuslimWorldLeague"}, {Method::Egyptian, "Egyptian"}, {Method::Karachi, "Karachi"},
     {Method::UmmAlQura, "UmmAlQura"}, {Method::Dubai, "Dubai"}, {Method::MoonsightingCommittee, "MoonsightingCommittee"},
     {Method::NorthAmerica, "NorthAmerica"}, {Method::Kuwait, "Kuwait"}, {Method::Qatar, "Qatar"},
-    {Method::Singapore, "Singapore"}, {Method::Tehran, "Tehran"}, {Method::Turkey, "Turkey"}, {Method::Other, "Other"},
+    {Method::Singapore, "Singapore"}, {Method::Tehran, "Tehran"}, {Method::Turkey, "Turkey"}, {Method::Other, "Other"}, {Method::Other, "Custom"},
 };
 }  // namespace
 

@@ -264,6 +264,26 @@
     "ar": "تهم شمال خط عرض ٤٨° في الصيف حين لا ينتهي الشفق.",
     "de": "Wichtig nördlich von ca. 48° im Sommer, wenn die Dämmerung nicht endet."
   },
+  "settings.customAngles": {
+    "en": "Custom angles",
+    "ar": "زوايا مخصصة",
+    "de": "Eigene Winkel"
+  },
+  "settings.fajrAngle": {
+    "en": "Fajr angle (°)",
+    "ar": "زاوية الفجر (°)",
+    "de": "Fajr-Winkel (°)"
+  },
+  "settings.ishaAngle": {
+    "en": "Isha angle (°)",
+    "ar": "زاوية العشاء (°)",
+    "de": "Isha-Winkel (°)"
+  },
+  "settings.ishaInterval": {
+    "en": "Isha = Maghrib + minutes (0 = use angle)",
+    "ar": "العشاء = المغرب + دقائق (٠ = استخدم الزاوية)",
+    "de": "Isha = Maghrib + Minuten (0 = Winkel verwenden)"
+  },
   "settings.adjustments": {
     "en": "Adjustments (minutes)",
     "ar": "تعديلات (بالدقائق)",

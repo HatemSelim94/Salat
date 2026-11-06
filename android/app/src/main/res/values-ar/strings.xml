@@ -54,6 +54,10 @@
     <string name="settings_asrHanafi" translatable="true">حنفي</string>
     <string name="settings_highLatRule" translatable="true">قاعدة خطوط العرض العليا</string>
     <string name="settings_highLatHint" translatable="true">تهم شمال خط عرض ٤٨° في الصيف حين لا ينتهي الشفق.</string>
+    <string name="settings_customAngles" translatable="true">زوايا مخصصة</string>
+    <string name="settings_fajrAngle" translatable="true">زاوية الفجر (°)</string>
+    <string name="settings_ishaAngle" translatable="true">زاوية العشاء (°)</string>
+    <string name="settings_ishaInterval" translatable="true">العشاء = المغرب + دقائق (٠ = استخدم الزاوية)</string>
     <string name="settings_adjustments" translatable="true">تعديلات (بالدقائق)</string>
     <string name="settings_adjustmentsHint" translatable="true">حرّك كل صلاة لتطابق جدول المسجد المحلي.</string>
     <string name="settings_preview" translatable="true">اليوم بهذه الإعدادات</string>

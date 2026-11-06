@@ -64,6 +64,7 @@ function readSettings(): Settings {
   s.language = cfg.get('language', 'auto');
   lang = resolveLanguage(s.language, vscode.env.language);
   s.method = cfg.get('method', s.method);
+  s.custom = { fajrAngle: cfg.get('custom.fajrAngle', 18), ishaAngle: cfg.get('custom.ishaAngle', 17), ishaInterval: cfg.get('custom.ishaInterval', 0) };
   s.madhab = cfg.get('madhab', s.madhab);
   s.highLatitudeRule = cfg.get('highLatitudeRule', s.highLatitudeRule);
   s.adjustments = cfg.get('adjustments', {});

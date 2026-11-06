@@ -54,6 +54,10 @@
     <string name="settings_asrHanafi" translatable="true">Hanafi</string>
     <string name="settings_highLatRule" translatable="true">High-latitude rule</string>
     <string name="settings_highLatHint" translatable="true">Matters north of ~48° in summer, when twilight never ends.</string>
+    <string name="settings_customAngles" translatable="true">Custom angles</string>
+    <string name="settings_fajrAngle" translatable="true">Fajr angle (°)</string>
+    <string name="settings_ishaAngle" translatable="true">Isha angle (°)</string>
+    <string name="settings_ishaInterval" translatable="true">Isha = Maghrib + minutes (0 = use angle)</string>
     <string name="settings_adjustments" translatable="true">Adjustments (minutes)</string>
     <string name="settings_adjustmentsHint" translatable="true">Shift individual prayers to match a local timetable.</string>
     <string name="settings_preview" translatable="true">Today with these settings</string>

@@ -53,10 +53,13 @@
         "salat.method": {
           "type": "string",
           "default": "MuslimWorldLeague",
-          "enum": ["MuslimWorldLeague", "Egyptian", "Karachi", "UmmAlQura", "Dubai", "MoonsightingCommittee", "NorthAmerica", "Kuwait", "Qatar", "Singapore", "Tehran", "Turkey"],
-          "enumDescriptions": ["Muslim World League", "Egyptian General Authority of Survey", "University of Islamic Sciences, Karachi", "Umm al-Qura University, Makkah", "Dubai", "Moonsighting Committee Worldwide", "ISNA (North America)", "Kuwait", "Qatar", "Singapore", "Institute of Geophysics, Tehran", "Diyanet (Turkey)"],
+          "enum": ["MuslimWorldLeague", "Egyptian", "Karachi", "UmmAlQura", "Dubai", "MoonsightingCommittee", "NorthAmerica", "Kuwait", "Qatar", "Singapore", "Tehran", "Turkey", "Custom"],
+          "enumDescriptions": ["Muslim World League", "Egyptian General Authority of Survey", "University of Islamic Sciences, Karachi", "Umm al-Qura University, Makkah", "Dubai", "Moonsighting Committee Worldwide", "ISNA (North America)", "Kuwait", "Qatar", "Singapore", "Institute of Geophysics, Tehran", "Diyanet (Turkey)", "Custom angles (see salat.custom.*)"],
           "description": "Calculation method. Use what your local mosque or country authority uses."
         },
+        "salat.custom.fajrAngle": { "type": "number", "default": 18, "minimum": 5, "maximum": 25, "description": "Fajr twilight angle in degrees (method = Custom)." },
+        "salat.custom.ishaAngle": { "type": "number", "default": 17, "minimum": 5, "maximum": 25, "description": "Isha twilight angle in degrees (method = Custom)." },
+        "salat.custom.ishaInterval": { "type": "number", "default": 0, "minimum": 0, "maximum": 180, "description": "Isha = Maghrib + this many minutes; 0 uses the angle (method = Custom)." },
         "salat.madhab": {
           "type": "string",
           "default": "shafi",

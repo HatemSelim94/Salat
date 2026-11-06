@@ -40,6 +40,14 @@
       <label for="hlr"><span data-i18n="settings.highLatRule">High-latitude rule</span><div class="hint" data-i18n="settings.highLatHint">Matters north of ~48° in summer, when twilight never ends.</div></label>
       <select id="hlr"></select>
     </div>
+    <div class="field" id="custom-row" style="display:block" hidden>
+      <label><span data-i18n="settings.customAngles">Custom angles</span></label>
+      <div class="coords" style="margin-top:6px">
+        <label><span data-i18n="settings.fajrAngle">Fajr angle (°)</span> <input id="custom-fajr" type="number" step="0.1" min="5" max="25"></label>
+        <label><span data-i18n="settings.ishaAngle">Isha angle (°)</span> <input id="custom-isha" type="number" step="0.1" min="5" max="25"></label>
+        <label><span data-i18n="settings.ishaInterval">Isha = Maghrib + minutes</span> <input id="custom-interval" type="number" step="1" min="0" max="180"></label>
+      </div>
+    </div>
     <div class="field" style="display:block">
       <label><span data-i18n="settings.adjustments">Adjustments (minutes)</span><div class="hint" data-i18n="settings.adjustmentsHint">Shift individual prayers to match a local timetable.</div></label>
       <div class="adjust" id="adjust" style="margin-top:8px"></div>
