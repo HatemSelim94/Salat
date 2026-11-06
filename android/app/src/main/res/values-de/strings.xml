@@ -18,10 +18,10 @@
     <string name="home_remindersOff" translatable="true">Erinnerungen sind ausgeschaltet.</string>
     <string name="home_battery" translatable="true">Damit Erinnerungen pünktlich kommen, erlaube Salat, ohne Akku-Einschränkungen zu laufen.</string>
     <string name="home_exactAlarm" translatable="true">Android braucht die Berechtigung für exakte Alarme, damit Erinnerungen minutengenau sind. Tippen zum Erlauben.</string>
-    <string name="home_allow" translatable="true">Beheben</string>
+    <string name="home_allow" translatable="true">Wie?</string>
     <string name="home_setCityShort" translatable="true">Stadt wählen</string>
-    <string name="home_batteryShort" translatable="true">Erinnerungen können sich verspäten, solange der Akkusparmodus für Salat aktiv ist.</string>
-    <string name="home_exactAlarmShort" translatable="true">Für minutengenaue Erinnerungen wird die Berechtigung für exakte Alarme benötigt.</string>
+    <string name="home_batteryShort" translatable="true">Schalte die Akku-Optimierung für Salat aus, damit Erinnerungen pünktlich kommen.</string>
+    <string name="home_exactAlarmShort" translatable="true">Erlaube exakte Alarme für Salat, damit Erinnerungen minutengenau sind.</string>
     <string name="settings_title" translatable="true">Einstellungen</string>
     <string name="settings_back" translatable="true">Zurück</string>
     <string name="settings_lead" translatable="true">Alles wird auf diesem Gerät berechnet. Nichts wird irgendwohin gesendet.</string>
@@ -95,8 +95,11 @@
     <string name="vscode_current" translatable="true">aktuell</string>
     <string name="vscode_next" translatable="true">Nächste</string>
     <string name="vscode_guessed" translatable="true">Standort aus der Zeitzone geschätzt – „Salat: Stadt festlegen“ ausführen</string>
-    <string name="home_batterySteps" translatable="true">Es öffnet sich eine App-Liste. Oben den Filter von „Nicht optimiert“ auf „Alle“ stellen, Salat suchen und die Optimierung AUSschalten. Danach hierher zurückkehren – dieser Hinweis verschwindet, sobald es erledigt ist.</string>
-    <string name="home_whyBattery" translatable="true">Warum? Samsung- und andere Telefone legen Apps schlafen, um Akku zu sparen – und eine schlafende App kann zum Fajr nicht klingeln. Salat braucht fast keinen Akku: es wacht einmal pro Gebet auf.</string>
+    <string name="home_batterySteps" translatable="true">1. Unten auf „Liste öffnen“ tippen.
+2. Oben den Filter von „Nicht optimiert“ auf „Alle“ stellen.
+3. Salat suchen und AUSschalten (= nicht optimiert).
+4. Hierher zurückkehren; die Karte verschwindet, sobald es erledigt ist.</string>
+    <string name="home_whyBattery" translatable="true">Samsung- und andere Telefone legen Apps schlafen, um Akku zu sparen – eine schlafende App kann zum Fajr nicht klingeln. Salat braucht fast keinen Akku: es wacht einmal pro Gebet für eine Sekunde auf.</string>
     <string name="home_notNow" translatable="true">Später</string>
     <string name="home_continue" translatable="true">Liste öffnen</string>
 </resources>

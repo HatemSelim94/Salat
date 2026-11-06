@@ -18,10 +18,10 @@
     <string name="home_remindersOff" translatable="true">التذكيرات متوقفة.</string>
     <string name="home_battery" translatable="true">لضمان وصول التذكيرات في وقتها، اسمح لتطبيق صلاة بالعمل دون قيود البطارية.</string>
     <string name="home_exactAlarm" translatable="true">يحتاج أندرويد إلى إذن المنبهات الدقيقة لتصل التذكيرات في الدقيقة نفسها. اضغط للسماح.</string>
-    <string name="home_allow" translatable="true">إصلاح</string>
+    <string name="home_allow" translatable="true">كيف؟</string>
     <string name="home_setCityShort" translatable="true">اختر المدينة</string>
-    <string name="home_batteryShort" translatable="true">قد تتأخر التذكيرات ما دام توفير البطارية مفعّلًا لتطبيق صلاة.</string>
-    <string name="home_exactAlarmShort" translatable="true">يلزم إذن المنبهات الدقيقة لتذكيرات في الدقيقة نفسها.</string>
+    <string name="home_batteryShort" translatable="true">أوقف تحسين البطارية لتطبيق صلاة لتصل التذكيرات في وقتها.</string>
+    <string name="home_exactAlarmShort" translatable="true">اسمح بالمنبهات الدقيقة لتطبيق صلاة لتصل التذكيرات في الدقيقة نفسها.</string>
     <string name="settings_title" translatable="true">الإعدادات</string>
     <string name="settings_back" translatable="true">رجوع</string>
     <string name="settings_lead" translatable="true">يُحسب كل شيء على هذا الجهاز. لا يُرسل أي شيء إلى أي مكان.</string>
@@ -95,8 +95,11 @@
     <string name="vscode_current" translatable="true">الحالية</string>
     <string name="vscode_next" translatable="true">القادمة</string>
     <string name="vscode_guessed" translatable="true">تم تخمين الموقع من المنطقة الزمنية — شغّل «صلاة: تحديد المدينة»</string>
-    <string name="home_batterySteps" translatable="true">ستُفتح قائمة بالتطبيقات. غيّر الفلتر في الأعلى من «غير محسّنة» إلى «الكل»، ابحث عن صلاة وأوقف التحسين. ثم عد إلى هنا — يختفي هذا التنبيه عند الانتهاء.</string>
-    <string name="home_whyBattery" translatable="true">لماذا؟ هواتف سامسونج وغيرها تُنيم التطبيقات لتوفير البطارية، والتطبيق النائم لا يستطيع التنبيه عند الفجر. صلاة لا يستهلك البطارية تقريبًا: يستيقظ مرة واحدة لكل صلاة.</string>
+    <string name="home_batterySteps" translatable="true">١. اضغط «فتح القائمة» بالأسفل.
+٢. في الأعلى غيّر الفلتر من «غير محسّنة» إلى «الكل».
+٣. ابحث عن صلاة وأوقفه (= غير محسّن).
+٤. عد إلى هنا؛ تختفي هذه البطاقة عند الانتهاء.</string>
+    <string name="home_whyBattery" translatable="true">هواتف سامسونج وغيرها تُنيم التطبيقات لتوفير البطارية، والتطبيق النائم لا يستطيع التنبيه عند الفجر. صلاة لا يستهلك البطارية تقريبًا: يستيقظ لثانية واحدة لكل صلاة.</string>
     <string name="home_notNow" translatable="true">ليس الآن</string>
     <string name="home_continue" translatable="true">فتح القائمة</string>
 </resources>

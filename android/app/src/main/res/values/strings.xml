@@ -18,10 +18,10 @@
     <string name="home_remindersOff" translatable="true">Reminders are turned off.</string>
     <string name="home_battery" translatable="true">To make sure reminders fire on time, allow Salat to run without battery restrictions.</string>
     <string name="home_exactAlarm" translatable="true">Android needs permission for exact alarms so reminders are on the minute. Tap to allow.</string>
-    <string name="home_allow" translatable="true">Fix</string>
+    <string name="home_allow" translatable="true">How?</string>
     <string name="home_setCityShort" translatable="true">Set city</string>
-    <string name="home_batteryShort" translatable="true">Reminders may come late while battery saving is on for Salat.</string>
-    <string name="home_exactAlarmShort" translatable="true">Exact-alarm permission is needed for on-the-minute reminders.</string>
+    <string name="home_batteryShort" translatable="true">Turn off battery optimisation for Salat so reminders arrive on time.</string>
+    <string name="home_exactAlarmShort" translatable="true">Allow exact alarms for Salat so reminders are on the minute.</string>
     <string name="settings_title" translatable="true">Settings</string>
     <string name="settings_back" translatable="true">Back</string>
     <string name="settings_lead" translatable="true">Everything is calculated on this device. Nothing is sent anywhere.</string>
@@ -95,8 +95,11 @@
     <string name="vscode_current" translatable="true">current</string>
     <string name="vscode_next" translatable="true">Next</string>
     <string name="vscode_guessed" translatable="true">Location guessed from time zone — run Salat: Set City</string>
-    <string name="home_batterySteps" translatable="true">A list of apps will open. Change the filter at the top from “Not optimised” to “All”, find Salat and switch optimisation OFF. Then come back here — this notice disappears once it is done.</string>
-    <string name="home_whyBattery" translatable="true">Why? Samsung and other phones put apps to sleep to save battery, and a sleeping app cannot ring at Fajr. Salat uses almost no battery: it wakes once per prayer.</string>
+    <string name="home_batterySteps" translatable="true">1. Tap “Open the list” below.
+2. At the top, change the filter from “Not optimised” to “All”.
+3. Find Salat and switch it OFF (= not optimised).
+4. Come back here; this card disappears when it is done.</string>
+    <string name="home_whyBattery" translatable="true">Samsung and other phones put apps to sleep to save battery, and a sleeping app cannot ring at Fajr. Salat uses almost no battery: it wakes once per prayer for a second.</string>
     <string name="home_notNow" translatable="true">Not now</string>
     <string name="home_continue" translatable="true">Open the list</string>
 </resources>
