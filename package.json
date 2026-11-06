@@ -1,0 +1,24 @@
+{
+  "name": "salat-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Salat – lightweight, offline, non-annoying prayer-time reminders for desktop, Chrome, VS Code and Android",
+  "license": "MIT",
+  "workspaces": [
+    "core",
+    "chrome",
+    "vscode"
+  ],
+  "scripts": {
+    "build": "npm run build -w core && npm run build -w chrome && npm run build -w vscode",
+    "test": "npm test -w core",
+    "typecheck": "tsc -p core && tsc -p chrome --noEmit && tsc -p vscode --noEmit"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.280",
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.90.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.0"
+  }
+}
