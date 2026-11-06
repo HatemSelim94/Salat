@@ -6,6 +6,8 @@ import Salat
 Page {
     id: page
     signal openSettings()
+    signal openMonth()
+    signal openQibla()
     background: Rectangle { color: Theme.bg }
 
     ColumnLayout {
@@ -28,6 +30,26 @@ Page {
                 spacing: 0
                 Label { text: engine.hijriDate; color: Theme.muted; font.pixelSize: 12; horizontalAlignment: Text.AlignRight; Layout.alignment: Qt.AlignRight }
                 Label { text: engine.gregorianDate; color: Theme.muted; font.pixelSize: 12; horizontalAlignment: Text.AlignRight; Layout.alignment: Qt.AlignRight }
+            }
+        }
+
+        // Ramadan: Suhoor ends at Fajr, Iftar at Maghrib
+        Rectangle {
+            Layout.fillWidth: true
+            visible: engine.ramadan
+            implicitHeight: 52
+            radius: 12
+            color: Theme.card
+            border.color: Theme.line
+            RowLayout {
+                anchors { fill: parent; leftMargin: 14; rightMargin: 14 }
+                ColumnLayout {
+                    spacing: 0
+                    Layout.fillWidth: true
+                    Label { text: Tr.t("home.ramadan", Tr.rev).toUpperCase(); color: Theme.accent; font.pixelSize: 10; font.weight: Font.DemiBold; font.letterSpacing: 1 }
+                    Label { text: engine.ramadanLabel; color: Theme.fg; font.pixelSize: 15; font.weight: Font.DemiBold }
+                }
+                Label { text: engine.ramadanTime + " · " + engine.ramadanCountdown; color: Theme.fg; font.pixelSize: 13 }
             }
         }
 
@@ -73,6 +95,7 @@ Page {
                             font.weight: modelData.state === "current" ? Font.DemiBold : Font.Normal
                             color: modelData.state === "current" ? Theme.fg : (modelData.sunrise || modelData.state === "passed" ? Theme.muted : Theme.fg)
                         }
+                        Label { text: modelData.iqamah ? Tr.t("home.iqamah", Tr.rev).substring(0, 3) + " " + modelData.iqamah : ""; visible: modelData.iqamah !== ""; color: Theme.muted; font.pixelSize: 11 }
                         Rectangle { width: 7; height: 7; radius: 4; color: Theme.accent; visible: modelData.state === "current" }
                         Label {
                             text: modelData.time
@@ -113,15 +136,26 @@ Page {
 
         Item { Layout.fillHeight: true }
 
+        Label {
+            Layout.fillWidth: true
+            text: Tr.t("home.qibla", Tr.rev) + ": " + Tr.f("home.qiblaBearing", { deg: Math.round(engine.qiblaBearing) }, Tr.rev)
+                  + " · " + Tr.f("home.qiblaDistance", { km: Number(Math.round(engine.qiblaDistanceKm)).toLocaleString(Qt.locale(), "f", 0) }, Tr.rev)
+            color: Theme.muted; font.pixelSize: 12; elide: Text.ElideRight
+        }
         RowLayout {
             Layout.fillWidth: true
+            spacing: 12
             Label { text: engine.methodLabel; color: Theme.muted; font.pixelSize: 12; elide: Text.ElideRight; Layout.fillWidth: true }
-            Label {
-                text: "<a href='settings'>" + Tr.t("home.settings", Tr.rev) + "</a>"
-                font.pixelSize: 12
-                linkColor: Theme.accent
-                onLinkActivated: page.openSettings()
-                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; acceptedButtons: Qt.NoButton }
+            Repeater {
+                model: [["month", "home.month"], ["qibla", "home.qibla"], ["settings", "home.settings"]]
+                delegate: Label {
+                    required property var modelData
+                    text: "<a href='" + modelData[0] + "'>" + Tr.t(modelData[1], Tr.rev) + "</a>"
+                    font.pixelSize: 12
+                    linkColor: Theme.accent
+                    onLinkActivated: (link) => { if (link === "month") page.openMonth(); else if (link === "qibla") page.openQibla(); else page.openSettings() }
+                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; acceptedButtons: Qt.NoButton }
+                }
             }
         }
     }

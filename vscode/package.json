@@ -109,6 +109,25 @@
           "default": true,
           "description": "Show the next prayer and countdown in the status bar."
         },
+        "salat.iqamah": {
+          "type": "object",
+          "default": {},
+          "properties": { "fajr": { "type": "number" }, "dhuhr": { "type": "number" }, "asr": { "type": "number" }, "maghrib": { "type": "number" }, "isha": { "type": "number" } },
+          "additionalProperties": false,
+          "description": "Iqamah minutes after the adhan, shown in the tooltip, e.g. { \"asr\": 15 }."
+        },
+        "salat.jumuah.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Label Dhuhr as Jumu'ah on Fridays."
+        },
+        "salat.jumuah.reminderMinutes": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 180,
+          "description": "Extra reminder this many minutes before Jumu'ah on Fridays. 0 = off."
+        },
         "salat.language": {
           "type": "string",
           "default": "auto",

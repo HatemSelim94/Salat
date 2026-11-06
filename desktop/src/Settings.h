@@ -27,6 +27,13 @@ class Settings : public QObject {
     Q_PROPERTY(bool autostart READ autostart WRITE setAutostart NOTIFY changed)
     Q_PROPERTY(bool startHidden READ startHidden WRITE setStartHidden NOTIFY changed)
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY changed)
+    Q_PROPERTY(bool jumuahEnabled READ jumuahEnabled WRITE setJumuahEnabled NOTIFY changed)
+    Q_PROPERTY(int jumuahReminderMinutes READ jumuahReminderMinutes WRITE setJumuahReminderMinutes NOTIFY changed)
+    Q_PROPERTY(QString ramadan READ ramadan WRITE setRamadan NOTIFY changed)
+    Q_PROPERTY(bool quietHoursEnabled READ quietHoursEnabled WRITE setQuietHoursEnabled NOTIFY changed)
+    Q_PROPERTY(QString quietFrom READ quietFrom WRITE setQuietFrom NOTIFY changed)
+    Q_PROPERTY(QString quietTo READ quietTo WRITE setQuietTo NOTIFY changed)
+    Q_PROPERTY(int timetableDays READ timetableDays NOTIFY changed)
 
 public:
     explicit Settings(QObject* parent = nullptr);
@@ -47,6 +54,15 @@ public:
     bool autostart() const;
     bool startHidden() const;
     QString language() const;
+    bool jumuahEnabled() const;
+    int jumuahReminderMinutes() const;
+    QString ramadan() const;
+    bool quietHoursEnabled() const;
+    QString quietFrom() const;
+    QString quietTo() const;
+    int timetableDays() const { return m_timetable.size(); }
+    const QMap<QString, QMap<QString, QString>>& timetable() const { return m_timetable; }
+    void setTimetable(const QMap<QString, QMap<QString, QString>>& t);
 
     void setLatitude(double v);
     void setLongitude(double v);
@@ -63,6 +79,16 @@ public:
     void setAutostart(bool v);
     void setStartHidden(bool v);
     void setLanguage(const QString& v);
+    void setJumuahEnabled(bool v);
+    void setJumuahReminderMinutes(int v);
+    void setRamadan(const QString& v);
+    void setQuietHoursEnabled(bool v);
+    void setQuietFrom(const QString& v);
+    void setQuietTo(const QString& v);
+
+    /// Iqamah minutes after the adhan (0 = not shown).
+    Q_INVOKABLE int iqamah(const QString& prayer) const;
+    Q_INVOKABLE void setIqamah(const QString& prayer, int minutes);
 
     /// Per-prayer minute offsets: keys fajr, sunrise, dhuhr, asr, maghrib, isha.
     Q_INVOKABLE int adjustment(const QString& prayer) const;
@@ -76,5 +102,7 @@ signals:
 
 private:
     template <typename T> void put(const QString& key, const T& value);
+    QString timetablePath() const;
     QSettings m_s;
+    QMap<QString, QMap<QString, QString>> m_timetable;
 };

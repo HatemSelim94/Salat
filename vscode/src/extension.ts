@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import {
   METHODS,
   cityToLocation,
+  iqamahTime,
+  prayerDisplayLabel,
   prayerLabel,
   resolveLanguage,
   t as tr,
@@ -36,7 +38,7 @@ let locationGuessed = false;
 let lang: Language = 'en';
 let lastSystemTz = systemTimezone();
 const t = (key: string, params?: Record<string, string | number>) => tr(lang, key, params);
-const label = (p: PrayerName) => prayerLabel(lang, p);
+const label = (p: PrayerName, at?: Date) => (at ? prayerDisplayLabel(lang, settings, p, at) : prayerLabel(lang, p));
 
 // ---- settings ---------------------------------------------------------------
 
@@ -69,6 +71,8 @@ function readSettings(): Settings {
   s.notifications.preReminderMinutes = cfg.get('notifications.preReminderMinutes', 0);
   s.notifications.snoozeMinutes = cfg.get('notifications.snoozeMinutes', 10);
   s.hour12 = cfg.get('hour12', false);
+  s.iqamah = cfg.get('iqamah', {});
+  s.jumuah = { enabled: cfg.get('jumuah.enabled', true), reminderMinutes: cfg.get('jumuah.reminderMinutes', 0) };
   return s;
 }
 
@@ -87,8 +91,8 @@ function updateStatus(): void {
   const compact = cfg.get('statusBar.compact', false);
   const clock = formatTime(next.time, tz, settings.hour12);
   statusItem.text = compact
-    ? `$(bell) ${label(next.name)} ${formatCountdown(now, next.time)}`
-    : `$(bell) ${label(next.name)} ${clock} · ${formatCountdown(now, next.time)}`;
+    ? `$(bell) ${label(next.name, next.time)} ${formatCountdown(now, next.time)}`
+    : `$(bell) ${label(next.name, next.time)} ${clock} · ${formatCountdown(now, next.time)}`;
 
   const day = computeDay(settings, now);
   const current = currentPrayer(settings, now);
@@ -96,7 +100,9 @@ function updateStatus(): void {
   md.appendMarkdown(`**${t('app.name')}** — ${settings.location.label}  \n`);
   for (const p of ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as PrayerName[]) {
     const mark = p === current.name ? '●' : '○';
-    md.appendMarkdown(`${mark} ${label(p)} — ${formatTime(day[p], tz, settings.hour12)}  \n`);
+    const iq = p !== 'sunrise' ? iqamahTime(settings, p, day[p]) : null;
+    const iqText = iq ? ` (${t('home.iqamah')} ${formatTime(iq, tz, settings.hour12)})` : '';
+    md.appendMarkdown(`${mark} ${label(p, day[p])} — ${formatTime(day[p], tz, settings.hour12)}${iqText}  \n`);
   }
   md.appendMarkdown(`\n_${METHODS.find((m) => m.id === settings.method)?.label ?? settings.method}_`);
   if (locationGuessed) md.appendMarkdown(`  \n_${t('vscode.guessed')}_`);
@@ -153,12 +159,15 @@ function tick(): void {
 // ---- notifications ----------------------------------------------------------
 
 async function notify(ev: ScheduledEvent, snoozed = false): Promise<void> {
-  const name = label(ev.name);
+  const name = label(ev.name, ev.at);
   const tz = settings.location.timezone;
   const pre = settings.notifications.preReminderMinutes;
-  const prayerAt = new Date(ev.at.getTime() + (ev.kind === 'pre' ? pre * 60_000 : 0));
+  const jm = settings.jumuah.reminderMinutes;
+  const prayerAt = new Date(ev.at.getTime() + (ev.kind === 'pre' ? pre * 60_000 : ev.kind === 'jumuah' ? jm * 60_000 : 0));
   const message =
-    ev.kind === 'pre'
+    ev.kind === 'jumuah'
+      ? `${t('notif.jumuahTitle', { n: jm })} (${formatTime(prayerAt, tz, settings.hour12)})`
+    : ev.kind === 'pre'
       ? `${t('notif.preTitle', { prayer: name, n: pre })} (${formatTime(prayerAt, tz, settings.hour12)})`
       : snoozed
         ? t('notif.snoozedTitle', { prayer: name })
@@ -182,7 +191,7 @@ async function showTimes(): Promise<void> {
   const current = currentPrayer(settings, now);
   const tz = settings.location.timezone;
   const items: vscode.QuickPickItem[] = (['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as PrayerName[]).map((p) => ({
-    label: `${p === current.name ? '$(circle-filled)' : '$(circle-outline)'} ${label(p)}`,
+    label: `${p === current.name ? '$(circle-filled)' : '$(circle-outline)'} ${label(p, day[p])}`,
     description: formatTime(day[p], tz, settings.hour12),
     detail: p === current.name ? t('vscode.current') : undefined,
   }));
@@ -190,7 +199,7 @@ async function showTimes(): Promise<void> {
   const tomorrow = civilDate(next.time, tz).day !== civilDate(now, tz).day ? ` (${t('home.tomorrow')})` : '';
   await vscode.window.showQuickPick(items, {
     title: `${t('app.name')} — ${settings.location.label} · ${day.date}`,
-    placeHolder: `${t('vscode.next')}: ${label(next.name)} ${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t('home.in')} ${formatCountdown(now, next.time)}`,
+    placeHolder: `${t('vscode.next')}: ${label(next.name, next.time)} ${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t('home.in')} ${formatCountdown(now, next.time)}`,
   });
 }
 

@@ -12,6 +12,10 @@ Lightweight, offline, non-annoying prayer-time reminders — for your desktop, y
 | Desktop app | [`desktop/`](desktop) | C++17, Qt 6 / QML | ✅ builds on Linux; Windows/macOS untested |
 | Android app | [`android/`](android) | Kotlin, Jetpack Compose | ⚠️ algorithm + test verified; UI/receivers not yet compiled (no SDK here) |
 
+## Features
+
+Today's times with the current prayer highlighted and a countdown to the next · one notification per prayer with a short chime, snooze, optional heads-up · Jumu'ah on Fridays with an optional reminder · iqamah times · Ramadan view (Suhoor/Iftar countdown) · Qibla bearing (with a compass on Android) · monthly timetable with CSV export · import your mosque's timetable (CSV) to replace the calculation · quiet hours · 12 calculation methods, Hanafi Asr, high-latitude rules, per-prayer offsets · English, Arabic, German.
+
 ## Principles
 
 - **Light.** No Electron, no frameworks where a few hundred lines will do. Idle CPU is zero; the desktop app idles at 0 % CPU.

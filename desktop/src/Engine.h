@@ -28,14 +28,23 @@ class Engine : public QObject {
     Q_PROPERTY(QString hijriDate READ hijriDate NOTIFY updated)
     Q_PROPERTY(QString methodLabel READ methodLabel NOTIFY updated)
     Q_PROPERTY(QString trayText READ trayText NOTIFY updated)
+    Q_PROPERTY(bool ramadan READ ramadan NOTIFY updated)
+    Q_PROPERTY(QString ramadanLabel READ ramadanLabel NOTIFY updated)
+    Q_PROPERTY(QString ramadanTime READ ramadanTime NOTIFY updated)
+    Q_PROPERTY(QString ramadanCountdown READ ramadanCountdown NOTIFY updated)
+    Q_PROPERTY(double qiblaBearing READ qiblaBearing NOTIFY updated)
+    Q_PROPERTY(double qiblaDistanceKm READ qiblaDistanceKm NOTIFY updated)
 
 public:
     enum class Prayer { Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha };
 
     struct Event {
-        bool pre = false;   // heads-up before the prayer
+        enum class Kind { Prayer, Pre, Jumuah };
+        Kind kind = Kind::Prayer;
         Prayer prayer = Prayer::Fajr;
         qint64 at = 0;      // UTC epoch seconds
+        bool quiet = false; // inside quiet hours → no chime
+        bool pre() const { return kind == Kind::Pre; }
     };
     struct DayTimes { qint64 fajr, sunrise, dhuhr, asr, maghrib, isha; QString date; };
 
@@ -58,6 +67,21 @@ public:
     Q_INVOKABLE QVariantList previewToday() const;
     /// Fire a sample notification now.
     Q_INVOKABLE void testNotification();
+    /// Month table rows for QML: [{ day, weekday, hijri, friday, today, fajr…isha }].
+    Q_INVOKABLE QVariantList monthTable(int year, int month) const;
+    /// Month name for the header, localised.
+    Q_INVOKABLE QString monthName(int year, int month) const;
+    /// Write the month as CSV to a path chosen with a file dialog; returns the path or "".
+    Q_INVOKABLE QString exportMonthCsv(int year, int month);
+    /// Pick a CSV with a file dialog and import it; returns a status message.
+    Q_INVOKABLE QString importTimetable();
+    Q_INVOKABLE void clearTimetable();
+    bool ramadan() const;
+    QString ramadanLabel() const;
+    QString ramadanTime() const;
+    QString ramadanCountdown() const;
+    double qiblaBearing() const;
+    double qiblaDistanceKm() const;
     /// Snooze the most recent prayer notification.
     Q_INVOKABLE void snooze();
 
@@ -74,6 +98,9 @@ public slots:
 
 private:
     DayTimes computeDay(qint64 instant, int dayOffset) const;
+    DayTimes computeDate(const QDate& local) const;
+    QString labelFor(Prayer p, const QDate& date) const;  // Jumu'ah on Fridays
+    QString ramadanNext(qint64& at) const;
     void rebuildToday();
     void rebuildQueue();
     void armNext();

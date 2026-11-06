@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include <QCalendar>
+#include <QRegularExpression>
 #include <QLocale>
 #include <QTimeZone>
 #include <QVariantMap>
@@ -12,6 +13,11 @@
 #include "Platform.h"
 #include "Settings.h"
 #include "Tr.h"
+#include "Features.h"
+#include <QFileDialog>
+#include <QFile>
+#include <QStandardPaths>
+#include <QTextStream>
 #include "adhan/adhan.h"
 
 namespace {
@@ -58,7 +64,11 @@ QString Engine::labelFor(Prayer p) { return Tr::instance().prayer(keyFor(p)); }
 
 Engine::DayTimes Engine::computeDay(qint64 instant, int dayOffset) const {
     const QTimeZone tz(m_settings->timezone().toUtf8());
-    const QDate local = QDateTime::fromSecsSinceEpoch(instant, tz).date().addDays(dayOffset);
+    return computeDate(QDateTime::fromSecsSinceEpoch(instant, tz).date().addDays(dayOffset));
+}
+
+Engine::DayTimes Engine::computeDate(const QDate& local) const {
+    const QTimeZone tz(m_settings->timezone().toUtf8());
 
     adhan::Coordinates coords{m_settings->latitude(), m_settings->longitude()};
     auto params = adhan::parametersFor(adhan::methodFromId(m_settings->method().toStdString()).value_or(adhan::Method::MuslimWorldLeague));
@@ -76,7 +86,23 @@ Engine::DayTimes Engine::computeDay(qint64 instant, int dayOffset) const {
     params.adjustments.isha = m_settings->adjustment("isha");
 
     const auto t = adhan::computePrayerTimes(coords, adhan::CivilDate{local.year(), local.month(), local.day()}, params);
-    return {t.fajr, t.sunrise, t.dhuhr, t.asr, t.maghrib, t.isha, local.toString(Qt::ISODate)};
+    DayTimes d{t.fajr, t.sunrise, t.dhuhr, t.asr, t.maghrib, t.isha, local.toString(Qt::ISODate)};
+    // Imported mosque timetable overrides the calculation for listed dates.
+    const auto row = m_settings->timetable().constFind(d.date);
+    if (row != m_settings->timetable().constEnd()) {
+        auto apply = [&](const QString& key, qint64& out) {
+            const auto m = Features::minutesOfDay(row->value(key));
+            if (m) out = QDateTime(local, QTime(*m / 60, *m % 60), tz).toSecsSinceEpoch();
+        };
+        apply("fajr", d.fajr); apply("sunrise", d.sunrise); apply("dhuhr", d.dhuhr);
+        apply("asr", d.asr); apply("maghrib", d.maghrib); apply("isha", d.isha);
+    }
+    return d;
+}
+
+QString Engine::labelFor(Prayer p, const QDate& date) const {
+    if (p == Prayer::Dhuhr && m_settings->jumuahEnabled() && Features::isFriday(date)) return Tr::instance().t("prayer.jumuah");
+    return labelFor(p);
 }
 
 static qint64 timeOf(const Engine::DayTimes& d, Engine::Prayer p) {
@@ -107,12 +133,15 @@ void Engine::rebuildToday() {
     const bool beforeFajr = today.fajr > now;
 
     m_today.clear();
+    const QDate todayDate = QDate::fromString(today.date, Qt::ISODate);
     for (Prayer p : kAll) {
         const qint64 t = timeOf(today, p);
         QVariantMap row;
         row["key"] = keyFor(p);
-        row["label"] = labelFor(p);
+        row["label"] = labelFor(p, todayDate);
         row["time"] = formatTime(t);
+        const int iq = p == Prayer::Sunrise ? 0 : m_settings->iqamah(keyFor(p));
+        row["iqamah"] = iq > 0 ? formatTime(t + iq * 60) : QString();
         row["epoch"] = t;
         row["sunrise"] = p == Prayer::Sunrise;
         row["state"] = (!beforeFajr && p == current && p != Prayer::Sunrise) ? "current" : (t <= now ? "passed" : "upcoming");
@@ -134,13 +163,16 @@ void Engine::rebuildQueue() {
     if (m_settings->notificationsEnabled()) {
         const qint64 now = nowEpoch();
         const int pre = m_settings->preReminderMinutes();
+        const int jm = m_settings->jumuahEnabled() ? m_settings->jumuahReminderMinutes() : 0;
         for (int off = 0; off < 3; ++off) {
             const DayTimes d = computeDay(now, off);
+            const bool friday = Features::isFriday(QDate::fromString(d.date, Qt::ISODate));
             for (Prayer p : kObligatory) {
                 const qint64 t = timeOf(d, p);
                 if (t <= now || t > now + kHorizonSeconds) continue;
-                if (pre > 0 && t - pre * 60 > now) m_queue.push_back({true, p, t - pre * 60});
-                m_queue.push_back({false, p, t});
+                if (pre > 0 && t - pre * 60 > now) m_queue.push_back({Event::Kind::Pre, p, t - pre * 60, Features::inQuietHours(*m_settings, t - pre * 60)});
+                if (friday && p == Prayer::Dhuhr && jm > 0 && t - jm * 60 > now) m_queue.push_back({Event::Kind::Jumuah, p, t - jm * 60, Features::inQuietHours(*m_settings, t - jm * 60)});
+                m_queue.push_back({Event::Kind::Prayer, p, t, Features::inQuietHours(*m_settings, t)});
             }
         }
         std::sort(m_queue.begin(), m_queue.end(), [](const Event& a, const Event& b) { return a.at < b.at; });
@@ -189,10 +221,15 @@ void Engine::drainDue(qint64 now) {
 }
 
 void Engine::fire(const Event& e, bool snoozed) {
-    const QString label = labelFor(e.prayer);
+    const QDate date = QDateTime::fromSecsSinceEpoch(e.at, QTimeZone(m_settings->timezone().toUtf8())).date();
+    const QString label = labelFor(e.prayer, date);
     const Tr& tr = Tr::instance();
     QString title, message;
-    if (e.pre) {
+    if (e.kind == Event::Kind::Jumuah) {
+        const int n = m_settings->jumuahReminderMinutes();
+        title = tr.f("notif.jumuahTitle", {{"n", n}});
+        message = tr.f("notif.jumuahBody", {{"time", formatTime(e.at + n * 60)}});
+    } else if (e.pre()) {
         const int n = m_settings->preReminderMinutes();
         title = tr.f("notif.preTitle", {{"prayer", label}, {"n", n}});
         message = tr.f("notif.preBody", {{"prayer", label}, {"time", formatTime(e.at + n * 60)}});
@@ -203,9 +240,10 @@ void Engine::fire(const Event& e, bool snoozed) {
         title = tr.f("notif.prayerTitle", {{"prayer", label}});
         message = tr.f("notif.prayerBody", {{"prayer", label}, {"time", formatTime(e.at)}});
     }
-    if (!e.pre) { m_lastFired = e; m_hasLastFired = true; }
-    emit notify(title, message, !e.pre);
-    if (!e.pre && m_settings->sound()) Platform::playSound(Platform::chimePath());
+    const bool isPrayer = e.kind == Event::Kind::Prayer;
+    if (isPrayer) { m_lastFired = e; m_hasLastFired = true; }
+    emit notify(title, message, isPrayer);
+    if (isPrayer && m_settings->sound() && !e.quiet) Platform::playSound(Platform::chimePath());
 }
 
 void Engine::snooze() {
@@ -220,6 +258,96 @@ void Engine::testNotification() {
     e.at = nowEpoch();
     fire(e);
 }
+
+// ---- features ---------------------------------------------------------------
+
+QString Engine::ramadanNext(qint64& at) const {
+    const qint64 now = nowEpoch();
+    const DayTimes d = computeDay(now, 0);
+    const Tr& tr = Tr::instance();
+    if (now < d.fajr) { at = d.fajr; return tr.t("prayer.suhoor"); }
+    if (now < d.maghrib) { at = d.maghrib; return tr.t("prayer.iftar"); }
+    at = computeDay(now, 1).fajr;
+    return tr.t("prayer.suhoor");
+}
+
+bool Engine::ramadan() const {
+    const QDate local = QDateTime::currentDateTime().toTimeZone(QTimeZone(m_settings->timezone().toUtf8())).date();
+    return Features::isRamadan(*m_settings, local);
+}
+QString Engine::ramadanLabel() const { qint64 at; return ramadanNext(at); }
+QString Engine::ramadanTime() const { qint64 at; ramadanNext(at); return formatTime(at); }
+QString Engine::ramadanCountdown() const {
+    qint64 at; ramadanNext(at);
+    const qint64 total = std::max<qint64>(0, std::llround((at - nowEpoch()) / 60.0));
+    const qint64 h = total / 60, m = total % 60;
+    return h == 0 ? QStringLiteral("%1m").arg(m) : QStringLiteral("%1h %2m").arg(h).arg(m, 2, 10, QLatin1Char('0'));
+}
+double Engine::qiblaBearing() const { return Features::qiblaBearing(m_settings->latitude(), m_settings->longitude()); }
+double Engine::qiblaDistanceKm() const { return Features::distanceToKaabaKm(m_settings->latitude(), m_settings->longitude()); }
+
+QVariantList Engine::monthTable(int year, int month) const {
+    QVariantList out;
+    const QDate today = QDateTime::currentDateTime().toTimeZone(QTimeZone(m_settings->timezone().toUtf8())).date();
+    const QLocale loc = Tr::instance().locale();
+    for (int day = 1; day <= QDate(year, month, 1).daysInMonth(); ++day) {
+        const QDate date(year, month, day);
+        const DayTimes d = computeDate(date);
+        QVariantMap row;
+        row["day"] = day;
+        row["weekday"] = loc.dayName(date.dayOfWeek(), QLocale::ShortFormat);
+        const auto h = Features::hijri(date);
+        row["hijri"] = h ? QStringLiteral("%1/%2").arg(h->day).arg(h->month) : QString();
+        row["friday"] = Features::isFriday(date);
+        row["today"] = date == today;
+        row["imported"] = m_settings->timetable().contains(d.date);
+        for (Prayer p : kAll) row[keyFor(p)] = formatTime(timeOf(d, p));
+        out.push_back(row);
+    }
+    return out;
+}
+
+QString Engine::monthName(int year, int month) const {
+    return Tr::instance().locale().toString(QDate(year, month, 1), QStringLiteral("MMMM yyyy"));
+}
+
+QString Engine::exportMonthCsv(int year, int month) {
+    const QString suggested = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+        + QStringLiteral("/salat-%1-%2-%3.csv").arg(m_settings->label().toLower().replace(QRegularExpression("[^a-z0-9]+"), "-")).arg(year).arg(month, 2, 10, QLatin1Char('0'));
+    const QString path = QFileDialog::getSaveFileName(nullptr, Tr::instance().t("month.export"), suggested, QStringLiteral("CSV (*.csv)"));
+    if (path.isEmpty()) return {};
+    QFile f(path);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) return {};
+    QTextStream out(&f);
+    out << "date,fajr,sunrise,dhuhr,asr,maghrib,isha\n";
+    const QTimeZone tz(m_settings->timezone().toUtf8());
+    for (int day = 1; day <= QDate(year, month, 1).daysInMonth(); ++day) {
+        const QDate date(year, month, day);
+        const DayTimes d = computeDate(date);
+        out << d.date;
+        for (Prayer p : kAll) out << ',' << QDateTime::fromSecsSinceEpoch(timeOf(d, p), tz).toString("HH:mm");
+        out << '\n';
+    }
+    return path;
+}
+
+QString Engine::importTimetable() {
+    const QString path = QFileDialog::getOpenFileName(nullptr, Tr::instance().t("settings.timetableImport"), QString(), QStringLiteral("CSV (*.csv *.txt);;All files (*)"));
+    if (path.isEmpty()) return {};
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) return {};
+    const auto result = Features::parseTimetableCsv(QString::fromUtf8(f.readAll()));
+    if (result.days() > 0) {
+        auto merged = m_settings->timetable();
+        for (auto it = result.entries.begin(); it != result.entries.end(); ++it) merged[it.key()] = it.value();
+        m_settings->setTimetable(merged);
+    }
+    QString msg = Tr::instance().f("settings.timetableStatus", {{"days", result.days()}});
+    if (!result.errors.isEmpty()) msg += " · " + Tr::instance().f("settings.timetableErrors", {{"n", result.errors.size()}});
+    return msg;
+}
+
+void Engine::clearTimetable() { m_settings->setTimetable({}); }
 
 // ---- presentation -----------------------------------------------------------
 

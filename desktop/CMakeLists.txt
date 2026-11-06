@@ -24,6 +24,7 @@ qt_add_executable(salat
     src/Platform.cpp src/Platform.h
     src/Tr.cpp src/Tr.h
     src/About.h
+    src/Features.cpp src/Features.h
 )
 
 # Theme.qml is a singleton (must be declared before qt_add_qml_module).
@@ -36,6 +37,8 @@ qt_add_qml_module(salat
         qml/Main.qml
         qml/HomePage.qml
         qml/SettingsPage.qml
+        qml/MonthPage.qml
+        qml/QiblaPage.qml
         qml/SettingsCard.qml
         qml/SettingRow.qml
         qml/LabeledField.qml

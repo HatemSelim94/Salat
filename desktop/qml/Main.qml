@@ -23,6 +23,8 @@ ApplicationWindow {
     Component.onCompleted: {
         Theme.dark = useDarkTheme
         if (initialPage === "settings") stack.push(settingsPage, StackView.Immediate)
+        else if (initialPage === "month") stack.push(monthPage, StackView.Immediate)
+        else if (initialPage === "qibla") stack.push(qiblaPage, StackView.Immediate)
     }
 
     StackView {
@@ -37,10 +39,22 @@ ApplicationWindow {
 
     Component {
         id: homePage
-        HomePage { onOpenSettings: stack.push(settingsPage) }
+        HomePage {
+            onOpenSettings: stack.push(settingsPage)
+            onOpenMonth: stack.push(monthPage)
+            onOpenQibla: stack.push(qiblaPage)
+        }
     }
     Component {
         id: settingsPage
         SettingsPage { onBack: stack.pop() }
+    }
+    Component {
+        id: monthPage
+        MonthPage { onBack: stack.pop() }
+    }
+    Component {
+        id: qiblaPage
+        QiblaPage { onBack: stack.pop() }
     }
 }

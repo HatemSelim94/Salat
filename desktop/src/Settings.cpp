@@ -7,6 +7,9 @@
 #include <QTimeZone>
 
 #include "Platform.h"
+#include "Features.h"
+#include <QDir>
+#include <QStandardPaths>
 
 namespace {
 const QString kLat = QStringLiteral("location/latitude");
@@ -34,7 +37,13 @@ DefaultLocation defaultLocation() {
 }
 }  // namespace
 
+QString Settings::timetablePath() const {
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/timetable.json";
+}
+
 Settings::Settings(QObject* parent) : QObject(parent), m_s(QStringLiteral("salat"), QStringLiteral("salat")) {
+    QFile tf(timetablePath());
+    if (tf.open(QIODevice::ReadOnly)) m_timetable = Features::timetableFromJson(QJsonDocument::fromJson(tf.readAll()).object());
     if (!m_s.contains(kLat)) {
         const auto d = defaultLocation();
         m_s.setValue(kLat, d.lat);
@@ -68,6 +77,31 @@ bool Settings::hour12() const { return m_s.value("ui/hour12", false).toBool(); }
 bool Settings::autostart() const { return Platform::isAutostartEnabled(); }
 bool Settings::startHidden() const { return m_s.value("ui/startHidden", true).toBool(); }
 QString Settings::language() const { return m_s.value("ui/language", QStringLiteral("auto")).toString(); }
+bool Settings::jumuahEnabled() const { return m_s.value("jumuah/enabled", true).toBool(); }
+int Settings::jumuahReminderMinutes() const { return m_s.value("jumuah/reminder", 0).toInt(); }
+QString Settings::ramadan() const { return m_s.value("ramadan", QStringLiteral("auto")).toString(); }
+bool Settings::quietHoursEnabled() const { return m_s.value("quiet/enabled", false).toBool(); }
+QString Settings::quietFrom() const { return m_s.value("quiet/from", QStringLiteral("22:00")).toString(); }
+QString Settings::quietTo() const { return m_s.value("quiet/to", QStringLiteral("06:00")).toString(); }
+int Settings::iqamah(const QString& prayer) const { return m_s.value("iqamah/" + prayer, 0).toInt(); }
+void Settings::setIqamah(const QString& prayer, int minutes) { put("iqamah/" + prayer, qBound(0, minutes, 120)); }
+void Settings::setJumuahEnabled(bool v) { put(QStringLiteral("jumuah/enabled"), v); }
+void Settings::setJumuahReminderMinutes(int v) { put(QStringLiteral("jumuah/reminder"), qBound(0, v, 180)); }
+void Settings::setRamadan(const QString& v) { put(QStringLiteral("ramadan"), v); }
+void Settings::setQuietHoursEnabled(bool v) { put(QStringLiteral("quiet/enabled"), v); }
+void Settings::setQuietFrom(const QString& v) { if (Features::minutesOfDay(v)) put(QStringLiteral("quiet/from"), v); }
+void Settings::setQuietTo(const QString& v) { if (Features::minutesOfDay(v)) put(QStringLiteral("quiet/to"), v); }
+
+void Settings::setTimetable(const QMap<QString, QMap<QString, QString>>& t) {
+    m_timetable = t;
+    QDir().mkpath(QFileInfo(timetablePath()).absolutePath());
+    if (t.isEmpty()) QFile::remove(timetablePath());
+    else {
+        QFile f(timetablePath());
+        if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) f.write(QJsonDocument(Features::timetableToJson(t)).toJson(QJsonDocument::Compact));
+    }
+    emit changed();
+}
 
 void Settings::setLatitude(double v) { put(kLat, v); }
 void Settings::setLongitude(double v) { put(kLng, v); }

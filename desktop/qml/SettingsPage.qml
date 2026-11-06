@@ -189,6 +189,77 @@ Page {
                 }
             }
 
+            // ---- Iqamah / Jumu'ah / Ramadan -----------------------------------
+            SettingsCard {
+                title: Tr.t("settings.iqamah", Tr.rev)
+                Label { text: Tr.t("settings.iqamahHint", Tr.rev); color: Theme.muted; font.pixelSize: 12; wrapMode: Text.WordWrap; Layout.fillWidth: true }
+                GridLayout {
+                    columns: 3; columnSpacing: 12; rowSpacing: 4; Layout.fillWidth: true
+                    Repeater {
+                        model: ["fajr", "dhuhr", "asr", "maghrib", "isha"]
+                        delegate: RowLayout {
+                            required property string modelData
+                            Label { text: Tr.t("prayer." + modelData, Tr.rev); color: Theme.fg; Layout.fillWidth: true }
+                            TextField {
+                                text: settingsObj.iqamah(modelData)
+                                validator: IntValidator { bottom: 0; top: 120 }
+                                horizontalAlignment: TextInput.AlignRight
+                                font.pixelSize: 13
+                                Layout.preferredWidth: 44
+                                onEditingFinished: settingsObj.setIqamah(modelData, Number(text))
+                            }
+                        }
+                    }
+                }
+                SettingRow { label: Tr.t("settings.jumuah", Tr.rev); Switch { checked: settingsObj.jumuahEnabled; onToggled: settingsObj.jumuahEnabled = checked } }
+                SettingRow {
+                    label: Tr.t("settings.jumuahReminder", Tr.rev)
+                    ComboBox {
+                        readonly property var values: [0, 15, 30, 45, 60, 90]
+                        model: values.map(v => page.minutesLabel(v))
+                        currentIndex: Math.max(0, values.indexOf(settingsObj.jumuahReminderMinutes))
+                        onActivated: (i) => settingsObj.jumuahReminderMinutes = values[i]
+                        font.pixelSize: 13
+                        Layout.preferredWidth: 110
+                    }
+                }
+                SettingRow {
+                    label: Tr.t("settings.ramadan", Tr.rev)
+                    ComboBox {
+                        readonly property var values: ["auto", "on", "off"]
+                        model: [Tr.t("settings.ramadanAuto", Tr.rev).split(" (")[0], Tr.t("settings.on", Tr.rev), Tr.t("settings.off", Tr.rev)]
+                        currentIndex: Math.max(0, values.indexOf(settingsObj.ramadan))
+                        onActivated: (i) => settingsObj.ramadan = values[i]
+                        font.pixelSize: 13
+                        Layout.preferredWidth: 110
+                    }
+                }
+            }
+
+            // ---- Quiet hours ----------------------------------------------------
+            SettingsCard {
+                title: Tr.t("settings.quietHours", Tr.rev)
+                SettingRow { label: Tr.t("settings.quietHours", Tr.rev); hint: Tr.t("settings.quietHoursHint", Tr.rev); Switch { checked: settingsObj.quietHoursEnabled; onToggled: settingsObj.quietHoursEnabled = checked } }
+                RowLayout {
+                    spacing: 8
+                    LabeledField { label: Tr.t("settings.from", Tr.rev); text: settingsObj.quietFrom; onCommitted: (v) => settingsObj.quietFrom = v }
+                    LabeledField { label: Tr.t("settings.to", Tr.rev); text: settingsObj.quietTo; onCommitted: (v) => settingsObj.quietTo = v }
+                }
+            }
+
+            // ---- Mosque timetable ----------------------------------------------
+            SettingsCard {
+                id: timetableCard
+                title: Tr.t("settings.timetable", Tr.rev)
+                property string status: settingsObj.timetableDays > 0 ? Tr.f("settings.timetableStatus", { days: settingsObj.timetableDays }, Tr.rev) : ""
+                Label { text: Tr.t("settings.timetableHint", Tr.rev); color: Theme.muted; font.pixelSize: 12; wrapMode: Text.WordWrap; Layout.fillWidth: true }
+                RowLayout {
+                    Button { text: Tr.t("settings.timetableImport", Tr.rev); flat: true; font.capitalization: Font.MixedCase; onClicked: { var m = engine.importTimetable(); if (m) timetableCard.status = m } }
+                    Button { text: Tr.t("settings.timetableClear", Tr.rev); flat: true; font.capitalization: Font.MixedCase; visible: settingsObj.timetableDays > 0; onClicked: { engine.clearTimetable(); timetableCard.status = "" } }
+                }
+                Label { text: timetableCard.status; visible: text.length > 0; color: Theme.muted; font.pixelSize: 12 }
+            }
+
             // ---- Reminders -------------------------------------------------
             SettingsCard {
                 title: Tr.t("settings.reminders", Tr.rev)
