@@ -10,12 +10,12 @@ kotlin {
 
 android {
     namespace = "io.github.hatemselim94.salat"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "io.github.hatemselim94.salat"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36 // Google Play requires API 36+ for new apps since Aug 2026
         versionCode = 1
         versionName = "0.1.0"
         // Only ship the resources we actually use (keeps the APK small).

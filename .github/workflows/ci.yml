@@ -172,14 +172,19 @@ jobs:
             echo "RELEASE_LABEL=release-TESTSIGNED" >> "$GITHUB_ENV"
           fi
           echo "SALAT_KEYSTORE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
-      - name: Build release APK
-        run: gradle -p android :app:assembleRelease --no-daemon
-      - name: Rename release APK
-        run: cp android/app/build/outputs/apk/release/app-release.apk "salat-android-${RELEASE_LABEL}.apk" && ls -la salat-android-*.apk
+      - name: Build release APK + Play bundle (AAB)
+        run: gradle -p android :app:assembleRelease :app:bundleRelease --no-daemon
+      - name: Rename release outputs
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk "salat-android-${RELEASE_LABEL}.apk"
+          cp android/app/build/outputs/bundle/release/app-release.aab "salat-android-${RELEASE_LABEL}.aab"
+          ls -la salat-android-*
       - uses: actions/upload-artifact@v4
         with:
           name: salat-android-release
-          path: salat-android-release*.apk
+          path: |
+            salat-android-release*.apk
+            salat-android-release*.aab
       - name: Lint
         run: gradle -p android :app:lintDebug --no-daemon
         continue-on-error: true
