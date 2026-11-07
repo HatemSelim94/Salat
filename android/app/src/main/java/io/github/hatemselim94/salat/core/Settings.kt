@@ -158,8 +158,10 @@ class Settings(context: Context) {
     }
 }
 
-data class City(val name: String, val country: String, val lat: Double, val lng: Double, val tz: String) {
+data class City(val name: String, val country: String, val lat: Double, val lng: Double, val tz: String, val alt: String = "") {
     val label get() = "$name, $country"
+    /** Normalised searchable forms: the name plus alternative spellings. */
+    val norms: List<String> by lazy { (listOf(name) + alt.split('|').filter { it.isNotEmpty() }).map(Cities::normalise) }
 }
 
 object Cities {
@@ -173,7 +175,7 @@ object Cities {
         val arr = JSONArray(json)
         return List(arr.length()) { i ->
             val o = arr.getJSONObject(i)
-            City(o.getString("name"), o.getString("country"), o.getDouble("lat"), o.getDouble("lng"), o.getString("tz"))
+            City(o.getString("name"), o.getString("country"), o.getDouble("lat"), o.getDouble("lng"), o.getString("tz"), o.optString("alt", ""))
         }
     }
 
@@ -181,11 +183,15 @@ object Cities {
         val q = normalise(query)
         if (q.isEmpty()) return emptyList()
         val all = load(context)
-        val starts = all.filter { normalise(it.name).startsWith(q) }
-        val contains = all.filter { it !in starts && (normalise(it.name).contains(q) || it.country.lowercase() == q) }
+        val starts = ArrayList<City>(); val contains = ArrayList<City>()
+        for (c in all) {
+            if (c.norms.any { it.startsWith(q) }) starts.add(c)
+            else if (c.norms.any { it.contains(q) } || c.country.lowercase() == q) contains.add(c)
+            if (starts.size >= limit) break
+        }
         return (starts + contains).take(limit)
     }
 
-    private fun normalise(s: String): String =
+    internal fun normalise(s: String): String =
         java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD).replace(Regex("\\p{Mn}+"), "").lowercase().trim()
 }

@@ -1,4 +1,5 @@
 #include "Cities.h"
+#include <algorithm>
 
 #include <QFile>
 #include <QJsonArray>
@@ -23,7 +24,10 @@ Cities::Cities(QObject* parent) : QObject(parent) {
     for (const auto& v : QJsonDocument::fromJson(f.readAll()).array()) {
         const auto o = v.toObject();
         const QString name = o.value("name").toString();
-        m_cities.push_back({name, o.value("country").toString(), o.value("tz").toString(), normalise(name), o.value("lat").toDouble(), o.value("lng").toDouble()});
+        // Searchable forms: the name plus any alternative spellings ("Köln|Koeln").
+        QStringList norms{normalise(name)};
+        for (const QString& a : o.value("alt").toString().split(QLatin1Char('|'), Qt::SkipEmptyParts)) norms.push_back(normalise(a));
+        m_cities.push_back({name, o.value("country").toString(), o.value("tz").toString(), norms, o.value("lat").toDouble(), o.value("lng").toDouble()});
     }
 }
 
@@ -33,8 +37,10 @@ QVariantList Cities::search(const QString& query, int limit) const {
     if (q.isEmpty()) return {};
     for (const auto& c : m_cities) {
         QVariantMap row{{"name", c.name}, {"country", c.country}, {"lat", c.lat}, {"lng", c.lng}, {"tz", c.tz}};
-        if (c.norm.startsWith(q)) starts.push_back(row);
-        else if (c.norm.contains(q) || c.country.toLower() == q) contains.push_back(row);
+        const bool st = std::any_of(c.norms.begin(), c.norms.end(), [&](const QString& n) { return n.startsWith(q); });
+        const bool ct = !st && std::any_of(c.norms.begin(), c.norms.end(), [&](const QString& n) { return n.contains(q); });
+        if (st) starts.push_back(row);
+        else if (ct || c.country.toLower() == q) contains.push_back(row);
     }
     QVariantList out = starts + contains;
     while (out.size() > limit) out.removeLast();

@@ -14,7 +14,7 @@ Lightweight, offline, non-annoying prayer-time reminders — for your desktop, y
 
 ## Features
 
-Today's times with the current prayer highlighted and a countdown to the next · one notification per prayer with a short chime, snooze, optional heads-up · Jumu'ah on Fridays with an optional reminder · iqamah times · Ramadan view (Suhoor/Iftar countdown) · Qibla bearing (with a compass on Android) · monthly timetable with CSV export · import your mosque's timetable (CSV) to replace the calculation · quiet hours · 12 calculation methods, Hanafi Asr, high-latitude rules, per-prayer offsets · English, Arabic, German.
+Today's times with the current prayer highlighted and a countdown to the next · one notification per prayer with a short chime, snooze, optional heads-up · Jumu'ah on Fridays with an optional reminder · iqamah times · Ramadan view (Suhoor/Iftar countdown) · Qibla bearing (with a compass on Android) · monthly timetable with CSV export · import your mosque's timetable (CSV) to replace the calculation · quiet hours · 12 calculation methods, Hanafi Asr, high-latitude rules, per-prayer offsets · 1,800+ cities built in (or exact coordinates) · English, Arabic, German.
 
 ## Principles
 

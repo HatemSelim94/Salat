@@ -30,6 +30,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+## city-timezones — MIT
+The built-in city list (`core/src/cities.json`) is derived from the `city-timezones` dataset by Kevin Roberts (https://github.com/kevinroberts/city-timezones), itself based on MaxMind's free world-cities data, filtered to cities of 200,000+ people and merged with a hand-curated list. Copyright (c) 2016 Kevin Roberts. Licensed under the MIT License (text above).
+
 ## Qt 6 — LGPL v3
 The desktop app links the Qt libraries dynamically (they ship as separate shared libraries next to the executable, in the AppImage, the macOS bundle and the Windows zip). Under the LGPL you may replace those Qt libraries with your own builds. Qt source: https://code.qt.io — licence text: https://www.gnu.org/licenses/lgpl-3.0.html
 

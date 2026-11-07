@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QStringList>
 #include <QVariantList>
 #include <qqml.h>
 
@@ -17,6 +18,6 @@ public:
     Q_INVOKABLE QVariantList search(const QString& query, int limit = 8) const;
 
 private:
-    struct City { QString name, country, tz, norm; double lat, lng; };
+    struct City { QString name, country, tz; QStringList norms; double lat, lng; };
     std::vector<City> m_cities;
 };
