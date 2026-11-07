@@ -29,7 +29,8 @@ class MainActivity : ComponentActivity() {
         Scheduler.reschedule(this)
     }
 
-    private val requestNotifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+    // Asked once on first launch; after a refusal the home screen shows a card that opens the system page.
+    private val requestNotifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) { revision++ }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

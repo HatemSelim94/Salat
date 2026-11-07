@@ -139,4 +139,6 @@
     <string name="home_whyBattery" translatable="true">Samsung- und andere Telefone legen Apps schlafen, um Akku zu sparen – eine schlafende App kann zum Fajr nicht klingeln. Salat braucht fast keinen Akku: es wacht einmal pro Gebet für eine Sekunde auf.</string>
     <string name="home_notNow" translatable="true">Später</string>
     <string name="home_continue" translatable="true">App-Info öffnen</string>
+    <string name="home_notificationsBlocked" translatable="true">Benachrichtigungen sind aus – Salat kann dich nicht erinnern.</string>
+    <string name="home_notificationsSteps" translatable="true">Erlauben → Benachrichtigungen (und den Gebetskanal) einschalten.</string>
 </resources>

@@ -139,4 +139,6 @@
     <string name="home_whyBattery" translatable="true">هواتف سامسونج وغيرها تُنيم التطبيقات لتوفير البطارية، والتطبيق النائم لا يستطيع التنبيه عند الفجر. صلاة لا يستهلك البطارية تقريبًا: يستيقظ لثانية واحدة لكل صلاة.</string>
     <string name="home_notNow" translatable="true">ليس الآن</string>
     <string name="home_continue" translatable="true">فتح معلومات التطبيق</string>
+    <string name="home_notificationsBlocked" translatable="true">الإشعارات متوقفة — لن يتمكن تطبيق صلاة من تذكيرك.</string>
+    <string name="home_notificationsSteps" translatable="true">السماح ← فعّل الإشعارات (وقناة الصلاة).</string>
 </resources>

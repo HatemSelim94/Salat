@@ -56,6 +56,7 @@ import io.github.hatemselim94.salat.core.Engine
 import io.github.hatemselim94.salat.core.Features
 import io.github.hatemselim94.salat.core.Prayer
 import io.github.hatemselim94.salat.core.Settings
+import io.github.hatemselim94.salat.notify.Notifications
 import io.github.hatemselim94.salat.notify.Scheduler
 import kotlinx.coroutines.delay
 
@@ -217,6 +218,11 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onNavigate: (S
         Spacer(Modifier.height(14.dp))
         if (!settings.locationConfigured) {
             ActionCard(stringResource(R.string.home_locationGuessed), stringResource(R.string.home_setCityShort), onClick = onOpenSettings)
+        }
+        if (settings.notificationsEnabled && !Notifications.enabled(context)) {
+            ActionCard(stringResource(R.string.home_notificationsBlocked), stringResource(R.string.home_allow), hint = stringResource(R.string.home_notificationsSteps)) {
+                Notifications.openSystemSettings(context)
+            }
         }
         val pm = context.getSystemService(PowerManager::class.java)
         if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {

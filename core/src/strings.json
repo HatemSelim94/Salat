@@ -688,5 +688,15 @@
     "en": "Open app info",
     "ar": "فتح معلومات التطبيق",
     "de": "App-Info öffnen"
+  },
+  "home.notificationsBlocked": {
+    "en": "Notifications are off — Salat can’t remind you.",
+    "ar": "الإشعارات متوقفة — لن يتمكن تطبيق صلاة من تذكيرك.",
+    "de": "Benachrichtigungen sind aus – Salat kann dich nicht erinnern."
+  },
+  "home.notificationsSteps": {
+    "en": "Allow → turn on Notifications (and the Prayer channel).",
+    "ar": "السماح ← فعّل الإشعارات (وقناة الصلاة).",
+    "de": "Erlauben → Benachrichtigungen (und den Gebetskanal) einschalten."
   }
 }

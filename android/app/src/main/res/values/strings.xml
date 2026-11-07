@@ -139,4 +139,6 @@
     <string name="home_whyBattery" translatable="true">Samsung and other phones put apps to sleep to save battery, and a sleeping app cannot ring at Fajr. Salat uses almost no battery: it wakes once per prayer for a second.</string>
     <string name="home_notNow" translatable="true">Not now</string>
     <string name="home_continue" translatable="true">Open app info</string>
+    <string name="home_notificationsBlocked" translatable="true">Notifications are off — Salat can’t remind you.</string>
+    <string name="home_notificationsSteps" translatable="true">Allow → turn on Notifications (and the Prayer channel).</string>
 </resources>

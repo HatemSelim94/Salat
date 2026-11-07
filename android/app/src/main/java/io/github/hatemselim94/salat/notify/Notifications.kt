@@ -33,6 +33,24 @@ object Notifications {
     private const val NOTIFICATION_ID = 100
     const val ACTION_SNOOZE_CLICKED = "io.github.hatemselim94.salat.SNOOZE_CLICKED"
 
+    /** False when the user denied the permission, switched the app's notifications off, or disabled the prayer channel. */
+    fun enabled(context: Context): Boolean {
+        val nm = context.getSystemService(NotificationManager::class.java)
+        if (!nm.areNotificationsEnabled()) return false
+        val channel = nm.getNotificationChannel(CHANNEL_PRAYER_CHIME) ?: return true
+        return channel.importance != NotificationManager.IMPORTANCE_NONE
+    }
+
+    /** Opens the system page for this app's notifications (the switch is at the top). */
+    fun openSystemSettings(context: Context) {
+        val intent = android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
+            .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        try { context.startActivity(intent) } catch (_: Exception) {
+            context.startActivity(android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.parse("package:" + context.packageName)).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK))
+        }
+    }
+
     fun ensureChannels(context: Context) {
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         for (id in LEGACY_CHANNELS) nm.deleteNotificationChannel(id)
