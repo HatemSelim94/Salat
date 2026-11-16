@@ -3,10 +3,10 @@
 **App name (30):** Salat – Gebetszeiten
 
 **Short description (80):**
-Gebetszeiten, leise Erinnerungen. Ca. 1 MB, akkuschonend, offline, werbefrei.
+Islamische Gebetszeiten, leise Adhan-Erinnerung. ~1 MB, offline, ohne Werbung.
 
 **Full description (4000):**
-Salat zeigt die Gebetszeiten des Tages und erinnert dich zu jedem Gebet mit einem kurzen Klang – und hält sich sonst zurück. Etwa 1 MB, kein Hintergrunddienst, praktisch kein Akkuverbrauch.
+Salat (Salah, Namaz) zeigt die islamischen Gebetszeiten des Tages und erinnert dich zu jedem Gebet mit einem kurzen Adhan-Klang – und hält sich sonst zurück. Etwa 1 MB, kein Hintergrunddienst, praktisch kein Akkuverbrauch.
 
 LEICHT UND LEISE
 • Eine Benachrichtigung pro Gebet mit einem kurzen, unverwechselbaren Klang, der sich abschalten lässt
@@ -30,5 +30,7 @@ ALLES, WAS DU BRAUCHST – NICHT MEHR
 • 12 Berechnungsmethoden (Muslim World League, Ägyptisch, Umm al-Qura, Karachi, ISNA, …), eigene Fajr-/Isha-Winkel, hanafitisches Asr, Regeln für hohe Breitengrade, Korrektur je Gebet
 • Hidschri-Datum
 • Dunkler Modus, folgt der Sprache des Handys (Deutsch, Englisch, Arabisch)
+
+Eine einfache Gebets-App für Muslime: Fajr, Dhuhr, Asr, Maghrib und Isha, Adhan-Erinnerung, Qibla-Richtung, Hidschri-Kalender, Ramadan-Zeiten.
 
 Entwickelt von Hatem Selim. Fragen oder falsche Zeiten für deine Stadt: hatemselimtech@gmail.com

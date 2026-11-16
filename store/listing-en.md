@@ -3,10 +3,10 @@
 **App name (30):** Salat — Prayer Times
 
 **Short description (80):**
-Prayer times & quiet reminders. About 1 MB, no battery drain, offline, no ads.
+Muslim prayer times & quiet adhan reminders. ~1 MB, offline, no ads, no tracking.
 
 **Full description (4000):**
-Salat shows today's prayer times and reminds you at each prayer with a short chime — and otherwise stays out of your way. It is about 1 MB, runs no background service and uses next to no battery.
+Salat (Salah, Namaz) shows today's Islamic prayer times and reminds you at each prayer with a short adhan-style chime — and otherwise stays out of your way. It is about 1 MB, runs no background service and uses next to no battery.
 
 LIGHT AND QUIET
 • One notification per prayer, with a distinctive short chime you can turn off
@@ -30,5 +30,7 @@ EVERYTHING YOU NEED, NOTHING MORE
 • 12 calculation methods (Muslim World League, Egyptian, Umm al-Qura, Karachi, ISNA, …), custom Fajr/Isha angles, Hanafi Asr, high-latitude rules, per-prayer offsets
 • Hijri date
 • Dark mode, follows your phone's language (English, Arabic, German)
+
+A simple Muslim prayer app: Fajr, Dhuhr, Asr, Maghrib and Isha times, adhan reminder, Qibla direction, Hijri calendar, Ramadan timings.
 
 Made by Hatem Selim. Questions or wrong times for your city: hatemselimtech@gmail.com
