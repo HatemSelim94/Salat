@@ -3,16 +3,16 @@
 **App name (30):** Salat — Prayer Times
 
 **Short description (80):**
-Prayer times & quiet reminders. ~1 MB, no battery drain, offline, no ads.
+Prayer times & quiet reminders. Under 2 MB, no battery drain, offline, no ads.
 
 **Full description (4000):**
-Salat shows today's prayer times and reminds you at each prayer with a short chime — and otherwise stays out of your way. It is about 1 MB, runs no background service and uses next to no battery.
+Salat shows today's prayer times and reminds you at each prayer with a short chime — and otherwise stays out of your way. It is under 2 MB, runs no background service and uses next to no battery.
 
 LIGHT AND QUIET
 • One notification per prayer, with a distinctive short chime you can turn off
 • Snooze, and an optional heads-up a few minutes before
 • Quiet hours for the night
-• About 1 MB, no background service, no battery drain
+• Under 2 MB, no background service, no battery drain
 
 OFFLINE AND PRIVATE
 • Prayer times are calculated on your phone from your city's coordinates
