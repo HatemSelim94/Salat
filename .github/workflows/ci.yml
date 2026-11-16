@@ -214,7 +214,7 @@ jobs:
       - name: Collect
         run: |
           mkdir -p out
-          find artifacts -type f \( -name '*.zip' -o -name '*.vsix' -o -name '*.dmg' -o -name '*.apk' -o -name '*.AppImage' \) -exec cp {} out/ \;
+          find artifacts -type f \( -name '*.zip' -o -name '*.vsix' -o -name '*.dmg' -o -name 'salat-android-release.apk' -o -name '*.AppImage' \) -exec cp {} out/ \;
           ls -la out
       - uses: softprops/action-gh-release@v2
         with:
