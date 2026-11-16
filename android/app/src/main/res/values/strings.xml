@@ -141,4 +141,5 @@
     <string name="home_continue" translatable="true">Open app info</string>
     <string name="home_notificationsBlocked" translatable="true">Notifications are off — Salat can’t remind you.</string>
     <string name="home_notificationsSteps" translatable="true">Allow → turn on Notifications (and the Prayer channel).</string>
+    <string name="home_qiblaCalibrate" translatable="true">Compass accuracy is low — move your phone in a figure‑8 a few times.</string>
 </resources>

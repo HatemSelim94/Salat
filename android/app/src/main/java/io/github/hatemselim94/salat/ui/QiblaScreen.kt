@@ -1,10 +1,14 @@
 package io.github.hatemselim94.salat.ui
 
 import android.content.Context
+import android.hardware.GeomagneticField
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.view.Surface
+import android.view.WindowManager
+import android.os.Build
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,22 +67,31 @@ fun QiblaScreen(settings: Settings, onBack: () -> Unit) {
     val bearing = remember(settings.latitude, settings.longitude) { Features.qiblaBearing(settings.latitude, settings.longitude) }
     val distance = remember(settings.latitude, settings.longitude) { Features.distanceToKaabaKm(settings.latitude, settings.longitude) }
     var heading by remember { mutableFloatStateOf(Float.NaN) }
+    var lowAccuracy by remember { mutableStateOf(false) }
+    // The sensor reports headings from magnetic north; the Qibla bearing is from true north.
+    val declination = remember(settings.latitude, settings.longitude) {
+        GeomagneticField(settings.latitude.toFloat(), settings.longitude.toFloat(), 0f, System.currentTimeMillis()).declination
+    }
 
     DisposableEffect(Unit) {
         val sm = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val sensor = sm.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
+        @Suppress("DEPRECATION")
+        val rotation = if (Build.VERSION.SDK_INT >= 30) context.display?.rotation ?: Surface.ROTATION_0
+                       else (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
         val listener = object : SensorEventListener {
             private val rot = FloatArray(9)
-            private val orientation = FloatArray(3)
             override fun onSensorChanged(e: SensorEvent) {
                 SensorManager.getRotationMatrixFromVector(rot, e.values)
-                SensorManager.getOrientation(rot, orientation)
-                val az = Math.toDegrees(orientation[0].toDouble()).toFloat()
-                val next = (az + 360f) % 360f
+                val next = (deviceHeading(rot, rotation) + declination + 360f) % 360f
                 // Light smoothing so the arrow does not jitter.
                 heading = if (heading.isNaN()) next else lerpAngle(heading, next, 0.15f)
+                // Estimated heading error (radians) when the sensor provides it.
+                if (e.values.size > 4 && e.values[4] >= 0f) lowAccuracy = Math.toDegrees(e.values[4].toDouble()) > 15
             }
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+                lowAccuracy = accuracy < SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM
+            }
         }
         if (sensor != null) sm.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI)
         onDispose { sm.unregisterListener(listener) }
@@ -101,6 +115,7 @@ fun QiblaScreen(settings: Settings, onBack: () -> Unit) {
                 val accent = MaterialTheme.colorScheme.primary
                 val line = MaterialTheme.colorScheme.outline
                 val arrowRotation = if (heading.isNaN()) bearing.toFloat() else (bearing.toFloat() - heading + 360f) % 360f
+                val arrowAlpha = if (lowAccuracy && !heading.isNaN()) 0.45f else 1f
                 Canvas(Modifier.fillMaxSize()) {
                     val r = size.minDimension / 2
                     val c = Offset(size.width / 2, size.height / 2)
@@ -123,18 +138,42 @@ fun QiblaScreen(settings: Settings, onBack: () -> Unit) {
                             lineTo(c.x + 16.dp.toPx(), c.y + 10.dp.toPx())
                             close()
                         }
-                        drawPath(path, accent)
+                        drawPath(path, accent, alpha = arrowAlpha)
                     }
                     drawCircle(Color.White, 4.dp.toPx(), c)
                 }
             }
             Spacer(Modifier.height(24.dp))
             Text(
-                if (hasCompass) stringResource(R.string.home_qiblaCompassHint) else stringResource(R.string.home_qiblaNoCompass),
-                fontSize = 13.sp, color = muted, textAlign = TextAlign.Center,
+                when {
+                    !hasCompass -> stringResource(R.string.home_qiblaNoCompass)
+                    lowAccuracy -> stringResource(R.string.home_qiblaCalibrate)
+                    else -> stringResource(R.string.home_qiblaCompassHint)
+                },
+                fontSize = 13.sp, color = if (lowAccuracy && hasCompass) MaterialTheme.colorScheme.error else muted, textAlign = TextAlign.Center,
             )
         }
     }
+}
+
+/**
+ * Heading (degrees from magnetic north) of the direction the user is facing.
+ * The rotation matrix maps device axes to world (East, North, Up). Lying flat,
+ * the top edge of the phone points the way; held upright, the back of the phone
+ * does — the two agree at ~45° tilt, so switching between them is seamless.
+ * [rotation] is the display rotation so landscape still uses the screen's top edge.
+ */
+private fun deviceHeading(rot: FloatArray, rotation: Int): Float {
+    // World components of the screen's "top" axis, respecting display rotation.
+    val (tx, ty, tz) = when (rotation) {
+        Surface.ROTATION_90 -> Triple(rot[0], rot[3], rot[6])      // +X
+        Surface.ROTATION_180 -> Triple(-rot[1], -rot[4], -rot[7])  // −Y
+        Surface.ROTATION_270 -> Triple(-rot[0], -rot[3], -rot[6])  // −X
+        else -> Triple(rot[1], rot[4], rot[7])                     // +Y
+    }
+    val upright = kotlin.math.abs(tz) > 0.7f // top edge points mostly up/down → phone is held upright
+    val (east, north) = if (upright) Pair(-rot[2], -rot[5]) else Pair(tx, ty) // −Z = out of the back of the phone
+    return Math.toDegrees(kotlin.math.atan2(east.toDouble(), north.toDouble())).toFloat()
 }
 
 private fun lerpAngle(from: Float, to: Float, t: Float): Float {
