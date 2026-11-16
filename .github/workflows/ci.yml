@@ -221,4 +221,5 @@ jobs:
           files: out/*
           generate_release_notes: true
           body: |
-            Unsigned builds — see the README for the one-time warning on Windows (SmartScreen → Run anyway) and macOS (System Settings → Privacy & Security → Open Anyway).
+            **Android:** `salat-android-release.apk` — direct install (same signing key as the Play Store build). Allow "install from unknown sources" once.
+            **Desktop builds are unsigned** — see the README for the one-time warning on Windows (SmartScreen → Run anyway) and macOS (System Settings → Privacy & Security → Open Anyway).
