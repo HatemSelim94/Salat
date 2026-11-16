@@ -3,7 +3,7 @@
 **App name (30):** Salat – Gebetszeiten
 
 **Short description (80):**
-Gebetszeiten, leise Erinnerungen. Unter 2 MB, schont den Akku, offline, werbefrei.
+Gebetszeiten, leise Erinnerungen. Unter 2 MB, akkuschonend, offline, werbefrei.
 
 **Full description (4000):**
 Salat zeigt die Gebetszeiten des Tages und erinnert dich zu jedem Gebet mit einem kurzen Klang – und hält sich sonst zurück. Unter 2 MB, kein Hintergrunddienst, praktisch kein Akkuverbrauch.
