@@ -26,6 +26,7 @@ const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as 
 async function render(): Promise<void> {
   const { settings, extras } = await load();
   const lang = pageLanguage(settings);
+  const units = { h: t(lang, 'unit.h'), m: t(lang, 'unit.m') };
   localiseDocument(lang);
   const tz = settings.location.timezone;
   const now = new Date();
@@ -45,6 +46,7 @@ async function render(): Promise<void> {
 
   $('next-name').textContent = prayerDisplayLabel(lang, settings, next.name, next.time);
   $('next-glyph').innerHTML = prayerGlyph(next.name, 36);
+  const rtl = getComputedStyle(document.documentElement).direction === 'rtl';
   const ms = (d: Date) => d.getTime();
   $('next').className = `next ${periodFor(ms(now), ms(day.fajr), ms(day.sunrise), ms(day.dhuhr), ms(day.asr), ms(day.maghrib), ms(day.isha))}`;
   const nextFajr = ms(computeDay(settings, now, 1).fajr);
@@ -54,9 +56,10 @@ async function render(): Promise<void> {
     (ms(now) - ms(day.fajr)) / span,
     (['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const).map((n) => ({ frac: frac(day[n]), passed: ms(day[n]) <= ms(now) })),
     268,
+    rtl,
   );
   const tomorrow = civilDate(next.time, tz).day !== civilDate(now, tz).day ? ` ${t(lang, 'home.tomorrow')}` : '';
-  $('next-in').innerHTML = `${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t(lang, 'home.in')} <b>${formatCountdown(now, next.time)}</b>`;
+  $('next-in').innerHTML = `${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t(lang, 'home.in')} <b>${formatCountdown(now, next.time, units)}</b>`;
 
   const list = $('times');
   list.innerHTML = '';
@@ -84,7 +87,7 @@ async function render(): Promise<void> {
     const at = suhoor ? day.fajr : iftar ? day.maghrib : computeDay(settings, now, 1).fajr;
     ram.hidden = false;
     $('ramadan-name').textContent = t(lang, iftar ? 'prayer.iftar' : 'prayer.suhoor');
-    $('ramadan-time').textContent = `${formatTime(at, tz, settings.hour12)} · ${formatCountdown(now, at)}`;
+    $('ramadan-time').textContent = `${formatTime(at, tz, settings.hour12)} · ${formatCountdown(now, at, units)}`;
   } else ram.hidden = true;
 
   const { latitude, longitude } = settings.location;

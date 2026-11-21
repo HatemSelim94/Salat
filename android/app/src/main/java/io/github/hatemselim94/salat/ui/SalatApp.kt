@@ -23,6 +23,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -99,6 +100,7 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onNavigate: (S
     val bg = MaterialTheme.colorScheme.background
     val period = periodFor(now, day[Prayer.FAJR], day[Prayer.SUNRISE], day[Prayer.DHUHR], day[Prayer.ASR], day[Prayer.MAGHRIB], day[Prayer.ISHA])
     val (cardBrush, cardColors) = periodBrush(period)
+    val hUnit = stringResource(R.string.unit_h); val mUnit = stringResource(R.string.unit_m)
 
     // Edge-to-edge window: keep content clear of both the status bar and the navigation/gesture bar.
     Column(modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 20.dp, vertical = 12.dp)) {
@@ -142,7 +144,7 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onNavigate: (S
                     Text(stringResource(R.string.home_ramadan).uppercase(), fontSize = 10.sp, color = accent, fontWeight = FontWeight.SemiBold, letterSpacing = 1.sp)
                     Text(label, fontSize = 15.sp, color = fg, fontWeight = FontWeight.SemiBold)
                 }
-                Text(engine.formatTime(at) + " · " + engine.countdown(now, at), fontSize = 13.sp, color = fg)
+                Text(engine.formatTime(at) + " · " + engine.countdown(now, at, hUnit, mUnit), fontSize = 13.sp, color = fg)
             }
             Spacer(Modifier.height(10.dp))
         }
@@ -162,7 +164,7 @@ fun HomeScreen(settings: Settings, engine: Engine, revision: Int, onNavigate: (S
                     Row(verticalAlignment = Alignment.Bottom) {
                         Text(engine.formatTime(next.epoch) + (if (tomorrow) " " + stringResource(R.string.home_tomorrow) else ""), fontSize = 14.sp, color = cardColors.fgMuted)
                         Text("  ·  " + stringResource(R.string.home_in) + " ", fontSize = 14.sp, color = cardColors.fgMuted)
-                        AnimatedContent(targetState = engine.countdown(now, next.epoch), transitionSpec = { fadeIn(tween(300)) togetherWith fadeOut(tween(300)) }, label = "countdown") { cd ->
+                        AnimatedContent(targetState = engine.countdown(now, next.epoch, hUnit, mUnit), transitionSpec = { fadeIn(tween(300)) togetherWith fadeOut(tween(300)) }, label = "countdown") { cd ->
                             Text(cd, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = cardColors.fg)
                         }
                     }
@@ -303,8 +305,8 @@ private fun ActionCard(text: String, action: String, hint: String = "", onClick:
             Text(text, fontSize = 13.sp, color = MaterialTheme.colorScheme.onPrimaryContainer)
             if (hint.isNotEmpty()) Text(hint, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
         }
-        Button(onClick = onClick, contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp), modifier = Modifier.heightIn(min = 40.dp)) {
-            Text(action, fontSize = 13.sp)
+        Button(onClick = onClick, contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp), modifier = Modifier.heightIn(min = 40.dp).widthIn(min = 72.dp)) {
+            Text(action, fontSize = 13.sp, maxLines = 1, softWrap = false)
         }
     }
 }

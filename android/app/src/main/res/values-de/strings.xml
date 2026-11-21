@@ -142,4 +142,6 @@
     <string name="home_notificationsBlocked" translatable="true">Benachrichtigungen sind aus – Salat kann dich nicht erinnern.</string>
     <string name="home_notificationsSteps" translatable="true">Erlauben → Benachrichtigungen (und den Gebetskanal) einschalten.</string>
     <string name="home_qiblaCalibrate" translatable="true">Kompass ungenau – bewege das Handy ein paar Mal in einer Acht.</string>
+    <string name="unit_h" translatable="true">h</string>
+    <string name="unit_m" translatable="true">min</string>
 </resources>

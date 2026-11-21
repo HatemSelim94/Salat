@@ -79,12 +79,14 @@ export function periodFor(now: number, fajr: number, sunrise: number, dhuhr: num
 }
 
 /** Fajr → next-Fajr progress line as SVG; `dots` are fractions 0..1 with a passed flag. */
-export function dayProgress(progress: number, dots: Array<{ frac: number; passed: boolean }>, width: number): string {
-  const pad = 6, x = (fr: number) => pad + Math.min(1, Math.max(0, fr)) * (width - 2 * pad);
+export function dayProgress(progress: number, dots: Array<{ frac: number; passed: boolean }>, width: number, rtl = false): string {
+  const pad = 6;
+  // Time runs right-to-left in RTL pages.
+  const x = (fr: number) => { const f = Math.min(1, Math.max(0, fr)); return rtl ? width - pad - f * (width - 2 * pad) : pad + f * (width - 2 * pad); };
   const px = x(progress);
   return `<svg class="progress" width="${width}" height="14" viewBox="0 0 ${width} 14" aria-hidden="true">`
     + `<line x1="${pad}" y1="7" x2="${width - pad}" y2="7" class="track"/>`
-    + (progress > 0 ? `<line x1="${pad}" y1="7" x2="${f(px)}" y2="7" class="fill"/>` : '')
+    + (progress > 0 ? `<line x1="${f(x(0))}" y1="7" x2="${f(px)}" y2="7" class="fill"/>` : '')
     + dots.map((d) => `<circle cx="${f(x(d.frac))}" cy="7" r="4" class="${d.passed ? 'fill' : 'track'}"/>`).join('')
     + `<circle cx="${f(px)}" cy="7" r="6" class="fill"/><circle cx="${f(px)}" cy="7" r="2.5" fill="#fff"/></svg>`;
 }

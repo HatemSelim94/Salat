@@ -703,5 +703,15 @@
     "en": "Compass accuracy is low — move your phone in a figure‑8 a few times.",
     "ar": "دقة البوصلة منخفضة — حرّك هاتفك على شكل الرقم 8 عدة مرات.",
     "de": "Kompass ungenau – bewege das Handy ein paar Mal in einer Acht."
+  },
+  "unit.h": {
+    "en": "h",
+    "ar": "س",
+    "de": "h"
+  },
+  "unit.m": {
+    "en": "m",
+    "ar": "د",
+    "de": "min"
   }
 }

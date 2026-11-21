@@ -206,11 +206,12 @@ export function formatTime(d: Date, timezone: string, hour12: boolean): string {
 }
 
 /** "2h 05m" / "14m" / "<1m" until `target`. */
-export function formatCountdown(now: Date, target: Date): string {
+/** `units` are the localised suffixes, e.g. { h: 'h', m: 'm' } or { h: 'س', m: 'د' }. */
+export function formatCountdown(now: Date, target: Date, units: { h: string; m: string } = { h: 'h', m: 'm' }): string {
   const totalMin = Math.max(0, Math.round((target.getTime() - now.getTime()) / 60_000));
-  if (totalMin < 1) return '<1m';
+  if (totalMin < 1) return `<1${units.m}`;
   const h = Math.floor(totalMin / 60);
   const m = totalMin % 60;
-  if (h === 0) return `${m}m`;
-  return `${h}h ${String(m).padStart(2, '0')}m`;
+  if (h === 0) return `${m}${units.m}`;
+  return `${h}${units.h} ${String(m).padStart(2, '0')}${units.m}`;
 }

@@ -383,9 +383,10 @@ QString Engine::nextTime() const { return m_nextKey.isEmpty() ? QString() : form
 
 QString Engine::countdown() const {
     const qint64 total = std::max<qint64>(0, std::llround((m_nextAt - nowEpoch()) / 60.0));
-    if (total < 1) return QStringLiteral("<1m");
+    const QString hu = Tr::instance().t("unit.h"), mu = Tr::instance().t("unit.m");
+    if (total < 1) return QStringLiteral("<1") + mu;
     const qint64 h = total / 60, m = total % 60;
-    return h == 0 ? QStringLiteral("%1m").arg(m) : QStringLiteral("%1h %2m").arg(h).arg(m, 2, 10, QLatin1Char('0'));
+    return h == 0 ? QString::number(m) + mu : QString::number(h) + hu + QLatin1Char(' ') + QStringLiteral("%1").arg(m, 2, 10, QLatin1Char('0')) + mu;
 }
 
 QString Engine::gregorianDate() const {

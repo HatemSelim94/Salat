@@ -92,8 +92,8 @@ function updateStatus(): void {
   const compact = cfg.get('statusBar.compact', false);
   const clock = formatTime(next.time, tz, settings.hour12);
   statusItem.text = compact
-    ? `$(bell) ${label(next.name, next.time)} ${formatCountdown(now, next.time)}`
-    : `$(bell) ${label(next.name, next.time)} ${clock} · ${formatCountdown(now, next.time)}`;
+    ? `$(bell) ${label(next.name, next.time)} ${formatCountdown(now, next.time, { h: t('unit.h'), m: t('unit.m') })}`
+    : `$(bell) ${label(next.name, next.time)} ${clock} · ${formatCountdown(now, next.time, { h: t('unit.h'), m: t('unit.m') })}`;
 
   const day = computeDay(settings, now);
   const current = currentPrayer(settings, now);
@@ -200,7 +200,7 @@ async function showTimes(): Promise<void> {
   const tomorrow = civilDate(next.time, tz).day !== civilDate(now, tz).day ? ` (${t('home.tomorrow')})` : '';
   await vscode.window.showQuickPick(items, {
     title: `${t('app.name')} — ${settings.location.label} · ${day.date}`,
-    placeHolder: `${t('vscode.next')}: ${label(next.name, next.time)} ${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t('home.in')} ${formatCountdown(now, next.time)}`,
+    placeHolder: `${t('vscode.next')}: ${label(next.name, next.time)} ${formatTime(next.time, tz, settings.hour12)}${tomorrow} · ${t('home.in')} ${formatCountdown(now, next.time, { h: t('unit.h'), m: t('unit.m') })}`,
   });
 }
 

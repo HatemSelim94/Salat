@@ -104,11 +104,12 @@ class Engine(private val settings: Settings) {
     fun label(context: android.content.Context, prayer: Prayer, date: LocalDate): String =
         if (prayer == Prayer.DHUHR && settings.jumuahEnabled && Features.isFriday(date)) context.getString(R.string.prayer_jumuah) else prayer.label(context)
 
-    fun countdown(now: Long, target: Long): String {
+    /** [hUnit]/[mUnit] are the localised unit suffixes ("h"/"m", "س"/"د"). */
+    fun countdown(now: Long, target: Long, hUnit: String = "h", mUnit: String = "m"): String {
         val total = Math.max(0L, Math.round((target - now) / 60.0))
-        if (total < 1) return "<1m"
+        if (total < 1) return "<1$mUnit"
         val h = total / 60; val m = total % 60
-        return if (h == 0L) "${m}m" else "${h}h ${m.toString().padStart(2, '0')}m"
+        return if (h == 0L) "$m$mUnit" else "$h$hUnit ${m.toString().padStart(2, '0')}$mUnit"
     }
 
     fun gregorianDate(now: Long): String =

@@ -142,4 +142,6 @@
     <string name="home_notificationsBlocked" translatable="true">الإشعارات متوقفة — لن يتمكن تطبيق صلاة من تذكيرك.</string>
     <string name="home_notificationsSteps" translatable="true">السماح ← فعّل الإشعارات (وقناة الصلاة).</string>
     <string name="home_qiblaCalibrate" translatable="true">دقة البوصلة منخفضة — حرّك هاتفك على شكل الرقم 8 عدة مرات.</string>
+    <string name="unit_h" translatable="true">س</string>
+    <string name="unit_m" translatable="true">د</string>
 </resources>

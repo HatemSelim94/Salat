@@ -13,6 +13,8 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -135,10 +137,13 @@ private fun DrawScope.rays(color: Color, c: Offset, r1: Float, r2: Float, width:
  */
 @Composable
 fun DayProgress(now: Long, times: List<Long>, nextFajr: Long, track: Color, fill: Color, modifier: Modifier = Modifier) {
+    // Time runs right-to-left in RTL layouts, like the rest of the screen.
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     Canvas(modifier) {
         val y = size.height / 2
         val pad = 6.dp.toPx()
-        val x0 = pad; val x1 = size.width - pad
+        val x0 = if (rtl) size.width - pad else pad
+        val x1 = if (rtl) pad else size.width - pad
         val start = times.first(); val end = nextFajr
         fun xOf(t: Long): Float = x0 + ((t - start).toFloat() / (end - start).toFloat()).coerceIn(0f, 1f) * (x1 - x0)
         drawLine(track, Offset(x0, y), Offset(x1, y), 3.dp.toPx(), StrokeCap.Round)
